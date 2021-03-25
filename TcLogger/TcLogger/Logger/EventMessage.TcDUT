@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.6">
+  <DUT Name="EventMessage" Id="{eab319f3-c899-4cf2-8754-0b17b4d9d8d7}">
+    <Declaration><![CDATA[TYPE EventMessage :
+STRUCT
+  id: INT;
+  level: EventLevel;
+  timestamp_raised: TIMESTRUCT;
+  timestamp_cleared: TIMESTRUCT;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

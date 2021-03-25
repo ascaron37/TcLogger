@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.6">
+  <POU Name="Event" Id="{03cc76af-17ce-40eb-bb2a-7913c5ab3a91}" SpecialFunc="None">
+    <Declaration><![CDATA[{attribute 'reflection'}
+FUNCTION_BLOCK Event
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+  {attribute 'instance-path'}
+  {attribute 'noinit'}
+  path: STRING(255);
+  id: INT;
+  _message: STRING(255);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="add_message" Id="{5cbfa2c1-1c09-4567-9983-e434249344bc}">
+      <Declaration><![CDATA[METHOD add_message
+VAR_INPUT
+  level: EventLevel;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GVL_EventLogger.runner.add_message(id:=id, level:=level);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="alarm_raised" Id="{d5a53cec-25bf-456d-9d29-f598e0a02060}">
+      <Declaration><![CDATA[METHOD alarm_raised : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[alarm_raised := GVL_EventLogger.runner.raised_history_count(id) > 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="clear_alarm" Id="{7cc823d2-a8dd-44ff-903e-fdbcff90c798}">
+      <Declaration><![CDATA[METHOD clear_alarm
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GVL_EventLogger.runner.clear_alarm(id:=id);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="error_alarm" Id="{55e8d959-842f-4996-ac2c-8dd7cddc5c5b}">
+      <Declaration><![CDATA[METHOD error_alarm
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[raise_alarm(level:=EventLevel.ERROR);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="error_message" Id="{ca38d702-e59f-46d2-9511-1415bc78b78f}">
+      <Declaration><![CDATA[METHOD error_message
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[add_message(level:=EventLevel.ERROR);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FB_init" Id="{7731af07-9e97-4141-9829-41a64228a976}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GVL_EventLogger.event_id_counter := GVL_EventLogger.event_id_counter + 1;
+id := GVL_EventLogger.event_id_counter;
+GVL_EventLogger.event_addresses[id] := THIS;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="info_alarm" Id="{ebd43a98-e667-4595-89c9-a229f5f0f0d6}">
+      <Declaration><![CDATA[METHOD info_alarm
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[raise_alarm(level:=EventLevel.INFO);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="info_message" Id="{c0f9f1db-48a1-4979-bf36-bb8af0c33ed2}">
+      <Declaration><![CDATA[METHOD info_message
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[add_message(level:=EventLevel.INFO);]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="instance_path" Id="{8a5a1c1c-ff06-4418-9b66-52ecf8d7f269}">
+      <Declaration><![CDATA[PROPERTY instance_path : STRING(255)]]></Declaration>
+      <Get Name="Get" Id="{502f1fc3-998f-4e3e-ac0b-443913534009}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[instance_path := path;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="message" Id="{95b2f84d-eb7a-4759-a78c-209d6dcdc019}">
+      <Declaration><![CDATA[PROPERTY message : STRING(255)]]></Declaration>
+      <Get Name="Get" Id="{f93df829-d8fe-4832-a369-057f95411a5d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[message := _message;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{c521e5f0-7926-4ff9-9eb2-135493eb5d8f}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_message := message;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="raise_alarm" Id="{b92c7d97-5a9f-4a9c-8999-52ff932d2446}">
+      <Declaration><![CDATA[METHOD raise_alarm
+VAR_INPUT
+  level: EventLevel;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GVL_EventLogger.runner.raise_alarm(id:=id, level:=level);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="warning_alarm" Id="{f15a875c-59ec-43c3-b61d-c6f041445d2c}">
+      <Declaration><![CDATA[METHOD warning_alarm
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[raise_alarm(level:=EventLevel.WARNING);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="warning_message" Id="{38bd0a24-bea0-4de5-869a-4f5133c97093}">
+      <Declaration><![CDATA[METHOD warning_message
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[add_message(level:=EventLevel.WARNING);]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

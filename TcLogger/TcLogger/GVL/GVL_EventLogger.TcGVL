@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.6">
+  <GVL Name="GVL_EventLogger" Id="{e8cbc2c7-be2b-47ec-9cc7-f499f2cc99d1}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL CONSTANT
+  NUM_EVENTS: INT := 400;
+  NUM_EVENT_HISTORY: INT := 1000;
+END_VAR
+VAR_GLOBAL
+  event_id_counter: INT;
+  event_addresses: ARRAY[1..NUM_EVENTS] OF POINTER TO Event;
+  event_history: ARRAY[1..NUM_EVENT_HISTORY] OF EventMessage;
+  runner: EventRunner;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>
