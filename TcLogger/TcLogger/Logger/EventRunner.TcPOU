@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.6">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="EventRunner" Id="{0d525c38-ad3f-47ea-a798-0db63d693ea9}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK EventRunner
 VAR_INPUT
+  save_data_to_file: BOOL;
 END_VAR
 VAR_OUTPUT
 END_VAR
@@ -11,6 +12,12 @@ VAR
   actSystemTime: TIMESTRUCT;
   event_history_counter: INT;
   disable_ads_output: BOOL;
+  _path_file_memory: STRING(255) := 'c:\test.log';
+  file_memory: TcExt.FileMemory;
+  read_event_history: BOOL := TRUE;
+  event_history_read: BOOL;
+  write_done: BOOL;
+  write_error_id: UDINT;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -117,6 +124,25 @@ END_VAR
         <ST><![CDATA[event_history_counter := LIMIT(1, event_history_counter + 1, GVL_EventLogger.NUM_EVENT_HISTORY);]]></ST>
       </Implementation>
     </Method>
+    <Property Name="path_file_memory" Id="{c9b7f186-de3b-47c0-970f-cec5b451017f}">
+      <Declaration><![CDATA[PROPERTY path_file_memory : STRING(255)]]></Declaration>
+      <Get Name="Get" Id="{b76019eb-14c7-4bd8-8f0f-b399af7b4227}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[path_file_memory := _path_file_memory;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{6577929e-daf4-494f-80e5-e4fd4e9cbcf2}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_path_file_memory := path_file_memory;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Method Name="raise_alarm" Id="{b9a7897e-9e09-4385-9cb5-c61ebd939157}">
       <Declaration><![CDATA[METHOD raise_alarm
 VAR_INPUT
@@ -161,10 +187,33 @@ END_FOR]]></ST>
 VAR_INPUT
   disable_ads_output: BOOL; // for testing purposes
 END_VAR
-]]></Declaration>
+VAR
+  read_done: BOOL;
+  error_id: UDINT;
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[localtime();
-THIS^.disable_ads_output := disable_ads_output;]]></ST>
+THIS^.disable_ads_output := disable_ads_output;
+file_memory.path := path_file_memory;
+file_memory.read(
+  start:=TRUE,
+  data_ptr:=ADR(GVL_EventLogger.event_history),
+  data_size:=SIZEOF(GVL_EventLogger.event_history),
+  done=>read_done,
+  error_id=>error_id);
+IF read_done THEN
+  IF (error_id = 0) OR (error_id = 16#070C) THEN
+    event_history_read := TRUE;
+	END_IF
+END_IF
+IF event_history_read THEN
+  file_memory.write(
+    start:=save_data_to_file,
+    data_ptr:=ADR(GVL_EventLogger.event_history),
+    data_size:=SIZEOF(GVL_EventLogger.event_history),
+    done=>write_done,
+    error_id=>write_error_id);
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Property Name="time_valid" Id="{97759346-09f2-489b-abe8-e35197fe4275}">
