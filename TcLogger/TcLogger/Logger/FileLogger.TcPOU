@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FileLogger" Id="{eddd5bf2-9f8b-4014-b1a1-2b9514f6af17}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FileLogger IMPLEMENTS EventLogger
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+  done: BOOL;
+  error_id: DWORD;
+END_VAR
+VAR
+  _path: STRING(255);
+  file: TcExt.FileMemory;
+  localtime: FB_LocalSystemTime := (bEnable:=TRUE);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="get_timestaped_path" Id="{fd365ee7-137c-43d5-b097-a6c91d56c64b}">
+      <Declaration><![CDATA[METHOD PRIVATE get_timestaped_path : STRING(255)
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[get_timestaped_path := CONCAT(path, CONCAT('log_', CONCAT(TO_STRING(localtime.systemTime), '.log')));]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="path" Id="{8ad77a76-a7ae-4211-a029-62cbfb7f3a1a}">
+      <Declaration><![CDATA[PROPERTY path : STRING(255)]]></Declaration>
+      <Get Name="Get" Id="{32fab473-3ae0-4d2e-b9ac-c6915164202f}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[path := _path;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{b4db1cae-d219-49b1-923d-846a377b7031}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_path := path;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="save" Id="{501c7d54-f5c2-48f2-862f-f63db1339f45}">
+      <Declaration><![CDATA[METHOD save
+VAR_INPUT
+  execute: BOOL;
+  data_ptr: PVOID;
+  data_size: DWORD;
+END_VAR
+VAR_INST
+  r_execute: R_TRIG;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[localtime();
+r_execute(CLK:=execute);
+
+IF r_execute.Q THEN
+  file.path := get_timestaped_path();
+END_IF
+file.write(
+  start:=execute,
+  data_ptr:=data_ptr,
+  data_size:=data_size,
+  done=>done,
+  error_id=>error_id);]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

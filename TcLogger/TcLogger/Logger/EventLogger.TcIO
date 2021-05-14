@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <Itf Name="EventLogger" Id="{ed02ee8e-c48d-425b-b1ba-db2fe412fd83}">
+    <Declaration><![CDATA[INTERFACE EventLogger
+]]></Declaration>
+    <Method Name="save" Id="{bf8cf63d-c744-4436-8e81-8bfe67c7f6c9}">
+      <Declaration><![CDATA[METHOD save
+VAR_INPUT
+  execute: BOOL;
+  data_ptr: PVOID;
+  data_size: DWORD;
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

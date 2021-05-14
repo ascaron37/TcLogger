@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.6">
-  <POU Name="Event" Id="{03cc76af-17ce-40eb-bb2a-7913c5ab3a91}" SpecialFunc="None">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FBEvent" Id="{03cc76af-17ce-40eb-bb2a-7913c5ab3a91}" SpecialFunc="None">
     <Declaration><![CDATA[{attribute 'reflection'}
-FUNCTION_BLOCK Event
+FUNCTION_BLOCK FBEvent
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
@@ -69,12 +69,13 @@ END_VAR
 VAR_INPUT
 	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
 	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+  event_runner: REFERENCE TO EventRunner;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[GVL_EventLogger.event_id_counter := GVL_EventLogger.event_id_counter + 1;
-id := GVL_EventLogger.event_id_counter;
-GVL_EventLogger.event_addresses[id] := THIS;]]></ST>
+        <ST><![CDATA[IF __ISVALIDREF(event_runner) THEN
+  event_runner.add_event(THIS^);
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="info_alarm" Id="{ebd43a98-e667-4595-89c9-a229f5f0f0d6}">

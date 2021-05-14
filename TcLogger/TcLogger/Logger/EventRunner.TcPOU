@@ -8,16 +8,14 @@ END_VAR
 VAR_OUTPUT
 END_VAR
 VAR
+  event_id_counter: INT;
+  event_addresses: ARRAY[1..GVL_EventLogger.NUM_EVENTS] OF POINTER TO FBEvent;
   localtime: FB_LocalSystemTime := (bEnable:=TRUE);
   actSystemTime: TIMESTRUCT;
   event_history_counter: INT;
   disable_ads_output: BOOL;
-  _path_file_memory: STRING(255) := 'c:\test.log';
-  file_memory: TcExt.FileMemory;
-  read_event_history: BOOL := TRUE;
-  event_history_read: BOOL;
-  write_done: BOOL;
-  write_error_id: UDINT;
+  event_logger: ARRAY [1..GVL_EventLogger.NUM_LOGGER] OF EventLogger;
+  act_logger_counter: INT;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -42,6 +40,32 @@ END_IF]]></ST>
         </Implementation>
       </Get>
     </Property>
+    <Method Name="add_event" Id="{23657ebd-51b0-4e7b-9f49-e6f890046f14}">
+      <Declaration><![CDATA[METHOD INTERNAL add_event
+VAR_INPUT
+  event: REFERENCE TO FBEvent;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF __ISVALIDREF(event) THEN
+  event_id_counter := event_id_counter + 1;
+  event_addresses[event_id_counter] := ADR(event);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="add_logger" Id="{2651f9dc-bec6-4584-8fd4-83f95233f0d4}">
+      <Declaration><![CDATA[METHOD add_logger
+VAR_INPUT
+  logger: EventLogger;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF act_logger_counter < GVL_EventLogger.NUM_LOGGER AND ADR(logger) <> 0 THEN
+  act_logger_counter := act_logger_counter + 1;
+  event_logger[act_logger_counter] := logger;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="add_message" Id="{f126ae69-dbb0-4036-b829-819771f00c85}">
       <Declaration><![CDATA[METHOD add_message
 VAR_INPUT
@@ -70,7 +94,7 @@ VAR
   mask: DWORD;
   prefix: STRING(12);
   message: STRING(255);
-  event_pointer: POINTER TO Event;
+  event_pointer: POINTER TO FBEvent;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF disable_ads_output THEN
@@ -92,7 +116,7 @@ ELSE
   prefix := ' | Info: ';
 END_CASE
 
-event_pointer := GVL_EventLogger.event_addresses[id];
+event_pointer := event_addresses[id];
 
 message := CONCAT(prefix, event_pointer^.message);
 //message := CONCAT(event_pointer^.instance_path, message);
@@ -124,25 +148,6 @@ END_VAR
         <ST><![CDATA[event_history_counter := LIMIT(1, event_history_counter + 1, GVL_EventLogger.NUM_EVENT_HISTORY);]]></ST>
       </Implementation>
     </Method>
-    <Property Name="path_file_memory" Id="{c9b7f186-de3b-47c0-970f-cec5b451017f}">
-      <Declaration><![CDATA[PROPERTY path_file_memory : STRING(255)]]></Declaration>
-      <Get Name="Get" Id="{b76019eb-14c7-4bd8-8f0f-b399af7b4227}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[path_file_memory := _path_file_memory;]]></ST>
-        </Implementation>
-      </Get>
-      <Set Name="Set" Id="{6577929e-daf4-494f-80e5-e4fd4e9cbcf2}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[_path_file_memory := path_file_memory;]]></ST>
-        </Implementation>
-      </Set>
-    </Property>
     <Method Name="raise_alarm" Id="{b9a7897e-9e09-4385-9cb5-c61ebd939157}">
       <Declaration><![CDATA[METHOD raise_alarm
 VAR_INPUT
@@ -194,26 +199,27 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[localtime();
 THIS^.disable_ads_output := disable_ads_output;
-file_memory.path := path_file_memory;
-file_memory.read(
-  start:=TRUE,
-  data_ptr:=ADR(GVL_EventLogger.event_history),
-  data_size:=SIZEOF(GVL_EventLogger.event_history),
-  done=>read_done,
-  error_id=>error_id);
-IF read_done THEN
-  IF (error_id = 0) OR (error_id = 16#070C) THEN
-    event_history_read := TRUE;
-	END_IF
-END_IF
-IF event_history_read THEN
-  file_memory.write(
-    start:=save_data_to_file,
-    data_ptr:=ADR(GVL_EventLogger.event_history),
-    data_size:=SIZEOF(GVL_EventLogger.event_history),
-    done=>write_done,
-    error_id=>write_error_id);
-END_IF]]></ST>
+
+save_logger(execute:=save_data_to_file);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="save_logger" Id="{da433036-a647-4f83-9bab-6401224e9fee}">
+      <Declaration><![CDATA[METHOD save_logger
+VAR_INPUT
+  execute: BOOL;
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i:=1 TO act_logger_counter DO
+  IF ADR(event_logger[i]) <> 0 THEN
+    event_logger[i].save(
+      execute:=execute,
+      data_ptr:=ADR(GVL_EventLogger.event_history),
+      data_size:=SIZEOF(GVL_EventLogger.event_history));
+  END_IF
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Property Name="time_valid" Id="{97759346-09f2-489b-abe8-e35197fe4275}">

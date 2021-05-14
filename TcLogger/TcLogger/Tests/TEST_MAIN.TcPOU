@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
-  <POU Name="MAIN_TEST" Id="{e0fe771e-7548-4546-bb6c-2059f20a9739}" SpecialFunc="None">
-    <Declaration><![CDATA[PROGRAM MAIN_TEST
+  <POU Name="TEST_MAIN" Id="{e0fe771e-7548-4546-bb6c-2059f20a9739}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM TEST_MAIN
 VAR
+  test_file_logger: TestFileLogger;
 END_VAR
 ]]></Declaration>
     <Implementation>
