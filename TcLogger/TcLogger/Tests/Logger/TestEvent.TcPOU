@@ -10,7 +10,8 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[event_erstellen();]]></ST>
+      <ST><![CDATA[event_erstellen();
+file_logger_testen();]]></ST>
     </Implementation>
     <Method Name="event_erstellen" Id="{84e9d7a6-3a39-48d5-8e25-b4781b9bf70a}">
       <Declaration><![CDATA[METHOD event_erstellen
@@ -26,6 +27,29 @@ sut.event.message := 'Test';
 AssertEquals_STRING('Test', sut.event.message, 'Event not properly created');
 
 TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="file_logger_testen" Id="{21fea1f4-e348-4ccc-a848-51272e2d54b0}">
+      <Declaration><![CDATA[METHOD file_logger_testen
+VAR_INPUT
+END_VAR
+VAR_INST
+  sut: EventTestsystem;
+  file_logger: FileLogger;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('file_logger_testen');
+
+file_logger.path := 'c:\';
+sut.runner.add_logger(file_logger);
+sut.event.message := 'Test';
+sut.event.error_alarm();
+
+sut.runner.save_logger(execute:=TRUE);
+
+IF sut.runner.saving_logger_done() THEN
+  TEST_FINISHED();
+END_IF]]></ST>
       </Implementation>
     </Method>
   </POU>

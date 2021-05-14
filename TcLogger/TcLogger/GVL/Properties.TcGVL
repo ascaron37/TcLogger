@@ -3,8 +3,8 @@
   <GVL Name="Properties" Id="{f4d96ff7-2767-4dda-aedb-114ebae1033c}" ParameterList="True">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL CONSTANT
-  NUM_EVENTS: INT := 400;
-  NUM_EVENT_HISTORY: INT := 1000;
+  NUM_EVENTS: INT := 4;
+  NUM_EVENT_HISTORY: INT := 10;
   NUM_LOGGER: INT := 5;
 END_VAR]]></Declaration>
   </GVL>

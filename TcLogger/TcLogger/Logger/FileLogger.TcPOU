@@ -5,25 +5,62 @@
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
-  done: BOOL;
   error_id: DWORD;
 END_VAR
 VAR
   _path: STRING(255);
   file: TcExt.FileMemory;
   localtime: FB_LocalSystemTime := (bEnable:=TRUE);
+  _done: BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
+    <Property Name="done" Id="{687b28e8-dfd4-40db-a439-a623577f86e7}">
+      <Declaration><![CDATA[PROPERTY done : BOOL]]></Declaration>
+      <Get Name="Get" Id="{f4b573f4-12a0-4d9f-ade5-ca186ec28527}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[done := _done;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{79f34a29-2418-4485-9442-9987efedfe83}">
+        <Declaration><![CDATA[PRIVATE
+VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_done := done;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Method Name="get_timestaped_path" Id="{fd365ee7-137c-43d5-b097-a6c91d56c64b}">
       <Declaration><![CDATA[METHOD PRIVATE get_timestaped_path : STRING(255)
-VAR_INPUT
+VAR
+  datetime: STRING(255);
+  char_at: INT;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[get_timestaped_path := CONCAT(path, CONCAT('log_', CONCAT(TO_STRING(localtime.systemTime), '.log')));]]></ST>
+        <ST><![CDATA[datetime := SYSTEMTIME_TO_STRING(localtime.systemTime);
+
+char_at := FIND(datetime, '.');
+IF char_at <> 0 THEN
+  datetime := DELETE(datetime, 4, char_at);
+END_IF
+
+REPEAT
+  char_at := FIND(datetime, ':');
+  IF char_at <> 0 THEN
+    datetime := REPLACE(datetime, '_', 1, char_at);
+  END_IF
+UNTIL char_at = 0
+END_REPEAT
+
+get_timestaped_path := CONCAT(path, CONCAT('log_', CONCAT(datetime, '.log')));]]></ST>
       </Implementation>
     </Method>
     <Property Name="path" Id="{8ad77a76-a7ae-4211-a029-62cbfb7f3a1a}">
@@ -66,7 +103,7 @@ file.write(
   start:=execute,
   data_ptr:=data_ptr,
   data_size:=data_size,
-  done=>done,
+  done=>_done,
   error_id=>error_id);]]></ST>
       </Implementation>
     </Method>

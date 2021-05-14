@@ -65,6 +65,7 @@ END_VAR
         <ST><![CDATA[inc_history_counter();
 
 event_history[event_history_counter].id := id;
+event_history[event_history_counter].message := message;
 event_history[event_history_counter].level := level;
 event_history[event_history_counter].timestamp_raised := act_time;
 event_history[event_history_counter].timestamp_cleared := act_time;
@@ -178,6 +179,7 @@ END_VAR]]></Declaration>
         <ST><![CDATA[IF raised_history_count(id:=id) = 0 THEN
   inc_history_counter();
   event_history[event_history_counter].id := id;
+  event_history[event_history_counter].message := message;
   event_history[event_history_counter].level := level;
   event_history[event_history_counter].timestamp_raised := act_time;
   event_history[event_history_counter].timestamp_cleared := undefined_time;
@@ -235,6 +237,21 @@ END_VAR]]></Declaration>
       execute:=execute,
       data_ptr:=ADR(event_history),
       data_size:=SIZEOF(event_history));
+  END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="saving_logger_done" Id="{e61f5e9d-e135-4c62-a6aa-83dd0ef4bc19}">
+      <Declaration><![CDATA[METHOD saving_logger_done : BOOL
+VAR
+  i: INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[saving_logger_done := TRUE;
+FOR i:=1 TO act_logger_counter DO
+  IF ADR(event_logger[i]) <> 0 THEN
+    saving_logger_done := saving_logger_done AND event_logger[i].done;
   END_IF
 END_FOR]]></ST>
       </Implementation>
