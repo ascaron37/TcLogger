@@ -1,9 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
-  <GVL Name="GVL_EventLogger" Id="{e8cbc2c7-be2b-47ec-9cc7-f499f2cc99d1}">
+  <GVL Name="Properties" Id="{f4d96ff7-2767-4dda-aedb-114ebae1033c}" ParameterList="True">
     <Declaration><![CDATA[{attribute 'qualified_only'}
-VAR_GLOBAL
-  event_history: ARRAY[1..Properties.NUM_EVENT_HISTORY] OF EventMessage;
+VAR_GLOBAL CONSTANT
+  NUM_EVENTS: INT := 400;
+  NUM_EVENT_HISTORY: INT := 1000;
+  NUM_LOGGER: INT := 5;
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>

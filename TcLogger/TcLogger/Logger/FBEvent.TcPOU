@@ -8,6 +8,7 @@ END_VAR
 VAR_OUTPUT
 END_VAR
 VAR
+  runner: REFERENCE TO EventRunner;
   {attribute 'instance-path'}
   {attribute 'noinit'}
   path: STRING(255);
@@ -25,7 +26,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[GVL_EventLogger.runner.add_message(id:=id, level:=level);]]></ST>
+        <ST><![CDATA[runner.add_message(id:=id, level:=level);]]></ST>
       </Implementation>
     </Method>
     <Method Name="alarm_raised" Id="{d5a53cec-25bf-456d-9d29-f598e0a02060}">
@@ -34,7 +35,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[alarm_raised := GVL_EventLogger.runner.raised_history_count(id) > 0;]]></ST>
+        <ST><![CDATA[alarm_raised := runner.raised_history_count(id) > 0;]]></ST>
       </Implementation>
     </Method>
     <Method Name="clear_alarm" Id="{7cc823d2-a8dd-44ff-903e-fdbcff90c798}">
@@ -43,7 +44,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[GVL_EventLogger.runner.clear_alarm(id:=id);]]></ST>
+        <ST><![CDATA[runner.clear_alarm(id:=id);]]></ST>
       </Implementation>
     </Method>
     <Method Name="error_alarm" Id="{55e8d959-842f-4996-ac2c-8dd7cddc5c5b}">
@@ -69,12 +70,13 @@ END_VAR
 VAR_INPUT
 	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
 	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
-  event_runner: REFERENCE TO EventRunner;
+  runner: REFERENCE TO EventRunner;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF __ISVALIDREF(event_runner) THEN
-  event_runner.add_event(THIS^);
+        <ST><![CDATA[IF __ISVALIDREF(runner) THEN
+  runner.add_event(THIS^);
+  THIS^.runner REF= runner;
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -133,7 +135,17 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[GVL_EventLogger.runner.raise_alarm(id:=id, level:=level);]]></ST>
+        <ST><![CDATA[runner.raise_alarm(id:=id, level:=level);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="set_id" Id="{ca8e16af-abb6-4e45-b03a-925bd73ad678}">
+      <Declaration><![CDATA[METHOD INTERNAL set_id
+VAR_INPUT
+  id: INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.id := id;]]></ST>
       </Implementation>
     </Method>
     <Method Name="warning_alarm" Id="{f15a875c-59ec-43c3-b61d-c6f041445d2c}">

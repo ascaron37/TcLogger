@@ -9,12 +9,12 @@ VAR_OUTPUT
 END_VAR
 VAR
   event_id_counter: INT;
-  event_addresses: ARRAY[1..GVL_EventLogger.NUM_EVENTS] OF POINTER TO FBEvent;
+  event_addresses: ARRAY[1..Properties.NUM_EVENTS] OF POINTER TO FBEvent;
   localtime: FB_LocalSystemTime := (bEnable:=TRUE);
   actSystemTime: TIMESTRUCT;
   event_history_counter: INT;
   disable_ads_output: BOOL;
-  event_logger: ARRAY [1..GVL_EventLogger.NUM_LOGGER] OF EventLogger;
+  event_logger: ARRAY [1..Properties.NUM_LOGGER] OF EventLogger;
   act_logger_counter: INT;
 END_VAR
 ]]></Declaration>
@@ -50,6 +50,7 @@ END_VAR
         <ST><![CDATA[IF __ISVALIDREF(event) THEN
   event_id_counter := event_id_counter + 1;
   event_addresses[event_id_counter] := ADR(event);
+  event_addresses[event_id_counter]^.set_id(id:=event_id_counter);
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -60,7 +61,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF act_logger_counter < GVL_EventLogger.NUM_LOGGER AND ADR(logger) <> 0 THEN
+        <ST><![CDATA[IF act_logger_counter < Properties.NUM_LOGGER AND ADR(logger) <> 0 THEN
   act_logger_counter := act_logger_counter + 1;
   event_logger[act_logger_counter] := logger;
 END_IF]]></ST>
@@ -145,7 +146,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[event_history_counter := LIMIT(1, event_history_counter + 1, GVL_EventLogger.NUM_EVENT_HISTORY);]]></ST>
+        <ST><![CDATA[event_history_counter := LIMIT(1, event_history_counter + 1, Properties.NUM_EVENT_HISTORY);]]></ST>
       </Implementation>
     </Method>
     <Method Name="raise_alarm" Id="{b9a7897e-9e09-4385-9cb5-c61ebd939157}">
@@ -179,8 +180,8 @@ VAR
   undefined_time: TIMESTRUCT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[FOR i:=1 TO GVL_EventLogger.NUM_EVENT_HISTORY DO
-  IF timestruct_equal(GVL_EventLogger.event_history[i].timestamp_cleared, undefined_time) THEN
+        <ST><![CDATA[FOR i:=1 TO Properties.NUM_EVENT_HISTORY DO
+  IF GVL_EventLogger.event_history[i].id = id AND timestruct_equal(GVL_EventLogger.event_history[i].timestamp_cleared, undefined_time) THEN
     raised_history_count := i;
     EXIT;
 	END_IF

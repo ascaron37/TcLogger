@@ -64,6 +64,10 @@
     <Compile Include="GVL\GVL_EventLogger.TcGVL">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GVL\Properties.TcGVL">
+      <SubType>Code</SubType>
+      <LinkAlways>true</LinkAlways>
+    </Compile>
     <Compile Include="Logger\FBEvent.TcPOU">
       <SubType>Code</SubType>
     </Compile>
