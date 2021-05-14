@@ -26,7 +26,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[runner.add_message(id:=id, level:=level);]]></ST>
+        <ST><![CDATA[runner.add_message(id:=id, message:=message, level:=level);]]></ST>
       </Implementation>
     </Method>
     <Method Name="alarm_raised" Id="{d5a53cec-25bf-456d-9d29-f598e0a02060}">
@@ -75,8 +75,8 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF __ISVALIDREF(runner) THEN
-  runner.add_event(THIS^);
   THIS^.runner REF= runner;
+  id := THIS^.runner.generate_event_id();
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -135,7 +135,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[runner.raise_alarm(id:=id, level:=level);]]></ST>
+        <ST><![CDATA[runner.raise_alarm(id:=id, message:=message, level:=level);]]></ST>
       </Implementation>
     </Method>
     <Method Name="set_id" Id="{ca8e16af-abb6-4e45-b03a-925bd73ad678}">

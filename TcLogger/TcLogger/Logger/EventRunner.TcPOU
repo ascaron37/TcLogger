@@ -9,7 +9,6 @@ VAR_OUTPUT
 END_VAR
 VAR
   event_id_counter: INT;
-  event_addresses: ARRAY[1..Properties.NUM_EVENTS] OF POINTER TO FBEvent;
   localtime: FB_LocalSystemTime := (bEnable:=TRUE);
   actSystemTime: TIMESTRUCT;
   event_history_counter: INT;
@@ -40,20 +39,6 @@ END_IF]]></ST>
         </Implementation>
       </Get>
     </Property>
-    <Method Name="add_event" Id="{23657ebd-51b0-4e7b-9f49-e6f890046f14}">
-      <Declaration><![CDATA[METHOD INTERNAL add_event
-VAR_INPUT
-  event: REFERENCE TO FBEvent;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[IF __ISVALIDREF(event) THEN
-  event_id_counter := event_id_counter + 1;
-  event_addresses[event_id_counter] := ADR(event);
-  event_addresses[event_id_counter]^.set_id(id:=event_id_counter);
-END_IF]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="add_logger" Id="{2651f9dc-bec6-4584-8fd4-83f95233f0d4}">
       <Declaration><![CDATA[METHOD add_logger
 VAR_INPUT
@@ -71,6 +56,7 @@ END_IF]]></ST>
       <Declaration><![CDATA[METHOD add_message
 VAR_INPUT
   id: INT;
+  message: STRING(255);
   level: EventLevel;
 END_VAR
 ]]></Declaration>
@@ -82,19 +68,20 @@ GVL_EventLogger.event_history[event_history_counter].level := level;
 GVL_EventLogger.event_history[event_history_counter].timestamp_raised := act_time;
 GVL_EventLogger.event_history[event_history_counter].timestamp_cleared := act_time;
 
-ads_log(id:=id, level:=level);]]></ST>
+ads_log(id:=id, message:=message, level:=level);]]></ST>
       </Implementation>
     </Method>
     <Method Name="ads_log" Id="{0c503934-a332-47a9-ab84-e19746f835d8}">
       <Declaration><![CDATA[METHOD ads_log
 VAR_INPUT
   id: INT;
+  message: STRING(255);
   level: EventLevel;
 END_VAR
 VAR
   mask: DWORD;
   prefix: STRING(12);
-  message: STRING(255);
+  formatted_message: STRING(255);
   event_pointer: POINTER TO FBEvent;
 END_VAR]]></Declaration>
       <Implementation>
@@ -117,12 +104,10 @@ ELSE
   prefix := ' | Info: ';
 END_CASE
 
-event_pointer := event_addresses[id];
-
-message := CONCAT(prefix, event_pointer^.message);
+formatted_message := CONCAT(prefix, message);
 //message := CONCAT(event_pointer^.instance_path, message);
 
-ADSLOGSTR(mask, message, '');]]></ST>
+ADSLOGSTR(mask, formatted_message, '');]]></ST>
       </Implementation>
     </Method>
     <Method Name="clear_alarm" Id="{07a3255c-8c06-4ac3-9bc3-7cc05616380c}">
@@ -140,6 +125,17 @@ IF count > 0 THEN
 END_IF]]></ST>
       </Implementation>
     </Method>
+    <Method Name="generate_event_id" Id="{45e6113d-bd59-45d0-baac-1654e214698c}">
+      <Declaration><![CDATA[METHOD INTERNAL generate_event_id : INT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[event_id_counter := event_id_counter + 1;
+// TODO: add conditional for max num
+generate_event_id := event_id_counter;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="inc_history_counter" Id="{c1bf2e16-ba4b-408b-a3aa-157cc3fb0417}">
       <Declaration><![CDATA[METHOD inc_history_counter
 VAR_INPUT
@@ -153,6 +149,7 @@ END_VAR
       <Declaration><![CDATA[METHOD raise_alarm
 VAR_INPUT
   id: INT;
+  message: STRING(255);
   level: EventLevel;
 END_VAR
 VAR
@@ -166,7 +163,7 @@ END_VAR]]></Declaration>
   GVL_EventLogger.event_history[event_history_counter].timestamp_raised := act_time;
   GVL_EventLogger.event_history[event_history_counter].timestamp_cleared := undefined_time;
   
-  ads_log(id:=id, level:=level);
+  ads_log(id:=id, message:=message, level:=level);
 END_IF]]></ST>
       </Implementation>
     </Method>
