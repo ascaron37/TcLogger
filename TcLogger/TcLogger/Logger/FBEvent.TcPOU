@@ -35,7 +35,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[alarm_raised := runner.raised_history_count(id) > 0;]]></ST>
+        <ST><![CDATA[alarm_raised := runner.alarm_raised(id);]]></ST>
       </Implementation>
     </Method>
     <Method Name="clear_alarm" Id="{7cc823d2-a8dd-44ff-903e-fdbcff90c798}">
