@@ -89,6 +89,9 @@
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\Logger\EventTestsystem.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\Logger\TestEvent.TcPOU">
       <SubType>Code</SubType>
     </Compile>

@@ -7,7 +7,6 @@ END_VAR
 VAR_OUTPUT
 END_VAR
 VAR
-  event_erstellen_runner: EventRunner;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -18,12 +17,13 @@ END_VAR
 VAR_INPUT
 END_VAR
 VAR_INST
-  sut: FBEvent(event_erstellen_runner) := (message:='Test');
+  sut: EventTestsystem;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('event_erstellen');
 
-AssertEquals_STRING('Test', sut.message, 'Event not properly created');
+sut.event.message := 'Test';
+AssertEquals_STRING('Test', sut.event.message, 'Event not properly created');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
