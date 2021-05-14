@@ -14,6 +14,7 @@ VAR
   event_history_counter: INT;
   disable_ads_output: BOOL;
   event_logger: ARRAY [1..Properties.NUM_LOGGER] OF EventLogger;
+  event_history: ARRAY[1..Properties.NUM_EVENT_HISTORY] OF EventMessage;
   act_logger_counter: INT;
 END_VAR
 ]]></Declaration>
@@ -63,10 +64,10 @@ END_VAR
       <Implementation>
         <ST><![CDATA[inc_history_counter();
 
-GVL_EventLogger.event_history[event_history_counter].id := id;
-GVL_EventLogger.event_history[event_history_counter].level := level;
-GVL_EventLogger.event_history[event_history_counter].timestamp_raised := act_time;
-GVL_EventLogger.event_history[event_history_counter].timestamp_cleared := act_time;
+event_history[event_history_counter].id := id;
+event_history[event_history_counter].level := level;
+event_history[event_history_counter].timestamp_raised := act_time;
+event_history[event_history_counter].timestamp_cleared := act_time;
 
 ads_log(id:=id, message:=message, level:=level);]]></ST>
       </Implementation>
@@ -131,7 +132,7 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[count := raised_history_count(id:=id);
 IF count > 0 THEN
-  GVL_EventLogger.event_history[count].timestamp_cleared := act_time;
+  event_history[count].timestamp_cleared := act_time;
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -176,10 +177,10 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF raised_history_count(id:=id) = 0 THEN
   inc_history_counter();
-  GVL_EventLogger.event_history[event_history_counter].id := id;
-  GVL_EventLogger.event_history[event_history_counter].level := level;
-  GVL_EventLogger.event_history[event_history_counter].timestamp_raised := act_time;
-  GVL_EventLogger.event_history[event_history_counter].timestamp_cleared := undefined_time;
+  event_history[event_history_counter].id := id;
+  event_history[event_history_counter].level := level;
+  event_history[event_history_counter].timestamp_raised := act_time;
+  event_history[event_history_counter].timestamp_cleared := undefined_time;
   
   ads_log(id:=id, message:=message, level:=level);
 END_IF]]></ST>
@@ -196,7 +197,7 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[FOR i:=1 TO Properties.NUM_EVENT_HISTORY DO
-  IF GVL_EventLogger.event_history[i].id = id AND timestruct_equal(GVL_EventLogger.event_history[i].timestamp_cleared, undefined_time) THEN
+  IF event_history[i].id = id AND timestruct_equal(event_history[i].timestamp_cleared, undefined_time) THEN
     raised_history_count := i;
     EXIT;
 	END_IF
@@ -232,8 +233,8 @@ END_VAR]]></Declaration>
   IF ADR(event_logger[i]) <> 0 THEN
     event_logger[i].save(
       execute:=execute,
-      data_ptr:=ADR(GVL_EventLogger.event_history),
-      data_size:=SIZEOF(GVL_EventLogger.event_history));
+      data_ptr:=ADR(event_history),
+      data_size:=SIZEOF(event_history));
   END_IF
 END_FOR]]></ST>
       </Implementation>
