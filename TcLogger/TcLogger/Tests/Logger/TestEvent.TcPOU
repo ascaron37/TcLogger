@@ -7,10 +7,26 @@ END_VAR
 VAR_OUTPUT
 END_VAR
 VAR
+  event_erstellen_runner: EventRunner;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[]]></ST>
+      <ST><![CDATA[event_erstellen();]]></ST>
     </Implementation>
+    <Method Name="event_erstellen" Id="{84e9d7a6-3a39-48d5-8e25-b4781b9bf70a}">
+      <Declaration><![CDATA[METHOD event_erstellen
+VAR_INPUT
+END_VAR
+VAR_INST
+  sut: FBEvent(event_erstellen_runner);
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('event_erstellen');
+
+AssertTrue(TRUE, 'Alles ok');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
   </POU>
 </TcPlcObject>
