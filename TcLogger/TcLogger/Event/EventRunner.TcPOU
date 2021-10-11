@@ -114,6 +114,20 @@ END_IF
 create_event_message := ev;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="error" Id="{4dd89880-1abb-4d7e-a276-4d71779474aa}">
+      <Declaration><![CDATA[METHOD PUBLIC error
+VAR_INPUT
+  message: STRING(255);
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[submit_event_message(
+  id:=0,
+  message:=message,
+  level:=EventLevel.WARNING,
+  cleared:=TRUE);]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="generate_event_id" Id="{45e6113d-bd59-45d0-baac-1654e214698c}">
       <Declaration><![CDATA[METHOD INTERNAL generate_event_id : INT
 VAR_INPUT
@@ -158,6 +172,20 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[logger_counter := LIMIT(1, logger_counter + 1, Properties.NUM_LOGGER);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="info" Id="{0e6c198e-5eef-43dd-aa68-60c1a8cf47ab}">
+      <Declaration><![CDATA[METHOD PUBLIC info
+VAR_INPUT
+  message: STRING(255);
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[submit_event_message(
+  id:=0,
+  message:=message,
+  level:=EventLevel.INFO,
+  cleared:=TRUE);]]></ST>
       </Implementation>
     </Method>
     <Method Name="raise_alarm" Id="{b9a7897e-9e09-4385-9cb5-c61ebd939157}">
@@ -271,6 +299,20 @@ timestruct_equal := timestruct_equal AND timestruct_1.wDayOfWeek = timestruct_2.
 timestruct_equal := timestruct_equal AND timestruct_1.wHour = timestruct_2.wHour;
 timestruct_equal := timestruct_equal AND timestruct_1.wMilliseconds = timestruct_2.wMilliseconds;
 timestruct_equal := timestruct_equal AND timestruct_1.wMinute = timestruct_2.wMinute;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="warning" Id="{24bf1d2a-2c3d-49f9-a931-65114b2195ac}">
+      <Declaration><![CDATA[METHOD PUBLIC warning
+VAR_INPUT
+  message: STRING(255);
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[submit_event_message(
+  id:=0,
+  message:=message,
+  level:=EventLevel.ERROR,
+  cleared:=TRUE);]]></ST>
       </Implementation>
     </Method>
   </POU>
