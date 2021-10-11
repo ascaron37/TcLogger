@@ -57,6 +57,7 @@
   <ItemGroup>
     <Folder Include="Logger" />
     <Folder Include="GVL" />
+    <Folder Include="Utils" />
     <Folder Include="Tests" />
     <Folder Include="Tests\Logger" />
   </ItemGroup>
@@ -95,6 +96,9 @@
     <Compile Include="Tests\Logger\EventTestsystem.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\Logger\MultipleEventTestsystem.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\Logger\TestEvent.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -102,6 +106,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\TEST_MAIN.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\F_FIFO_WRITE.TcPOU">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

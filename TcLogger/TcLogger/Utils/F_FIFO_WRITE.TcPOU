@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="F_FIFO_WRITE" Id="{c078c526-32d9-45ed-91b9-28727d579935}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_FIFO_WRITE: BOOL
+VAR_INPUT
+  size_new_data: UDINT;
+  adr_new_data: POINTER TO BYTE;
+
+  size_memory_buffer: UDINT;
+  adr_memory_buffer : POINTER TO BYTE;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[FW_MemMove(
+  pDest := adr_memory_buffer + size_new_data,
+  pSrc := adr_memory_buffer,
+  cbLen := size_memory_buffer - size_new_data);
+FW_MemMove(
+  pDest := adr_memory_buffer,
+  pSrc := adr_new_data,
+  cbLen := size_new_data);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -65,8 +65,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[THIS^.runner REF= GVL.runner;
-set_id(THIS^.runner.generate_event_id());]]></ST>
+        <ST><![CDATA[THIS^.runner REF= GVL.runner;]]></ST>
       </Implementation>
     </Method>
     <Method Name="info" Id="{c0f9f1db-48a1-4979-bf36-bb8af0c33ed2}">
@@ -133,7 +132,8 @@ END_VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[_runner REF= runner;]]></ST>
+          <ST><![CDATA[_runner REF= runner;
+set_id(runner.generate_event_id());]]></ST>
         </Implementation>
       </Set>
     </Property>

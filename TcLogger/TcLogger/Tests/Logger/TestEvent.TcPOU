@@ -14,8 +14,28 @@ END_VAR
 //file_logger_testen();
 after_initialisation_alarm_is_not_raised();
 after_raising_an_alarm_the_alarm_is_raised();
-clear_alarm();]]></ST>
+clear_alarm();
+add_multiple_events();]]></ST>
     </Implementation>
+    <Method Name="add_multiple_events" Id="{e9dc6e7f-11a1-4018-94b6-f52294564527}">
+      <Declaration><![CDATA[METHOD add_multiple_events
+VAR_INST
+  sut: MultipleEventTestsystem;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Add multiple events');
+
+sut.event1.alarm();
+sut.event2.warning();
+sut.event3.alarm();
+AssertTrue(sut.event1.alarm_raised, 'Event 1');
+AssertFalse(sut.event2.alarm_raised, 'Event 2');
+AssertTrue(sut.event3.alarm_raised, 'Event 3');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="after_initialisation_alarm_is_not_raised" Id="{a58568b8-cfac-4930-b4ec-3c7531d956e8}">
       <Declaration><![CDATA[METHOD after_initialisation_alarm_is_not_raised
 VAR_INPUT

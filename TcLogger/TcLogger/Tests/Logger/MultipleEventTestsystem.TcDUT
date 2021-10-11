@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <DUT Name="MultipleEventTestsystem" Id="{463db442-f089-4be4-9631-f04acbc95b47}">
+    <Declaration><![CDATA[TYPE MultipleEventTestsystem :
+STRUCT
+  runner: EventRunner;
+  event1: Event := (runner:=runner);
+  event2: Event := (runner:=runner);
+  event3: Event := (runner:=runner);
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
