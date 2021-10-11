@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="MemoryLogger" Id="{96136309-a53e-49de-920d-d5f50ab34f7f}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK MemoryLogger IMPLEMENTS EventLogger
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+  event_history: ARRAY[1..Properties.NUM_EVENT_HISTORY] OF EventMessage;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="submit_event_message" Id="{e515f482-fb51-429d-880d-23c8a80c9002}">
+      <Declaration><![CDATA[METHOD submit_event_message
+VAR_INPUT
+	ev: EventMessage;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[F_FIFO_WRITE(SIZEOF(ev), ADR(ev), SIZEOF(event_history), ADR(event_history));]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

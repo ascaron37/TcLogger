@@ -10,9 +10,8 @@ VAR
   event_id_counter: INT;
   localtime: FB_LocalSystemTime := (bEnable:=TRUE);
   actSystemTime: TIMESTRUCT;
-  event_history_counter: INT;
   event_logger: ARRAY [1..Properties.NUM_LOGGER] OF EventLogger;
-  event_history: ARRAY[1..Properties.NUM_EVENT_HISTORY] OF EventMessage;
+  active_alarms: ARRAY[1..Properties.NUM_CONCURRENT_ALARMS] OF EventMessage;
   logger_counter: INT;
 END_VAR
 ]]></Declaration>
@@ -61,7 +60,7 @@ VAR
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[alarm_raised := get_alarm_history_index(id:=id) > 0;]]></ST>
+        <ST><![CDATA[alarm_raised := get_alarm_index(id:=id) > 0;]]></ST>
       </Implementation>
     </Method>
     <Method Name="clear_alarm" Id="{07a3255c-8c06-4ac3-9bc3-7cc05616380c}">
@@ -71,12 +70,22 @@ VAR_INPUT
 END_VAR
 VAR
   index: INT;
+  filldata: EventMessage;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF alarm_raised(id:=id) THEN
-  index := get_alarm_history_index(id:=id);
-  event_history[index].timestamp_cleared := act_time;
-  event_history[index].cleared := TRUE;
+  index := get_alarm_index(id:=id);
+  active_alarms[index].timestamp_cleared := act_time;
+  active_alarms[index].cleared := TRUE;
+  
+  submit_event_message_to_logger(active_alarms[index]);
+  
+  remove_field_from_array(
+    index_to_remove:=index,
+    size_filldata:=SIZEOF(filldata),
+    adr_filldata:=ADR(filldata),
+    size_memory_buffer:=SIZEOF(active_alarms),
+    adr_memory_buffer:=ADR(active_alarms));
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -117,8 +126,8 @@ END_VAR
 generate_event_id := event_id_counter;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="get_alarm_history_index" Id="{9cd2a2f4-2a2d-4387-8ae7-23f7428700c9}">
-      <Declaration><![CDATA[METHOD PRIVATE get_alarm_history_index : INT
+    <Method Name="get_alarm_index" Id="{9cd2a2f4-2a2d-4387-8ae7-23f7428700c9}">
+      <Declaration><![CDATA[METHOD PRIVATE get_alarm_index : INT
 VAR_INPUT
   id: INT;
 END_VAR
@@ -126,10 +135,10 @@ VAR
   i: INT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[get_alarm_history_index := 0;
+        <ST><![CDATA[get_alarm_index := 0;
 FOR i:=1 TO Properties.NUM_EVENT_HISTORY DO
-  IF event_history[i].id = id AND NOT event_history[i].cleared THEN
-    get_alarm_history_index := i;
+  IF active_alarms[i].id = id AND NOT active_alarms[i].cleared THEN
+    get_alarm_index := i;
     EXIT;
 	END_IF
 END_FOR]]></ST>
@@ -142,15 +151,6 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[event_id_counter := LIMIT(1, event_id_counter + 1, Properties.NUM_EVENTS);]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="inc_history_counter" Id="{c1bf2e16-ba4b-408b-a3aa-157cc3fb0417}">
-      <Declaration><![CDATA[METHOD PRIVATE inc_history_counter
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[event_history_counter := LIMIT(1, event_history_counter + 1, Properties.NUM_EVENT_HISTORY);]]></ST>
       </Implementation>
     </Method>
     <Method Name="inc_logger_counter" Id="{ac0be269-11ff-49ba-a6b4-7832eb336d0a}">
@@ -204,17 +204,26 @@ VAR_INPUT
 END_VAR
 VAR
   ev: EventMessage;
-  i: INT;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[inc_history_counter();
+        <ST><![CDATA[ev := create_event_message(id, message, level, cleared);
 
-ev := create_event_message(id, message, level, cleared);
+F_FIFO_WRITE(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));
 
-F_FIFO_WRITE(SIZEOF(ev), ADR(ev), SIZEOF(event_history), ADR(event_history));
-
-FOR i:=1 TO Properties.NUM_LOGGER DO
+submit_event_message_to_logger(ev);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="submit_event_message_to_logger" Id="{39af9b80-587a-45d1-be6f-b8a8ddcf9a59}">
+      <Declaration><![CDATA[METHOD PRIVATE submit_event_message_to_logger
+VAR_INPUT
+  ev: EventMessage;
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i:=1 TO Properties.NUM_LOGGER DO
   IF event_logger[i] <> 0 THEN
     event_logger[i].submit_event_message(ev);
 	END_IF

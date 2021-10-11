@@ -15,7 +15,8 @@ END_VAR
 after_initialisation_alarm_is_not_raised();
 after_raising_an_alarm_the_alarm_is_raised();
 clear_alarm();
-add_multiple_events();]]></ST>
+add_multiple_events();
+raise_and_clear_multiple_alarms();]]></ST>
     </Implementation>
     <Method Name="add_multiple_events" Id="{e9dc6e7f-11a1-4018-94b6-f52294564527}">
       <Declaration><![CDATA[METHOD add_multiple_events
@@ -121,6 +122,27 @@ sut.event.alarm();
 //IF sut.runner.saving_logger_done() THEN
   TEST_FINISHED();
 //END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="raise_and_clear_multiple_alarms" Id="{4d33586e-30c3-471a-bafb-f5eff5aeaf1c}">
+      <Declaration><![CDATA[METHOD raise_and_clear_multiple_alarms
+VAR_INST
+  sut: MultipleEventTestsystem;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Raise and clear multiple alarms');
+
+sut.event1.alarm();
+sut.event2.alarm();
+sut.event3.alarm();
+sut.event1.clear_alarm();
+sut.event3.clear_alarm();
+AssertFalse(sut.event1.alarm_raised, 'Event 1');
+AssertTrue(sut.event2.alarm_raised, 'Event 2');
+AssertFalse(sut.event3.alarm_raised, 'Event 3');
+
+TEST_FINISHED();]]></ST>
       </Implementation>
     </Method>
   </POU>

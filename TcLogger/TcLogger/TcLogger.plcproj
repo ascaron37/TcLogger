@@ -70,9 +70,6 @@
     <Compile Include="Event\EventLevel.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Event\EventLogger.TcIO">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Event\EventMessage.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -89,7 +86,13 @@
     <Compile Include="Logger\ADSLogger.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Logger\EventLogger.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Logger\FileLogger.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Logger\MemoryLogger.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Logger\run.TcPOU">
@@ -120,6 +123,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utils\F_FIFO_WRITE.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\remove_field_from_array.TcPOU">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

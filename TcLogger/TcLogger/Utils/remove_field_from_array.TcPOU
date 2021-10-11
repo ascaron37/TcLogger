@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="remove_field_from_array" Id="{1bd3c098-02fe-41dc-a7a9-aefaf2de3001}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION remove_field_from_array : BOOL
+VAR_INPUT
+  index_to_remove: INT; // array index must start with 1
+  size_filldata: UDINT;
+  adr_filldata: POINTER TO BYTE; 
+  size_memory_buffer: UDINT;
+  adr_memory_buffer : POINTER TO BYTE;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF index_to_remove < 1 THEN
+  RETURN;
+END_IF
+
+(*
+example:
+size_memory_buffer = 20
+size_filldata = 1
+index_to_remove = 1
+adr_memory_buffer = 100
+---------------------------------
+size_new_data = 20 - 1 = 19
+adr_new_data = 100 + 1 = 101
+
+
+size_memory_buffer = 20 - 1 = 19
+adr_memory_buffer = 100 + 0 = 100
+*)
+
+FW_MemMove(
+  pDest := adr_memory_buffer + size_filldata*TO_UDINT((index_to_remove-1)),
+  pSrc := adr_memory_buffer + size_filldata*TO_UDINT(index_to_remove),
+  cbLen := size_memory_buffer - size_filldata*TO_UDINT(index_to_remove));
+FW_MemMove(
+  pDest := adr_memory_buffer + (size_memory_buffer - size_filldata),
+  pSrc := adr_filldata,
+  cbLen := size_filldata);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

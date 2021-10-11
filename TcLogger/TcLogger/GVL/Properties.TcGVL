@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <GVL Name="Properties" Id="{f4d96ff7-2767-4dda-aedb-114ebae1033c}" ParameterList="True">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL CONSTANT
   NUM_EVENTS: INT := 4;
   NUM_EVENT_HISTORY: INT := 10;
+  NUM_CONCURRENT_ALARMS: INT := 10;
   NUM_LOGGER: INT := 5;
 END_VAR]]></Declaration>
   </GVL>
