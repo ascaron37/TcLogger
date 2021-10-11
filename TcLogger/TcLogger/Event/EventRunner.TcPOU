@@ -18,8 +18,6 @@ END_VAR
     <Implementation>
       <ST><![CDATA[(* 
 der runner wird am ende des sps programms ausgefuehrt
-- als input kommt das signal zum sichern der daten (bei der cx81xx bspw. das signal der usv). diese werden binaer gesichtert, koennen jedoch zusaetzlich als csv gesichert werden
-- ansonsten kuemmert sich der runner nur um die erstellung eines arrays zur darstellung in einer hmi mit den aktuell aktiven events
 - im programm werden pro meldung event-instanzen erstellt. diese registrieren sich selbst. die richtige id wird der pfad zur instanzvariable sein
 - im runner wird zudem das datum immer aktualisiert
 *)]]></ST>
@@ -183,7 +181,7 @@ END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="run" Id="{8739a071-bf84-4818-9cb8-125145dee33b}">
-      <Declaration><![CDATA[METHOD run
+      <Declaration><![CDATA[METHOD PUBLIC run
 VAR_INPUT
 END_VAR
 VAR
