@@ -126,7 +126,7 @@ END_VAR
         <ST><![CDATA[submit_event_message(
   id:=0,
   message:=message,
-  level:=EventLevel.WARNING,
+  level:=EventLevel.ERROR,
   cleared:=TRUE);]]></ST>
       </Implementation>
     </Method>
@@ -337,7 +337,7 @@ END_VAR
         <ST><![CDATA[submit_event_message(
   id:=0,
   message:=message,
-  level:=EventLevel.ERROR,
+  level:=EventLevel.WARNING,
   cleared:=TRUE);]]></ST>
       </Implementation>
     </Method>
