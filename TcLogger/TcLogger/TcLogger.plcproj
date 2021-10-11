@@ -14,10 +14,10 @@
     <LibraryReferences>{5a67f3bf-efe5-41a3-bc47-75b77493d556}</LibraryReferences>
     <CombineIds>false</CombineIds>
     <DefaultNamespace>TcLogger</DefaultNamespace>
-    <Released>true</Released>
+    <Released>false</Released>
     <Company>TcLogger</Company>
     <Title>TcLogger</Title>
-    <ProjectVersion>0.1.0</ProjectVersion>
+    <ProjectVersion>0.2.0</ProjectVersion>
     <CompilerVersion>3.1.4022.22</CompilerVersion>
   </PropertyGroup>
   <ItemGroup>
@@ -61,14 +61,14 @@
     <Folder Include="Tests\Logger" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GVL\GVL_EventLogger.TcGVL">
+    <Compile Include="GVL\GVL.TcGVL">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GVL\Properties.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
     </Compile>
-    <Compile Include="Logger\FBEvent.TcPOU">
+    <Compile Include="Logger\Event.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Logger\EventLevel.TcDUT">
@@ -84,6 +84,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Logger\FileLogger.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Logger\run.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PlcTask.TcTTO">

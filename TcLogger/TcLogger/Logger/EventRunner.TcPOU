@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="EventRunner" Id="{0d525c38-ad3f-47ea-a798-0db63d693ea9}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK EventRunner
 VAR_INPUT
@@ -23,7 +23,7 @@ END_VAR
 der runner wird am ende des sps programms ausgefuehrt
 - als input kommt das signal zum sichern der daten (bei der cx81xx bspw. das signal der usv). diese werden binaer gesichtert, koennen jedoch zusaetzlich als csv gesichert werden
 - ansonsten kuemmert sich der runner nur um die erstellung eines arrays zur darstellung in einer hmi mit den aktuell aktiven events
-- im programm werden pro meldung event-instanzen erstellt. diese regestrieren sich selbst. die richtige id wird der pfad zur instanzvariable sein
+- im programm werden pro meldung event-instanzen erstellt. diese registrieren sich selbst. die richtige id wird der pfad zur instanzvariable sein
 - im runner wird zudem das datum immer aktualisiert
 *)]]></ST>
     </Implementation>
@@ -84,7 +84,7 @@ VAR
   mask: DWORD;
   prefix: STRING(12);
   formatted_message: STRING(255);
-  event_pointer: POINTER TO FBEvent;
+  event_pointer: POINTER TO Event;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF disable_ads_output THEN
