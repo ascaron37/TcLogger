@@ -13,11 +13,11 @@
     <Implicit_Jitter_Distribution>{342408c2-9557-45a1-a64c-51e80d581d23}</Implicit_Jitter_Distribution>
     <LibraryReferences>{5a67f3bf-efe5-41a3-bc47-75b77493d556}</LibraryReferences>
     <CombineIds>false</CombineIds>
-    <DefaultNamespace>TcLogger</DefaultNamespace>
+    <DefaultNamespace>TcLog</DefaultNamespace>
     <Released>false</Released>
-    <Company>TcLogger</Company>
-    <Title>TcLogger</Title>
-    <ProjectVersion>0.2.0</ProjectVersion>
+    <Company>TcLog</Company>
+    <Title>TcLog</Title>
+    <ProjectVersion>0.3.0</ProjectVersion>
     <CompilerVersion>3.1.4022.22</CompilerVersion>
   </PropertyGroup>
   <ItemGroup>

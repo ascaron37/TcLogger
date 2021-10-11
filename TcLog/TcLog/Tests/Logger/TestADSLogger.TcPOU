@@ -15,7 +15,8 @@ submit_warning();
 submit_error();
 submit_alarm();
 change_default_level_to_warning_and_submit_info();
-change_default_level_to_warning_and_submit_error();]]></ST>
+change_default_level_to_warning_and_submit_error();
+create_event_with_a_parameter();]]></ST>
     </Implementation>
     <Method Name="change_default_level_to_warning_and_submit_error" Id="{fde893c3-5a5b-4fdb-ab58-28f4712e9db3}">
       <Declaration><![CDATA[METHOD change_default_level_to_warning_and_submit_error
@@ -57,6 +58,30 @@ sut.event.info();
 AssertEquals_DWORD(0, sut.logger.mask, '');
 AssertEquals_STRING('', sut.logger.prefix, '');
 AssertEquals_STRING('', sut.logger.formatted_output, '');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="create_event_with_a_parameter" Id="{220a2117-cff1-4bcc-9fe0-a73e4a8b7629}">
+      <Declaration><![CDATA[METHOD create_event_with_a_parameter
+VAR_INST
+  sut: ADSLoggerTestsystem;
+END_VAR
+VAR
+  parameter: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Create event with a parameter');
+
+sut.runner.add_logger(sut.logger);
+sut.event.message := 'Test %d';
+parameter := 123;
+sut.event.parameter := F_INT(parameter);
+sut.event.error();
+
+AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
+AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
+AssertEquals_STRING(' | Error: Test 123', sut.logger.formatted_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>

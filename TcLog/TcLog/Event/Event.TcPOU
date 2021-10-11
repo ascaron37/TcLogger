@@ -14,6 +14,7 @@ VAR
   path: STRING(255);
   id: INT;
   _message: STRING(255);
+  _parameter: T_Arg;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -107,6 +108,25 @@ END_VAR
         </Implementation>
       </Set>
     </Property>
+    <Property Name="parameter" Id="{4491cdea-dfd2-44be-8fcc-82c0238d8c0e}">
+      <Declaration><![CDATA[PROPERTY PUBLIC parameter : T_Arg]]></Declaration>
+      <Get Name="Get" Id="{cacb83f0-df67-4833-bc25-689d7cac25a5}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[parameter := _parameter;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{a782a2b3-c8d8-4a23-8b02-307fed13833a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_parameter := parameter;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Method Name="raise_alarm" Id="{b92c7d97-5a9f-4a9c-8999-52ff932d2446}">
       <Declaration><![CDATA[METHOD PRIVATE raise_alarm
 VAR_INPUT
@@ -154,7 +174,11 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[runner.submit_message(id:=id, message:=message, level:=level);]]></ST>
+        <ST><![CDATA[runner.parameter := parameter;
+runner.submit_message(
+  id:=id, 
+  message:=message,
+  level:=level);]]></ST>
       </Implementation>
     </Method>
     <Method Name="warning" Id="{38bd0a24-bea0-4de5-869a-4f5133c97093}">

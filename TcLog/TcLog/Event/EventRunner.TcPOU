@@ -13,6 +13,8 @@ VAR
   event_logger: ARRAY [1..Properties.NUM_LOGGER] OF EventLogger;
   active_alarms: ARRAY[1..Properties.NUM_CONCURRENT_ALARMS] OF EventMessage;
   logger_counter: INT;
+  format_str: FB_FormatString;
+  _parameter: T_Arg;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -188,6 +190,25 @@ END_VAR
   cleared:=TRUE);]]></ST>
       </Implementation>
     </Method>
+    <Property Name="parameter" Id="{06b7980e-d1cc-40e8-bdcf-02a1d31b5017}">
+      <Declaration><![CDATA[PROPERTY PUBLIC parameter : T_Arg]]></Declaration>
+      <Get Name="Get" Id="{f31b7eb9-151d-4b85-b437-02fbb47931d8}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[parameter := _parameter;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{780515c3-7c09-49e5-abe9-acf9d3402fa3}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_parameter := parameter;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Method Name="raise_alarm" Id="{b9a7897e-9e09-4385-9cb5-c61ebd939157}">
       <Declaration><![CDATA[METHOD INTERNAL raise_alarm
 VAR_INPUT
@@ -229,11 +250,16 @@ VAR_INPUT
   cleared: BOOL;
 END_VAR
 VAR
+  message_formatted: STRING(255);
   ev: EventMessage;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[ev := create_event_message(id, message, level, cleared);
+        <ST><![CDATA[format_str(
+  sFormat:=message,
+  arg1:=parameter,
+  sOut=>message_formatted);
+ev := create_event_message(id, message_formatted, level, cleared);
 
 IF NOT cleared THEN
   F_FIFO_WRITE(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));
