@@ -39,11 +39,10 @@ VAR_INST
   sut: EventTestsystem;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[TEST('Clear alarm');
+        <ST><![CDATA[TEST('After raising an alarm the alarm is raised');
 
 sut.event.alarm();
-sut.event.clear_alarm();
-AssertFalse(sut.event.alarm_raised, '');
+AssertTrue(sut.event.alarm_raised, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -56,10 +55,11 @@ VAR_INST
   sut: EventTestsystem;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[TEST('After raising an alarm the alarm is raised');
+        <ST><![CDATA[TEST('Clear alarm');
 
 sut.event.alarm();
-AssertTrue(sut.event.alarm_raised, '');
+sut.event.clear_alarm();
+AssertFalse(sut.event.alarm_raised, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>

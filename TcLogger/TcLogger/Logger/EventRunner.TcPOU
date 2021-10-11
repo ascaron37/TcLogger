@@ -67,10 +67,9 @@ END_VAR
 event_history[event_history_counter].id := id;
 event_history[event_history_counter].message := message;
 event_history[event_history_counter].level := level;
+event_history[event_history_counter].cleared := TRUE;
 event_history[event_history_counter].timestamp_raised := act_time;
-event_history[event_history_counter].timestamp_cleared := act_time;
-
-ads_log(id:=id, message:=message, level:=level);]]></ST>
+event_history[event_history_counter].timestamp_cleared := act_time;]]></ST>
       </Implementation>
     </Method>
     <Method Name="ads_log" Id="{0c503934-a332-47a9-ab84-e19746f835d8}">
@@ -134,6 +133,7 @@ END_VAR]]></Declaration>
         <ST><![CDATA[count := raised_history_count(id:=id);
 IF count > 0 THEN
   event_history[count].timestamp_cleared := act_time;
+  event_history[count].cleared := TRUE;
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -181,10 +181,9 @@ END_VAR]]></Declaration>
   event_history[event_history_counter].id := id;
   event_history[event_history_counter].message := message;
   event_history[event_history_counter].level := level;
+  event_history[event_history_counter].cleared := FALSE;
   event_history[event_history_counter].timestamp_raised := act_time;
   event_history[event_history_counter].timestamp_cleared := undefined_time;
-  
-  ads_log(id:=id, message:=message, level:=level);
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -199,7 +198,7 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[FOR i:=1 TO Properties.NUM_EVENT_HISTORY DO
-  IF event_history[i].id = id AND timestruct_equal(event_history[i].timestamp_cleared, undefined_time) THEN
+  IF event_history[i].id = id AND NOT event_history[i].cleared THEN
     raised_history_count := i;
     EXIT;
 	END_IF
