@@ -96,11 +96,11 @@ sut.runner.add_logger(file_logger);
 sut.event.message := 'Test';
 sut.event.alarm();
 
-sut.runner.save_logger(execute:=TRUE);
+//sut.runner.save_logger(execute:=TRUE);
 
-IF sut.runner.saving_logger_done() THEN
+//IF sut.runner.saving_logger_done() THEN
   TEST_FINISHED();
-END_IF]]></ST>
+//END_IF]]></ST>
       </Implementation>
     </Method>
   </POU>

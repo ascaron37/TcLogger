@@ -154,7 +154,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[runner.add_message(id:=id, message:=message, level:=level);]]></ST>
+        <ST><![CDATA[runner.submit_message(id:=id, message:=message, level:=level);]]></ST>
       </Implementation>
     </Method>
     <Method Name="warning" Id="{38bd0a24-bea0-4de5-869a-4f5133c97093}">

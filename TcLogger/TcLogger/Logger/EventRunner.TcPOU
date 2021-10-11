@@ -3,7 +3,6 @@
   <POU Name="EventRunner" Id="{0d525c38-ad3f-47ea-a798-0db63d693ea9}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK EventRunner
 VAR_INPUT
-  save_data_to_file: BOOL;
 END_VAR
 VAR_OUTPUT
 END_VAR
@@ -12,10 +11,9 @@ VAR
   localtime: FB_LocalSystemTime := (bEnable:=TRUE);
   actSystemTime: TIMESTRUCT;
   event_history_counter: INT;
-  disable_ads_output: BOOL;
   event_logger: ARRAY [1..Properties.NUM_LOGGER] OF EventLogger;
   event_history: ARRAY[1..Properties.NUM_EVENT_HISTORY] OF EventMessage;
-  act_logger_counter: INT;
+  logger_counter: INT;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -28,7 +26,7 @@ der runner wird am ende des sps programms ausgefuehrt
 *)]]></ST>
     </Implementation>
     <Property Name="act_time" Id="{7e8ceabb-80c4-4035-9e65-42491c23b792}">
-      <Declaration><![CDATA[PROPERTY act_time : TIMESTRUCT]]></Declaration>
+      <Declaration><![CDATA[PROPERTY PRIVATE act_time : TIMESTRUCT]]></Declaration>
       <Get Name="Get" Id="{380360c5-f864-458f-9b41-ca220d584c69}">
         <Declaration><![CDATA[VAR
 END_VAR
@@ -41,35 +39,16 @@ END_IF]]></ST>
       </Get>
     </Property>
     <Method Name="add_logger" Id="{2651f9dc-bec6-4584-8fd4-83f95233f0d4}">
-      <Declaration><![CDATA[METHOD add_logger
+      <Declaration><![CDATA[METHOD PUBLIC add_logger
 VAR_INPUT
   logger: EventLogger;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF act_logger_counter < Properties.NUM_LOGGER AND ADR(logger) <> 0 THEN
-  act_logger_counter := act_logger_counter + 1;
-  event_logger[act_logger_counter] := logger;
+        <ST><![CDATA[IF logger_counter < Properties.NUM_LOGGER AND ADR(logger) <> 0 THEN
+  inc_logger_counter();
+  event_logger[logger_counter] := logger;
 END_IF]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="add_message" Id="{f126ae69-dbb0-4036-b829-819771f00c85}">
-      <Declaration><![CDATA[METHOD INTERNAL add_message
-VAR_INPUT
-  id: INT;
-  message: STRING(255);
-  level: EventLevel;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[inc_history_counter();
-
-event_history[event_history_counter].id := id;
-event_history[event_history_counter].message := message;
-event_history[event_history_counter].level := level;
-event_history[event_history_counter].cleared := TRUE;
-event_history[event_history_counter].timestamp_raised := act_time;
-event_history[event_history_counter].timestamp_cleared := act_time;]]></ST>
       </Implementation>
     </Method>
     <Method Name="ads_log" Id="{0c503934-a332-47a9-ab84-e19746f835d8}">
@@ -86,11 +65,7 @@ VAR
   event_pointer: POINTER TO Event;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF disable_ads_output THEN
-  RETURN;
-END_IF
-
-CASE level OF
+        <ST><![CDATA[CASE level OF
 EventLevel.INFO:
   mask := ADSLOG_MSGTYPE_HINT OR ADSLOG_MSGTYPE_LOG;
   prefix := ' | Info: ';
@@ -112,28 +87,58 @@ ADSLOGSTR(mask, formatted_message, '');]]></ST>
       </Implementation>
     </Method>
     <Method Name="alarm_raised" Id="{0ecb95b1-2cc0-4d11-97b5-c5cef817c911}">
-      <Declaration><![CDATA[METHOD alarm_raised : BOOL
-VAR_INPUT
-  id: INT;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[alarm_raised := raised_history_count(id) > 0;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="clear_alarm" Id="{07a3255c-8c06-4ac3-9bc3-7cc05616380c}">
-      <Declaration><![CDATA[METHOD clear_alarm
+      <Declaration><![CDATA[METHOD INTERNAL alarm_raised : BOOL
 VAR_INPUT
   id: INT;
 END_VAR
 VAR
-  count: INT;
+  i: INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[alarm_raised := get_alarm_history_index(id:=id) > 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="append_event" Id="{ce173cb8-ea36-4b51-8b06-142152b19f09}">
+      <Declaration><![CDATA[METHOD PRIVATE append_event
+VAR_INPUT
+  id: INT;
+  message: STRING(255);
+  level: EventLevel;
+  cleared: BOOL;
+END_VAR
+VAR
+  undefined_time: TIMESTRUCT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[inc_history_counter();
+
+event_history[event_history_counter].id := id;
+event_history[event_history_counter].message := message;
+event_history[event_history_counter].level := level;
+event_history[event_history_counter].cleared := cleared;
+event_history[event_history_counter].timestamp_raised := act_time;
+IF cleared THEN
+  event_history[event_history_counter].timestamp_cleared := act_time;
+ELSE
+  event_history[event_history_counter].timestamp_cleared := undefined_time;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="clear_alarm" Id="{07a3255c-8c06-4ac3-9bc3-7cc05616380c}">
+      <Declaration><![CDATA[METHOD INTERNAL clear_alarm
+VAR_INPUT
+  id: INT;
+END_VAR
+VAR
+  index: INT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[count := raised_history_count(id:=id);
-IF count > 0 THEN
-  event_history[count].timestamp_cleared := act_time;
-  event_history[count].cleared := TRUE;
+        <ST><![CDATA[IF alarm_raised(id:=id) THEN
+  index := get_alarm_history_index(id:=id);
+  event_history[index].timestamp_cleared := act_time;
+  event_history[index].cleared := TRUE;
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -145,6 +150,24 @@ END_VAR
       <Implementation>
         <ST><![CDATA[inc_event_id_counter();
 generate_event_id := event_id_counter;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="get_alarm_history_index" Id="{9cd2a2f4-2a2d-4387-8ae7-23f7428700c9}">
+      <Declaration><![CDATA[METHOD PRIVATE get_alarm_history_index : INT
+VAR_INPUT
+  id: INT;
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[get_alarm_history_index := 0;
+FOR i:=1 TO Properties.NUM_EVENT_HISTORY DO
+  IF event_history[i].id = id AND NOT event_history[i].cleared THEN
+    get_alarm_history_index := i;
+    EXIT;
+	END_IF
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="inc_event_id_counter" Id="{18d6b3f6-2969-4465-a6b9-303d2dae68f6}">
@@ -165,6 +188,15 @@ END_VAR
         <ST><![CDATA[event_history_counter := LIMIT(1, event_history_counter + 1, Properties.NUM_EVENT_HISTORY);]]></ST>
       </Implementation>
     </Method>
+    <Method Name="inc_logger_counter" Id="{ac0be269-11ff-49ba-a6b4-7832eb336d0a}">
+      <Declaration><![CDATA[METHOD PRIVATE inc_logger_counter
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[logger_counter := LIMIT(1, logger_counter + 1, Properties.NUM_LOGGER);]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="raise_alarm" Id="{b9a7897e-9e09-4385-9cb5-c61ebd939157}">
       <Declaration><![CDATA[METHOD INTERNAL raise_alarm
 VAR_INPUT
@@ -176,87 +208,45 @@ VAR
   undefined_time: TIMESTRUCT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF raised_history_count(id:=id) = 0 THEN
-  inc_history_counter();
-  event_history[event_history_counter].id := id;
-  event_history[event_history_counter].message := message;
-  event_history[event_history_counter].level := level;
-  event_history[event_history_counter].cleared := FALSE;
-  event_history[event_history_counter].timestamp_raised := act_time;
-  event_history[event_history_counter].timestamp_cleared := undefined_time;
+        <ST><![CDATA[IF NOT alarm_raised(id:=id) THEN
+  append_event(
+    id:=id,
+    message:=message,
+    level:=level,
+    cleared:=FALSE);
 END_IF]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="raised_history_count" Id="{2dd42452-2a07-452a-9647-430f1f9f8d83}">
-      <Declaration><![CDATA[METHOD PRIVATE raised_history_count : INT
-VAR_INPUT
-  id: INT;
-END_VAR
-VAR
-  i: INT;
-  undefined_time: TIMESTRUCT;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[FOR i:=1 TO Properties.NUM_EVENT_HISTORY DO
-  IF event_history[i].id = id AND NOT event_history[i].cleared THEN
-    raised_history_count := i;
-    EXIT;
-	END_IF
-END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="run" Id="{8739a071-bf84-4818-9cb8-125145dee33b}">
       <Declaration><![CDATA[METHOD run
 VAR_INPUT
-  disable_ads_output: BOOL; // for testing purposes
 END_VAR
 VAR
   read_done: BOOL;
   error_id: UDINT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[localtime();
-THIS^.disable_ads_output := disable_ads_output;
-
-save_logger(execute:=save_data_to_file);]]></ST>
+        <ST><![CDATA[localtime();]]></ST>
       </Implementation>
     </Method>
-    <Method Name="save_logger" Id="{da433036-a647-4f83-9bab-6401224e9fee}">
-      <Declaration><![CDATA[METHOD save_logger
+    <Method Name="submit_message" Id="{f126ae69-dbb0-4036-b829-819771f00c85}">
+      <Declaration><![CDATA[METHOD INTERNAL submit_message
 VAR_INPUT
-  execute: BOOL;
-END_VAR
-VAR
-  i: INT;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[FOR i:=1 TO act_logger_counter DO
-  IF ADR(event_logger[i]) <> 0 THEN
-    event_logger[i].save(
-      execute:=execute,
-      data_ptr:=ADR(event_history),
-      data_size:=SIZEOF(event_history));
-  END_IF
-END_FOR]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="saving_logger_done" Id="{e61f5e9d-e135-4c62-a6aa-83dd0ef4bc19}">
-      <Declaration><![CDATA[METHOD saving_logger_done : BOOL
-VAR
-  i: INT;
+  id: INT;
+  message: STRING(255);
+  level: EventLevel;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[saving_logger_done := TRUE;
-FOR i:=1 TO act_logger_counter DO
-  IF ADR(event_logger[i]) <> 0 THEN
-    saving_logger_done := saving_logger_done AND event_logger[i].done;
-  END_IF
-END_FOR]]></ST>
+        <ST><![CDATA[append_event(
+  id:=id,
+  message:=message,
+  level:=level,
+  cleared:=TRUE);]]></ST>
       </Implementation>
     </Method>
     <Property Name="time_valid" Id="{97759346-09f2-489b-abe8-e35197fe4275}">
-      <Declaration><![CDATA[PROPERTY time_valid : BOOL]]></Declaration>
+      <Declaration><![CDATA[PROPERTY PUBLIC time_valid : BOOL]]></Declaration>
       <Get Name="Get" Id="{0bd76518-28fe-433e-82d9-2b30ff8be461}">
         <Declaration><![CDATA[PRIVATE
 VAR
