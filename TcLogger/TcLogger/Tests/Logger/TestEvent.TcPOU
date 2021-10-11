@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="TestEvent" Id="{1f6f0448-1ae3-4068-b11e-400de0fbbc2c}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK TestEvent EXTENDS TcUnit.FB_TestSuite
 VAR_INPUT
@@ -43,7 +43,7 @@ END_VAR]]></Declaration>
 file_logger.path := 'c:\';
 sut.runner.add_logger(file_logger);
 sut.event.message := 'Test';
-sut.event.error_alarm();
+sut.event.alarm();
 
 sut.runner.save_logger(execute:=TRUE);
 

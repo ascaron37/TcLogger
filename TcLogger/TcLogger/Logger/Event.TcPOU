@@ -19,36 +19,8 @@ END_VAR
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Method Name="add_message" Id="{5cbfa2c1-1c09-4567-9983-e434249344bc}">
-      <Declaration><![CDATA[METHOD add_message
-VAR_INPUT
-  level: EventLevel;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[runner.add_message(id:=id, message:=message, level:=level);]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="alarm_raised" Id="{d5a53cec-25bf-456d-9d29-f598e0a02060}">
-      <Declaration><![CDATA[METHOD alarm_raised : BOOL
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[alarm_raised := runner.alarm_raised(id);]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="clear_alarm" Id="{7cc823d2-a8dd-44ff-903e-fdbcff90c798}">
-      <Declaration><![CDATA[METHOD clear_alarm
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[runner.clear_alarm(id:=id);]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="error_alarm" Id="{55e8d959-842f-4996-ac2c-8dd7cddc5c5b}">
-      <Declaration><![CDATA[METHOD error_alarm
+    <Method Name="alarm" Id="{4734d13d-7054-4601-88d0-576b7693b39a}">
+      <Declaration><![CDATA[METHOD PUBLIC alarm
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -56,13 +28,33 @@ END_VAR
         <ST><![CDATA[raise_alarm(level:=EventLevel.ERROR);]]></ST>
       </Implementation>
     </Method>
-    <Method Name="error_message" Id="{ca38d702-e59f-46d2-9511-1415bc78b78f}">
-      <Declaration><![CDATA[METHOD error_message
+    <Property Name="alarm_raised" Id="{771897ac-6516-468d-85ab-585a8329696b}">
+      <Declaration><![CDATA[PROPERTY PUBLIC alarm_raised : BOOL]]></Declaration>
+      <Get Name="Get" Id="{7e95134c-fdc7-4d48-b502-33e3499fcd90}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[alarm_raised := runner.alarm_raised(id);]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="clear_alarm" Id="{7cc823d2-a8dd-44ff-903e-fdbcff90c798}">
+      <Declaration><![CDATA[METHOD PUBLIC clear_alarm
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[add_message(level:=EventLevel.ERROR);]]></ST>
+        <ST><![CDATA[runner.clear_alarm(id:=id);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="error" Id="{ca38d702-e59f-46d2-9511-1415bc78b78f}">
+      <Declaration><![CDATA[METHOD PUBLIC error
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[submit_message(level:=EventLevel.ERROR);]]></ST>
       </Implementation>
     </Method>
     <Method Name="FB_init" Id="{7731af07-9e97-4141-9829-41a64228a976}">
@@ -74,25 +66,16 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[THIS^.runner REF= GVL.runner;
-id := THIS^.runner.generate_event_id();]]></ST>
+set_id(THIS^.runner.generate_event_id());]]></ST>
       </Implementation>
     </Method>
-    <Method Name="info_alarm" Id="{ebd43a98-e667-4595-89c9-a229f5f0f0d6}">
-      <Declaration><![CDATA[METHOD info_alarm
+    <Method Name="info" Id="{c0f9f1db-48a1-4979-bf36-bb8af0c33ed2}">
+      <Declaration><![CDATA[METHOD info
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[raise_alarm(level:=EventLevel.INFO);]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="info_message" Id="{c0f9f1db-48a1-4979-bf36-bb8af0c33ed2}">
-      <Declaration><![CDATA[METHOD info_message
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[add_message(level:=EventLevel.INFO);]]></ST>
+        <ST><![CDATA[submit_message(level:=EventLevel.INFO);]]></ST>
       </Implementation>
     </Method>
     <Property Name="instance_path" Id="{8a5a1c1c-ff06-4418-9b66-52ecf8d7f269}">
@@ -126,7 +109,7 @@ END_VAR
       </Set>
     </Property>
     <Method Name="raise_alarm" Id="{b92c7d97-5a9f-4a9c-8999-52ff932d2446}">
-      <Declaration><![CDATA[METHOD raise_alarm
+      <Declaration><![CDATA[METHOD PRIVATE raise_alarm
 VAR_INPUT
   level: EventLevel;
 END_VAR
@@ -155,7 +138,7 @@ END_VAR
       </Set>
     </Property>
     <Method Name="set_id" Id="{ca8e16af-abb6-4e45-b03a-925bd73ad678}">
-      <Declaration><![CDATA[METHOD INTERNAL set_id
+      <Declaration><![CDATA[METHOD PRIVATE set_id
 VAR_INPUT
   id: INT;
 END_VAR
@@ -164,22 +147,23 @@ END_VAR
         <ST><![CDATA[THIS^.id := id;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="warning_alarm" Id="{f15a875c-59ec-43c3-b61d-c6f041445d2c}">
-      <Declaration><![CDATA[METHOD warning_alarm
+    <Method Name="submit_message" Id="{5cbfa2c1-1c09-4567-9983-e434249344bc}">
+      <Declaration><![CDATA[METHOD PRIVATE submit_message
 VAR_INPUT
+  level: EventLevel;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[raise_alarm(level:=EventLevel.WARNING);]]></ST>
+        <ST><![CDATA[runner.add_message(id:=id, message:=message, level:=level);]]></ST>
       </Implementation>
     </Method>
-    <Method Name="warning_message" Id="{38bd0a24-bea0-4de5-869a-4f5133c97093}">
-      <Declaration><![CDATA[METHOD warning_message
+    <Method Name="warning" Id="{38bd0a24-bea0-4de5-869a-4f5133c97093}">
+      <Declaration><![CDATA[METHOD warning
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[add_message(level:=EventLevel.WARNING);]]></ST>
+        <ST><![CDATA[submit_message(level:=EventLevel.WARNING);]]></ST>
       </Implementation>
     </Method>
   </POU>
