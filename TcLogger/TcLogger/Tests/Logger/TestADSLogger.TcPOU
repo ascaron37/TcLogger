@@ -13,8 +13,54 @@ END_VAR
       <ST><![CDATA[submit_info();
 submit_warning();
 submit_error();
-submit_alarm();]]></ST>
+submit_alarm();
+change_default_level_to_warning_and_submit_info();
+change_default_level_to_warning_and_submit_error();]]></ST>
     </Implementation>
+    <Method Name="change_default_level_to_warning_and_submit_error" Id="{fde893c3-5a5b-4fdb-ab58-28f4712e9db3}">
+      <Declaration><![CDATA[METHOD change_default_level_to_warning_and_submit_error
+VAR_INPUT
+END_VAR
+VAR_INST
+  sut: ADSLoggerTestsystem;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Change default level to warning and submit error');
+
+sut.runner.add_logger(sut.logger);
+sut.logger.level := EventLevel.WARNING;
+sut.event.message := 'Default level warning';
+sut.event.error();
+
+AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
+AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
+AssertEquals_STRING(' | Error: Default level warning', sut.logger.formatted_output, '');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="change_default_level_to_warning_and_submit_info" Id="{559af52a-7fea-4e0d-91b3-752a3aa7dcc3}">
+      <Declaration><![CDATA[METHOD change_default_level_to_warning_and_submit_info
+VAR_INPUT
+END_VAR
+VAR_INST
+  sut: ADSLoggerTestsystem;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Change default level to warning and submit info');
+
+sut.runner.add_logger(sut.logger);
+sut.logger.level := EventLevel.WARNING;
+sut.event.message := 'Default level warning';
+sut.event.info();
+
+AssertEquals_DWORD(0, sut.logger.mask, '');
+AssertEquals_STRING('', sut.logger.prefix, '');
+AssertEquals_STRING('', sut.logger.formatted_output, '');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="submit_alarm" Id="{7203e8ee-f5fe-4e56-af12-ce30cf3bab16}">
       <Declaration><![CDATA[METHOD submit_alarm
 VAR_INPUT
