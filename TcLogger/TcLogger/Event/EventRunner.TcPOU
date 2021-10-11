@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="EventRunner" Id="{0d525c38-ad3f-47ea-a798-0db63d693ea9}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK EventRunner
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+  event_id_counter: INT;
+  localtime: FB_LocalSystemTime := (bEnable:=TRUE);
+  actSystemTime: TIMESTRUCT;
+  event_history_counter: INT;
+  event_logger: ARRAY [1..Properties.NUM_LOGGER] OF EventLogger;
+  event_history: ARRAY[1..Properties.NUM_EVENT_HISTORY] OF EventMessage;
+  logger_counter: INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* 
+der runner wird am ende des sps programms ausgefuehrt
+- als input kommt das signal zum sichern der daten (bei der cx81xx bspw. das signal der usv). diese werden binaer gesichtert, koennen jedoch zusaetzlich als csv gesichert werden
+- ansonsten kuemmert sich der runner nur um die erstellung eines arrays zur darstellung in einer hmi mit den aktuell aktiven events
+- im programm werden pro meldung event-instanzen erstellt. diese registrieren sich selbst. die richtige id wird der pfad zur instanzvariable sein
+- im runner wird zudem das datum immer aktualisiert
+*)]]></ST>
+    </Implementation>
+    <Property Name="act_time" Id="{7e8ceabb-80c4-4035-9e65-42491c23b792}">
+      <Declaration><![CDATA[PROPERTY PRIVATE act_time : TIMESTRUCT]]></Declaration>
+      <Get Name="Get" Id="{380360c5-f864-458f-9b41-ca220d584c69}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IF time_valid THEN
+  act_time := localtime.systemTime;
+END_IF]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="add_logger" Id="{2651f9dc-bec6-4584-8fd4-83f95233f0d4}">
+      <Declaration><![CDATA[METHOD PUBLIC add_logger
+VAR_INPUT
+  logger: EventLogger;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF logger_counter < Properties.NUM_LOGGER AND ADR(logger) <> 0 THEN
+  inc_logger_counter();
+  event_logger[logger_counter] := logger;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="alarm_raised" Id="{0ecb95b1-2cc0-4d11-97b5-c5cef817c911}">
+      <Declaration><![CDATA[METHOD INTERNAL alarm_raised : BOOL
+VAR_INPUT
+  id: INT;
+END_VAR
+VAR
+  i: INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[alarm_raised := get_alarm_history_index(id:=id) > 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="clear_alarm" Id="{07a3255c-8c06-4ac3-9bc3-7cc05616380c}">
+      <Declaration><![CDATA[METHOD INTERNAL clear_alarm
+VAR_INPUT
+  id: INT;
+END_VAR
+VAR
+  index: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF alarm_raised(id:=id) THEN
+  index := get_alarm_history_index(id:=id);
+  event_history[index].timestamp_cleared := act_time;
+  event_history[index].cleared := TRUE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="create_event_message" Id="{e5a00f40-724a-4169-849a-17f7fb262ee6}">
+      <Declaration><![CDATA[METHOD PRIVATE create_event_message : EventMessage
+VAR_INPUT
+  id: INT;
+  message: STRING(255);
+  level: EventLevel;
+  cleared: BOOL;
+END_VAR
+VAR
+  ev: EventMessage;
+  undefined_time: TIMESTRUCT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ev.id := id;
+ev.message := message;
+ev.level := level;
+ev.cleared := cleared;
+ev.timestamp_raised := act_time;
+IF cleared THEN
+  ev.timestamp_cleared := act_time;
+ELSE
+  ev.timestamp_cleared := undefined_time;
+END_IF
+
+create_event_message := ev;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="generate_event_id" Id="{45e6113d-bd59-45d0-baac-1654e214698c}">
+      <Declaration><![CDATA[METHOD INTERNAL generate_event_id : INT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[inc_event_id_counter();
+generate_event_id := event_id_counter;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="get_alarm_history_index" Id="{9cd2a2f4-2a2d-4387-8ae7-23f7428700c9}">
+      <Declaration><![CDATA[METHOD PRIVATE get_alarm_history_index : INT
+VAR_INPUT
+  id: INT;
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[get_alarm_history_index := 0;
+FOR i:=1 TO Properties.NUM_EVENT_HISTORY DO
+  IF event_history[i].id = id AND NOT event_history[i].cleared THEN
+    get_alarm_history_index := i;
+    EXIT;
+	END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="inc_event_id_counter" Id="{18d6b3f6-2969-4465-a6b9-303d2dae68f6}">
+      <Declaration><![CDATA[METHOD PRIVATE inc_event_id_counter
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[event_id_counter := LIMIT(1, event_id_counter + 1, Properties.NUM_EVENTS);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="inc_history_counter" Id="{c1bf2e16-ba4b-408b-a3aa-157cc3fb0417}">
+      <Declaration><![CDATA[METHOD PRIVATE inc_history_counter
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[event_history_counter := LIMIT(1, event_history_counter + 1, Properties.NUM_EVENT_HISTORY);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="inc_logger_counter" Id="{ac0be269-11ff-49ba-a6b4-7832eb336d0a}">
+      <Declaration><![CDATA[METHOD PRIVATE inc_logger_counter
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[logger_counter := LIMIT(1, logger_counter + 1, Properties.NUM_LOGGER);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="raise_alarm" Id="{b9a7897e-9e09-4385-9cb5-c61ebd939157}">
+      <Declaration><![CDATA[METHOD INTERNAL raise_alarm
+VAR_INPUT
+  id: INT;
+  message: STRING(255);
+  level: EventLevel;
+END_VAR
+VAR
+  undefined_time: TIMESTRUCT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT alarm_raised(id:=id) THEN
+  submit_event_message(
+    id:=id,
+    message:=message,
+    level:=level,
+    cleared:=FALSE);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="run" Id="{8739a071-bf84-4818-9cb8-125145dee33b}">
+      <Declaration><![CDATA[METHOD run
+VAR_INPUT
+END_VAR
+VAR
+  read_done: BOOL;
+  error_id: UDINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[localtime();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="submit_event_message" Id="{ce173cb8-ea36-4b51-8b06-142152b19f09}">
+      <Declaration><![CDATA[METHOD PRIVATE submit_event_message
+VAR_INPUT
+  id: INT;
+  message: STRING(255);
+  level: EventLevel;
+  cleared: BOOL;
+END_VAR
+VAR
+  ev: EventMessage;
+  i: INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[inc_history_counter();
+
+ev := create_event_message(id, message, level, cleared);
+
+F_FIFO_WRITE(SIZEOF(ev), ADR(ev), SIZEOF(event_history), ADR(event_history));
+
+FOR i:=1 TO Properties.NUM_LOGGER DO
+  IF event_logger[i] <> 0 THEN
+    event_logger[i].submit_event_message(ev);
+	END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="submit_message" Id="{f126ae69-dbb0-4036-b829-819771f00c85}">
+      <Declaration><![CDATA[METHOD INTERNAL submit_message
+VAR_INPUT
+  id: INT;
+  message: STRING(255);
+  level: EventLevel;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[submit_event_message(
+  id:=id,
+  message:=message,
+  level:=level,
+  cleared:=TRUE);]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="time_valid" Id="{97759346-09f2-489b-abe8-e35197fe4275}">
+      <Declaration><![CDATA[PROPERTY PUBLIC time_valid : BOOL]]></Declaration>
+      <Get Name="Get" Id="{0bd76518-28fe-433e-82d9-2b30ff8be461}">
+        <Declaration><![CDATA[PRIVATE
+VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[time_valid := localtime.bValid;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="timestruct_equal" Id="{d3110f90-c794-4c07-a338-1efa49783308}">
+      <Declaration><![CDATA[METHOD PRIVATE timestruct_equal : BOOL
+VAR_INPUT
+  timestruct_1: TIMESTRUCT;
+  timestruct_2: TIMESTRUCT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[timestruct_equal := timestruct_1.wDay = timestruct_2.wDay;
+timestruct_equal := timestruct_equal AND timestruct_1.wDayOfWeek = timestruct_2.wDayOfWeek;
+timestruct_equal := timestruct_equal AND timestruct_1.wHour = timestruct_2.wHour;
+timestruct_equal := timestruct_equal AND timestruct_1.wMilliseconds = timestruct_2.wMilliseconds;
+timestruct_equal := timestruct_equal AND timestruct_1.wMinute = timestruct_2.wMinute;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

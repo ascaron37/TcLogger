@@ -57,11 +57,28 @@
   <ItemGroup>
     <Folder Include="Logger" />
     <Folder Include="GVL" />
+    <Folder Include="Event" />
+    <Folder Include="Tests\Event" />
     <Folder Include="Utils" />
     <Folder Include="Tests" />
     <Folder Include="Tests\Logger" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Event\Event.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Event\EventLevel.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Event\EventLogger.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Event\EventMessage.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Event\EventRunner.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="GVL\GVL.TcGVL">
       <SubType>Code</SubType>
     </Compile>
@@ -70,21 +87,6 @@
       <LinkAlways>true</LinkAlways>
     </Compile>
     <Compile Include="Logger\ADSLogger.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Logger\Event.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Logger\EventLevel.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Logger\EventLogger.TcIO">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Logger\EventMessage.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Logger\EventRunner.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Logger\FileLogger.TcPOU">
@@ -96,16 +98,16 @@
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\Logger\EventTestsystem.TcDUT">
+    <Compile Include="Tests\Event\EventTestsystem.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\Event\MultipleEventTestsystem.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\Event\TestEvent.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\Logger\ADSLoggerTestsystem.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\Logger\MultipleEventTestsystem.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\Logger\TestEvent.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\Logger\TestADSLogger.TcPOU">

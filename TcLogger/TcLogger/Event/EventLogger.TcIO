@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <Itf Name="EventLogger" Id="{ed02ee8e-c48d-425b-b1ba-db2fe412fd83}">
+    <Declaration><![CDATA[INTERFACE EventLogger
+]]></Declaration>
+    <Method Name="submit_event_message" Id="{f84ec892-41c2-4113-b29d-b2de8225110c}">
+      <Declaration><![CDATA[METHOD submit_event_message
+VAR_INPUT
+  ev: EventMessage;
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>
