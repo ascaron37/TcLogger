@@ -51,41 +51,6 @@ END_VAR
 END_IF]]></ST>
       </Implementation>
     </Method>
-    <Method Name="ads_log" Id="{0c503934-a332-47a9-ab84-e19746f835d8}">
-      <Declaration><![CDATA[METHOD PRIVATE ads_log
-VAR_INPUT
-  id: INT;
-  message: STRING(255);
-  level: EventLevel;
-END_VAR
-VAR
-  mask: DWORD;
-  prefix: STRING(12);
-  formatted_message: STRING(255);
-  event_pointer: POINTER TO Event;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[CASE level OF
-EventLevel.INFO:
-  mask := ADSLOG_MSGTYPE_HINT OR ADSLOG_MSGTYPE_LOG;
-  prefix := ' | Info: ';
-EventLevel.WARNING:
-  mask := ADSLOG_MSGTYPE_WARN OR ADSLOG_MSGTYPE_LOG;
-  prefix := ' | Warnung: ';
-EventLevel.ERROR:
-  mask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG;
-  prefix := ' | Fehler: ';
-ELSE
-  mask := ADSLOG_MSGTYPE_HINT OR ADSLOG_MSGTYPE_LOG;
-  prefix := ' | Info: ';
-END_CASE
-
-formatted_message := CONCAT(prefix, message);
-//message := CONCAT(event_pointer^.instance_path, message);
-
-ADSLOGSTR(mask, formatted_message, '');]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="alarm_raised" Id="{0ecb95b1-2cc0-4d11-97b5-c5cef817c911}">
       <Declaration><![CDATA[METHOD INTERNAL alarm_raised : BOOL
 VAR_INPUT
@@ -97,26 +62,6 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[alarm_raised := get_alarm_history_index(id:=id) > 0;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="append_event" Id="{ce173cb8-ea36-4b51-8b06-142152b19f09}">
-      <Declaration><![CDATA[METHOD PRIVATE append_event
-VAR_INPUT
-  id: INT;
-  message: STRING(255);
-  level: EventLevel;
-  cleared: BOOL;
-END_VAR
-VAR
-  ev: EventMessage;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[inc_history_counter();
-
-ev := create_event_message(id, message, level, cleared);
-
-F_FIFO_WRITE(SIZEOF(ev), ADR(ev), SIZEOF(event_history), ADR(event_history));]]></ST>
       </Implementation>
     </Method>
     <Method Name="clear_alarm" Id="{07a3255c-8c06-4ac3-9bc3-7cc05616380c}">
@@ -229,7 +174,7 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF NOT alarm_raised(id:=id) THEN
-  append_event(
+  submit_event_message(
     id:=id,
     message:=message,
     level:=level,
@@ -249,6 +194,33 @@ END_VAR]]></Declaration>
         <ST><![CDATA[localtime();]]></ST>
       </Implementation>
     </Method>
+    <Method Name="submit_event_message" Id="{ce173cb8-ea36-4b51-8b06-142152b19f09}">
+      <Declaration><![CDATA[METHOD PRIVATE submit_event_message
+VAR_INPUT
+  id: INT;
+  message: STRING(255);
+  level: EventLevel;
+  cleared: BOOL;
+END_VAR
+VAR
+  ev: EventMessage;
+  i: INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[inc_history_counter();
+
+ev := create_event_message(id, message, level, cleared);
+
+F_FIFO_WRITE(SIZEOF(ev), ADR(ev), SIZEOF(event_history), ADR(event_history));
+
+FOR i:=1 TO Properties.NUM_LOGGER DO
+  IF event_logger[i] <> 0 THEN
+    event_logger[i].submit_event_message(ev);
+	END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="submit_message" Id="{f126ae69-dbb0-4036-b829-819771f00c85}">
       <Declaration><![CDATA[METHOD INTERNAL submit_message
 VAR_INPUT
@@ -258,7 +230,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[append_event(
+        <ST><![CDATA[submit_event_message(
   id:=id,
   message:=message,
   level:=level,

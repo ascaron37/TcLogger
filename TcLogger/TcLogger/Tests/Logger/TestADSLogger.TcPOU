@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="TestADSLogger" Id="{e126a8bd-dc53-47fb-b987-2c50fb609a8b}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK TestADSLogger EXTENDS TcUnit.FB_TestSuite
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[submit_info();
+submit_warning();
+submit_error();
+submit_alarm();]]></ST>
+    </Implementation>
+    <Method Name="submit_alarm" Id="{7203e8ee-f5fe-4e56-af12-ce30cf3bab16}">
+      <Declaration><![CDATA[METHOD submit_alarm
+VAR_INPUT
+END_VAR
+VAR_INST
+  sut: ADSLoggerTestsystem;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Submit alarm');
+
+sut.runner.add_logger(sut.logger);
+sut.event.message := 'Alarm';
+sut.event.alarm();
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="submit_error" Id="{7c89dd55-cac3-43cf-b229-89629492e809}">
+      <Declaration><![CDATA[METHOD submit_error
+VAR_INPUT
+END_VAR
+VAR_INST
+  sut: ADSLoggerTestsystem;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Submit error');
+
+sut.runner.add_logger(sut.logger);
+sut.event.message := 'Error';
+sut.event.error();
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="submit_info" Id="{bd81e84a-3e0d-47ff-97fa-d790029e78ab}">
+      <Declaration><![CDATA[METHOD submit_info
+VAR_INPUT
+END_VAR
+VAR_INST
+  sut: ADSLoggerTestsystem;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Submit info');
+
+sut.runner.add_logger(sut.logger);
+sut.event.message := 'Info';
+sut.event.info();
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="submit_warning" Id="{d791f11d-b6d0-4afa-8f91-e5b068e59d16}">
+      <Declaration><![CDATA[METHOD submit_warning
+VAR_INPUT
+END_VAR
+VAR_INST
+  sut: ADSLoggerTestsystem;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Submit warning');
+
+sut.runner.add_logger(sut.logger);
+sut.event.message := 'Warning';
+sut.event.warning();
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

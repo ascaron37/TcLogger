@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="ADSLogger" Id="{f353a23b-59c1-4eb7-b1b3-77f5986ff606}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK ADSLogger IMPLEMENTS EventLogger
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="ads_log" Id="{1bc6e817-4323-49bf-a63f-a94d3b6c886f}">
+      <Declaration><![CDATA[METHOD PRIVATE ads_log
+VAR_INPUT
+  ev: EventMessage;
+END_VAR
+VAR
+  mask: DWORD;
+  prefix: STRING(12);
+  formatted_message: STRING(255);
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE ev.level OF
+EventLevel.INFO:
+  mask := ADSLOG_MSGTYPE_HINT OR ADSLOG_MSGTYPE_HINT;
+  prefix := ' | Info: ';
+EventLevel.WARNING:
+  mask := ADSLOG_MSGTYPE_WARN OR ADSLOG_MSGTYPE_WARN;
+  prefix := ' | Warning: ';
+EventLevel.ERROR:
+  mask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_ERROR;
+  prefix := ' | Error: ';
+ELSE
+  mask := ADSLOG_MSGTYPE_HINT OR ADSLOG_MSGTYPE_HINT;
+  prefix := ' | Info: ';
+END_CASE
+
+formatted_message := CONCAT(prefix, ev.message);
+//message := CONCAT(event_pointer^.instance_path, message);
+
+ADSLOGSTR(mask, formatted_message, '');]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="submit_event_message" Id="{72fa51cd-5f83-427b-a2c1-e007bce7d269}">
+      <Declaration><![CDATA[METHOD submit_event_message
+VAR_INPUT
+	ev: EventMessage;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ads_log(ev);]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

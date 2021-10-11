@@ -1,20 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <Itf Name="EventLogger" Id="{ed02ee8e-c48d-425b-b1ba-db2fe412fd83}">
     <Declaration><![CDATA[INTERFACE EventLogger
 ]]></Declaration>
-    <Property Name="done" Id="{442ba886-d65b-4520-bd1c-bf5abbe44953}">
-      <Declaration><![CDATA[PROPERTY done : BOOL]]></Declaration>
-      <Get Name="Get" Id="{8fdbaffa-31f3-4224-acf5-c676afa37dd8}">
-        <Declaration><![CDATA[]]></Declaration>
-      </Get>
-    </Property>
-    <Method Name="save" Id="{bf8cf63d-c744-4436-8e81-8bfe67c7f6c9}">
-      <Declaration><![CDATA[METHOD save
+    <Method Name="submit_event_message" Id="{f84ec892-41c2-4113-b29d-b2de8225110c}">
+      <Declaration><![CDATA[METHOD submit_event_message
 VAR_INPUT
-  execute: BOOL;
-  data_ptr: PVOID;
-  data_size: DWORD;
+  ev: EventMessage;
 END_VAR
 ]]></Declaration>
     </Method>

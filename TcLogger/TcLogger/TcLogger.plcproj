@@ -69,6 +69,9 @@
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
     </Compile>
+    <Compile Include="Logger\ADSLogger.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Logger\Event.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -96,10 +99,16 @@
     <Compile Include="Tests\Logger\EventTestsystem.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\Logger\ADSLoggerTestsystem.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\Logger\MultipleEventTestsystem.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\Logger\TestEvent.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\Logger\TestADSLogger.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\Logger\TestFileLogger.TcPOU">
