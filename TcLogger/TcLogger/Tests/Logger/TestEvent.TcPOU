@@ -11,8 +11,59 @@ END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[event_erstellen();
-file_logger_testen();]]></ST>
+//file_logger_testen();
+after_initialisation_alarm_is_not_raised();
+after_raising_an_alarm_the_alarm_is_raised();
+clear_alarm();]]></ST>
     </Implementation>
+    <Method Name="after_initialisation_alarm_is_not_raised" Id="{a58568b8-cfac-4930-b4ec-3c7531d956e8}">
+      <Declaration><![CDATA[METHOD after_initialisation_alarm_is_not_raised
+VAR_INPUT
+END_VAR
+VAR_INST
+  sut: EventTestsystem;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Alarm is not raised after initialisation');
+
+AssertFalse(sut.event.alarm_raised, '');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="after_raising_an_alarm_the_alarm_is_raised" Id="{3e51c88a-603f-40de-b89e-e09310467482}">
+      <Declaration><![CDATA[METHOD after_raising_an_alarm_the_alarm_is_raised
+VAR_INPUT
+END_VAR
+VAR_INST
+  sut: EventTestsystem;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Clear alarm');
+
+sut.event.alarm();
+sut.event.clear_alarm();
+AssertFalse(sut.event.alarm_raised, '');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="clear_alarm" Id="{79efaec0-0122-48a3-8419-dd3612e1e2ef}">
+      <Declaration><![CDATA[METHOD clear_alarm
+VAR_INPUT
+END_VAR
+VAR_INST
+  sut: EventTestsystem;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('After raising an alarm the alarm is raised');
+
+sut.event.alarm();
+AssertTrue(sut.event.alarm_raised, '');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="event_erstellen" Id="{84e9d7a6-3a39-48d5-8e25-b4781b9bf70a}">
       <Declaration><![CDATA[METHOD event_erstellen
 VAR_INPUT
