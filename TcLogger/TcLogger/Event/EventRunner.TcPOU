@@ -207,7 +207,9 @@ END_VAR
       <Implementation>
         <ST><![CDATA[ev := create_event_message(id, message, level, cleared);
 
-F_FIFO_WRITE(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));
+IF NOT cleared THEN
+  F_FIFO_WRITE(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));
+END_IF
 
 submit_event_message_to_logger(ev);]]></ST>
       </Implementation>
