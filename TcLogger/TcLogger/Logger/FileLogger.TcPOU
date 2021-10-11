@@ -12,6 +12,7 @@ VAR
   file: TcExt.FileMemory;
   localtime: FB_LocalSystemTime := (bEnable:=TRUE);
   _done: BOOL;
+  _level: EventLevel;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -63,6 +64,25 @@ END_REPEAT
 get_timestaped_path := CONCAT(path, CONCAT('log_', CONCAT(datetime, '.log')));]]></ST>
       </Implementation>
     </Method>
+    <Property Name="level" Id="{ab6b9969-76e1-4879-b617-99481726f092}">
+      <Declaration><![CDATA[PROPERTY PUBLIC level : EventLevel]]></Declaration>
+      <Get Name="Get" Id="{5ab1af13-9930-49f3-9811-710132aa1fb1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[level := _level;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{cf7d265b-a08f-46d3-959d-33b6de9e6222}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_level := level;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Property Name="path" Id="{8ad77a76-a7ae-4211-a029-62cbfb7f3a1a}">
       <Declaration><![CDATA[PROPERTY path : STRING(255)]]></Declaration>
       <Get Name="Get" Id="{32fab473-3ae0-4d2e-b9ac-c6915164202f}">

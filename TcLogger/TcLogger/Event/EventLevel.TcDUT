@@ -5,9 +5,9 @@
 {attribute 'strict'}
 TYPE EventLevel :
 (
-	INFO := 0,
-  WARNING,
-  ERROR
+	INFO := 10,
+  WARNING :=20,
+  ERROR := 30
 ) BYTE := INFO;
 END_TYPE
 ]]></Declaration>

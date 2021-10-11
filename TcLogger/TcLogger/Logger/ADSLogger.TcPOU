@@ -7,6 +7,11 @@ END_VAR
 VAR_OUTPUT
 END_VAR
 VAR
+  _level: EventLevel;
+  _disable_ads_output: BOOL;
+  _mask: DWORD;
+  _prefix: STRING(15);
+  _formatted_output: STRING(255);
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -18,40 +23,162 @@ VAR_INPUT
   ev: EventMessage;
 END_VAR
 VAR
-  mask: DWORD;
-  prefix: STRING(12);
-  formatted_message: STRING(255);
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[CASE ev.level OF
-EventLevel.INFO:
-  mask := ADSLOG_MSGTYPE_HINT OR ADSLOG_MSGTYPE_HINT;
-  prefix := ' | Info: ';
-EventLevel.WARNING:
-  mask := ADSLOG_MSGTYPE_WARN OR ADSLOG_MSGTYPE_WARN;
-  prefix := ' | Warning: ';
-EventLevel.ERROR:
-  mask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_ERROR;
-  prefix := ' | Error: ';
-ELSE
-  mask := ADSLOG_MSGTYPE_HINT OR ADSLOG_MSGTYPE_HINT;
-  prefix := ' | Info: ';
-END_CASE
+        <ST><![CDATA[mask := create_mask(ev.level);
+prefix := create_prefix(ev.level);
 
-formatted_message := CONCAT(prefix, ev.message);
-//message := CONCAT(event_pointer^.instance_path, message);
+formatted_output := CONCAT(prefix, ev.message);
 
-ADSLOGSTR(mask, formatted_message, '');]]></ST>
+IF NOT disable_ads_output THEN
+  ADSLOGSTR(mask, formatted_output, '');
+END_IF]]></ST>
       </Implementation>
     </Method>
+    <Method Name="create_mask" Id="{aee6a054-3e4f-421c-aca5-2c735f9fea76}">
+      <Declaration><![CDATA[METHOD PRIVATE create_mask : DWORD
+VAR_INPUT
+  level: EventLevel;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE level OF
+EventLevel.INFO:
+  create_mask := ADSLOG_MSGTYPE_HINT;
+EventLevel.WARNING:
+  create_mask := ADSLOG_MSGTYPE_WARN;
+EventLevel.ERROR:
+  create_mask := ADSLOG_MSGTYPE_ERROR;
+ELSE
+  create_mask := ADSLOG_MSGTYPE_HINT;
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="create_prefix" Id="{e6393b63-a206-438e-accf-a721f61f3d0a}">
+      <Declaration><![CDATA[METHOD PRIVATE create_prefix : STRING(15)
+VAR_INPUT
+  level: EventLevel;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE level OF
+EventLevel.INFO:
+  create_prefix := ' | Info: ';
+EventLevel.WARNING:
+  create_prefix := ' | Warning: ';
+EventLevel.ERROR:
+  create_prefix := ' | Error: ';
+ELSE
+  create_prefix := ' | Undefined: ';
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="disable_ads_output" Id="{7e9c1897-64d5-455a-b20b-e82b4706fc80}">
+      <Declaration><![CDATA[PROPERTY INTERNAL disable_ads_output : BOOL]]></Declaration>
+      <Get Name="Get" Id="{249061bd-6c70-46d6-a135-7e502181640a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[disable_ads_output := _disable_ads_output;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{41f678c7-9359-4213-abb0-e87b5beeefc5}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_disable_ads_output := disable_ads_output;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="formatted_output" Id="{c00d9c99-7aed-49b0-83c9-9c5fba96f988}">
+      <Declaration><![CDATA[PROPERTY INTERNAL formatted_output : STRING(255)]]></Declaration>
+      <Get Name="Get" Id="{cb587932-271f-416f-b6a0-4af026f4953f}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[formatted_output := _formatted_output;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{8bc1fa17-0d69-4124-b2c4-148f2b65324b}">
+        <Declaration><![CDATA[PRIVATE
+VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_formatted_output := formatted_output;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="level" Id="{a8405867-ed20-4229-ac83-fd765a22d2e1}">
+      <Declaration><![CDATA[PROPERTY PUBLIC level : EventLevel]]></Declaration>
+      <Get Name="Get" Id="{e4dc5a89-34cc-4104-955c-43c82263873f}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[level := _level;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{0a7594a5-f4cb-4c89-8bae-3f536563dccb}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_level := level;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="mask" Id="{494ef503-2861-4c0f-84f8-541fba4f652f}">
+      <Declaration><![CDATA[PROPERTY INTERNAL mask : DWORD]]></Declaration>
+      <Get Name="Get" Id="{a0b8587b-6cb6-4514-8d0b-783e5f031085}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[mask := _mask;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{c49ea54b-51ab-4a9a-b5b0-f3313dcf06e5}">
+        <Declaration><![CDATA[PRIVATE
+VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_mask := mask;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="prefix" Id="{323f41d0-a33a-4170-aaca-6778f0d96f7d}">
+      <Declaration><![CDATA[PROPERTY INTERNAL prefix : STRING(15)]]></Declaration>
+      <Get Name="Get" Id="{8ee79c6b-0c1f-4ac5-bc2d-f4f7faabd841}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[prefix := _prefix;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{d2420567-3b92-48d5-8816-decae5ecdad9}">
+        <Declaration><![CDATA[PRIVATE
+VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_prefix := prefix;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Method Name="submit_event_message" Id="{72fa51cd-5f83-427b-a2c1-e007bce7d269}">
-      <Declaration><![CDATA[METHOD submit_event_message
+      <Declaration><![CDATA[METHOD PUBLIC submit_event_message
 VAR_INPUT
 	ev: EventMessage;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[ads_log(ev);]]></ST>
+        <ST><![CDATA[IF ev.level >= level THEN
+  ads_log(ev);
+END_IF]]></ST>
       </Implementation>
     </Method>
   </POU>

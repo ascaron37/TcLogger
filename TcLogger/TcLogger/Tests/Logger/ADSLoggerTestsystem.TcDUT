@@ -5,7 +5,7 @@
 STRUCT
   runner: EventRunner;
   event: Event := (runner:=runner);
-  logger: ADSLogger;
+  logger: ADSLogger := (disable_ads_output := TRUE);
 END_STRUCT
 END_TYPE
 ]]></Declaration>

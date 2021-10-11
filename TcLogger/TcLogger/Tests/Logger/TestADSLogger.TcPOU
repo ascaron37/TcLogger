@@ -29,6 +29,10 @@ sut.runner.add_logger(sut.logger);
 sut.event.message := 'Alarm';
 sut.event.alarm();
 
+AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
+AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
+AssertEquals_STRING(' | Error: Alarm', sut.logger.formatted_output, '');
+
 TEST_FINISHED();]]></ST>
       </Implementation>
     </Method>
@@ -45,6 +49,10 @@ END_VAR]]></Declaration>
 sut.runner.add_logger(sut.logger);
 sut.event.message := 'Error';
 sut.event.error();
+
+AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
+AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
+AssertEquals_STRING(' | Error: Error', sut.logger.formatted_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -63,6 +71,10 @@ sut.runner.add_logger(sut.logger);
 sut.event.message := 'Info';
 sut.event.info();
 
+AssertEquals_DWORD(ADSLOG_MSGTYPE_HINT, sut.logger.mask, '');
+AssertEquals_STRING(' | Info: ', sut.logger.prefix, '');
+AssertEquals_STRING(' | Info: Info', sut.logger.formatted_output, '');
+
 TEST_FINISHED();]]></ST>
       </Implementation>
     </Method>
@@ -79,6 +91,10 @@ END_VAR]]></Declaration>
 sut.runner.add_logger(sut.logger);
 sut.event.message := 'Warning';
 sut.event.warning();
+
+AssertEquals_DWORD(ADSLOG_MSGTYPE_WARN, sut.logger.mask, '');
+AssertEquals_STRING(' | Warning: ', sut.logger.prefix, '');
+AssertEquals_STRING(' | Warning: Warning', sut.logger.formatted_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
