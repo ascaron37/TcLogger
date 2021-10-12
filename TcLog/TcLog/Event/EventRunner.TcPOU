@@ -44,7 +44,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF logger_counter < Properties.NUM_LOGGER AND ADR(logger) <> 0 THEN
+        <ST><![CDATA[IF logger_counter < Properties.NUM_LOGGER AND ADR(logger) <> 0 AND NOT logger_exist(logger) THEN
   inc_logger_counter();
   event_logger[logger_counter] := logger;
 END_IF]]></ST>
@@ -188,6 +188,24 @@ END_VAR
   message:=message,
   level:=EventLevel.INFO,
   cleared:=TRUE);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="logger_exist" Id="{7768adfe-3fdd-4fd2-85a2-e1dbf045e2e5}">
+      <Declaration><![CDATA[METHOD PRIVATE logger_exist : BOOL
+VAR_INPUT
+  logger: EventLogger;
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[logger_exist := FALSE;
+FOR i:=1 TO Properties.NUM_LOGGER DO
+  IF event_logger[i] = logger THEN
+    logger_exist := TRUE;
+    EXIT;
+	END_IF
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Property Name="parameter" Id="{06b7980e-d1cc-40e8-bdcf-02a1d31b5017}">
