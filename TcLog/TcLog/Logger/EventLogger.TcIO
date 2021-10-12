@@ -12,6 +12,13 @@
         <Declaration><![CDATA[]]></Declaration>
       </Set>
     </Property>
+    <Method Name="run" Id="{aef2808e-85b7-4075-9c20-5b0b7eee7fcc}">
+      <Declaration><![CDATA[METHOD run
+VAR_INPUT
+  act_time: TIMESTRUCT;
+END_VAR
+]]></Declaration>
+    </Method>
     <Method Name="submit_event_message" Id="{f84ec892-41c2-4113-b29d-b2de8225110c}">
       <Declaration><![CDATA[METHOD PUBLIC submit_event_message
 VAR_INPUT

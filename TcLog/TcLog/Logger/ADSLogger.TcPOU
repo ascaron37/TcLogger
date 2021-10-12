@@ -169,6 +169,20 @@ END_VAR]]></Declaration>
         </Implementation>
       </Set>
     </Property>
+    <Method Name="run" Id="{0de8fbd5-45f0-4096-94ab-d19dcde4a3ec}">
+      <Declaration><![CDATA[METHOD run
+VAR_INPUT
+  act_time: TIMESTRUCT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[(* 
+nothing to do here. a proposal would be to implement a buffered
+approach like TcUnit did in issue #35 because too many ADSLOGSTR
+calls could lead to a loss of messages.
+*)
+;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="submit_event_message" Id="{72fa51cd-5f83-427b-a2c1-e007bce7d269}">
       <Declaration><![CDATA[METHOD PUBLIC submit_event_message
 VAR_INPUT

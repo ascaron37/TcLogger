@@ -5,11 +5,10 @@
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
-  error_id: DWORD;
 END_VAR
 VAR
   _path: STRING(255);
-  file: TcExt.FileMemory;
+  file: TcExt.FileMemory := (mode_write := Tc2_System.FOPEN_MODEAPPEND OR Tc2_System.FOPEN_MODETEXT);
   localtime: FB_LocalSystemTime := (bEnable:=TRUE);
   _done: BOOL;
   _level: EventLevel;
@@ -18,28 +17,8 @@ END_VAR
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Property Name="done" Id="{687b28e8-dfd4-40db-a439-a623577f86e7}">
-      <Declaration><![CDATA[PROPERTY done : BOOL]]></Declaration>
-      <Get Name="Get" Id="{f4b573f4-12a0-4d9f-ade5-ca186ec28527}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[done := _done;]]></ST>
-        </Implementation>
-      </Get>
-      <Set Name="Set" Id="{79f34a29-2418-4485-9442-9987efedfe83}">
-        <Declaration><![CDATA[PRIVATE
-VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[_done := done;]]></ST>
-        </Implementation>
-      </Set>
-    </Property>
-    <Method Name="get_timestaped_path" Id="{fd365ee7-137c-43d5-b097-a6c91d56c64b}">
-      <Declaration><![CDATA[METHOD PRIVATE get_timestaped_path : STRING(255)
+    <Method Name="get_timestamped_path" Id="{fd365ee7-137c-43d5-b097-a6c91d56c64b}">
+      <Declaration><![CDATA[METHOD PRIVATE get_timestamped_path : STRING(255)
 VAR
   datetime: STRING(255);
   char_at: INT;
@@ -61,7 +40,7 @@ REPEAT
 UNTIL char_at = 0
 END_REPEAT
 
-get_timestaped_path := CONCAT(path, CONCAT('log_', CONCAT(datetime, '.log')));]]></ST>
+get_timestamped_path := CONCAT(path, CONCAT('log_', CONCAT(datetime, '.csv')));]]></ST>
       </Implementation>
     </Method>
     <Property Name="level" Id="{ab6b9969-76e1-4879-b617-99481726f092}">
@@ -102,6 +81,15 @@ END_VAR
         </Implementation>
       </Set>
     </Property>
+    <Method Name="run" Id="{90c25d9f-9ec4-40ba-a160-c50bc84f515f}">
+      <Declaration><![CDATA[METHOD run
+VAR_INPUT
+  act_time: TIMESTRUCT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="save" Id="{501c7d54-f5c2-48f2-862f-f63db1339f45}">
       <Declaration><![CDATA[METHOD save
 VAR_INPUT
@@ -117,14 +105,14 @@ END_VAR]]></Declaration>
 r_execute(CLK:=execute);
 
 IF r_execute.Q THEN
-  file.path := get_timestaped_path();
+  file.path := get_timestamped_path();
 END_IF
 file.write(
   start:=execute,
   data_ptr:=data_ptr,
   data_size:=data_size,
   done=>_done,
-  error_id=>error_id);]]></ST>
+  error_id=>);]]></ST>
       </Implementation>
     </Method>
     <Method Name="submit_event_message" Id="{4532367b-994f-48dd-829f-58c767e7db29}">

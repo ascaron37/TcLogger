@@ -238,7 +238,23 @@ VAR
   error_id: UDINT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[localtime();]]></ST>
+        <ST><![CDATA[localtime();
+run_logger();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="run_logger" Id="{6edc0e38-a1c9-4a4f-a9cc-0eadd0ceaa52}">
+      <Declaration><![CDATA[METHOD PRIVATE run_logger
+VAR_INPUT
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i:=1 TO Properties.NUM_LOGGER DO
+  IF event_logger[i] <> 0 THEN
+    event_logger[i].run(act_time:=act_time);
+	END_IF
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="submit_event_message" Id="{ce173cb8-ea36-4b51-8b06-142152b19f09}">
