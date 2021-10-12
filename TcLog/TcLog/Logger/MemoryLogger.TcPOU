@@ -20,7 +20,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[F_FIFO_WRITE(SIZEOF(ev), ADR(ev), SIZEOF(event_history), ADR(event_history));]]></ST>
+        <ST><![CDATA[put_new_data_at_start(SIZEOF(ev), ADR(ev), SIZEOF(event_history), ADR(event_history));]]></ST>
       </Implementation>
     </Method>
   </POU>

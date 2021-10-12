@@ -65,6 +65,12 @@
     <Folder Include="Tests\Logger" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Event\CyclicEventDetection.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Event\ST_CyclicEventDetection.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Event\Event.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -132,7 +138,7 @@
     <Compile Include="Utils\FB_FrameFifo.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utils\F_FIFO_WRITE.TcPOU">
+    <Compile Include="Utils\put_new_data_at_start.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utils\remove_project_from_path.TcPOU">

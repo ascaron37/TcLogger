@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="CyclicEventDetection" Id="{1c97c1bd-572d-44e9-8e88-b7c37ccb1356}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK CyclicEventDetection
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+  event_counter: INT;
+  events: ARRAY[1..Properties.NUM_CYCLIC_DETECTION_MESSAGES] OF ST_CyclicEventDetection;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="activate_event" Id="{11dcbf06-b87b-40e3-a22c-1322dcf8d3ab}">
+      <Declaration><![CDATA[METHOD PRIVATE activate_event
+VAR_INPUT
+  index: INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[events[index].message_submitted := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="add_event" Id="{dbe32403-a802-4456-9932-b36bf1dfcc8a}">
+      <Declaration><![CDATA[METHOD PUBLIC add_event
+VAR_INPUT
+  ev: EventMessage;
+END_VAR
+VAR
+  event_index: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[event_index := get_event_index(ev);
+IF event_index > 0 THEN
+  activate_event(event_index);
+ELSIF NOT max_number_events_reached() THEN
+  inc_event_counter();
+  events[event_counter].ev := ev;
+  activate_event(event_counter);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="cyclic_call" Id="{c7bed164-f925-46cd-910a-bb07f34b0bbb}">
+      <Declaration><![CDATA[METHOD PUBLIC cyclic_call
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[remove_deactivated_events();
+reset_events();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="dec_event_counter" Id="{39864b04-eef3-41d8-b15c-b9ce24cdcb1a}">
+      <Declaration><![CDATA[METHOD PRIVATE dec_event_counter
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[event_counter := LIMIT(0, event_counter - 1, Properties.NUM_CYCLIC_DETECTION_MESSAGES);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="event_was_called_in_last_invocation" Id="{792ac793-573f-480e-9aac-6f74d8eb6b0f}">
+      <Declaration><![CDATA[METHOD PUBLIC event_was_called_in_last_invocation : BOOL
+VAR_INPUT
+  ev: EventMessage;
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[event_was_called_in_last_invocation := get_event_index(ev) > 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="get_event_index" Id="{a046a0fe-7a93-44d8-a74c-feebbbc6fcc6}">
+      <Declaration><![CDATA[METHOD PRIVATE get_event_index : INT
+VAR_INPUT
+  ev: EventMessage;
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i:=1 TO event_counter DO
+  IF events[i].ev.message = ev.message THEN
+    get_event_index := i;
+    EXIT;
+	END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="inc_event_counter" Id="{d0c0bc51-8423-474b-8101-7c82bfc231c6}">
+      <Declaration><![CDATA[METHOD PRIVATE inc_event_counter
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[event_counter := LIMIT(1, event_counter + 1, Properties.NUM_CYCLIC_DETECTION_MESSAGES);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="max_number_events_reached" Id="{b34f7417-8ca3-4515-960a-8ab7223c93f0}">
+      <Declaration><![CDATA[METHOD PRIVATE max_number_events_reached : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[max_number_events_reached := event_counter >= Properties.NUM_CYCLIC_DETECTION_MESSAGES;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="remove_deactivated_events" Id="{800606f0-f6b4-4f9b-989f-2c47c5a54588}">
+      <Declaration><![CDATA[METHOD PRIVATE remove_deactivated_events
+VAR_INPUT
+END_VAR
+VAR
+  i: INT;
+  filldata: ST_CyclicEventDetection;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i:=1 TO event_counter DO
+  IF NOT events[i].message_submitted THEN
+    remove_field_from_array(
+      index_to_remove:=i,
+      size_filldata:=SIZEOF(filldata),
+      adr_filldata:=ADR(filldata),
+      size_memory_buffer:=SIZEOF(events),
+      adr_memory_buffer:=ADR(events)
+    );
+    dec_event_counter();
+    i := i - 1;
+	END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="reset_event" Id="{0a70bd33-007f-4294-8a73-d10e283a42ce}">
+      <Declaration><![CDATA[METHOD PRIVATE reset_event
+VAR_INPUT
+  index: INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[events[index].message_submitted := FALSE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="reset_events" Id="{7fc3b6d4-9905-410c-be29-b8c70d0b9bdf}">
+      <Declaration><![CDATA[METHOD PRIVATE reset_events
+VAR_INPUT
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i:=1 TO event_counter DO
+  reset_event(i);
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

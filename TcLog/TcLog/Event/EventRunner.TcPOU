@@ -14,8 +14,9 @@ VAR
   event_id_counter: INT;
   localtime: FB_LocalSystemTime := (bEnable:=TRUE);
   actSystemTime: TIMESTRUCT;
-  event_logger: ARRAY [1..Properties.NUM_LOGGER] OF EventLogger;
+  event_logger: ARRAY[1..Properties.NUM_LOGGER] OF EventLogger;
   active_alarms: ARRAY[1..Properties.NUM_CONCURRENT_ALARMS] OF EventMessage;
+  detection: CyclicEventDetection;
   logger_counter: INT;
   format_str: FB_FormatString;
   _parameter: T_Arg;
@@ -257,6 +258,15 @@ END_VAR]]></Declaration>
 END_IF]]></ST>
       </Implementation>
     </Method>
+    <Method Name="reset_cyclic_detection" Id="{e07e56d0-a669-426d-9d48-6a24f56fa41a}">
+      <Declaration><![CDATA[METHOD PRIVATE reset_cyclic_detection
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="run" Id="{8739a071-bf84-4818-9cb8-125145dee33b}">
       <Declaration><![CDATA[METHOD PUBLIC run
 VAR_INPUT
@@ -267,7 +277,8 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[localtime();
-run_logger();]]></ST>
+run_logger();
+detection.cyclic_call();]]></ST>
       </Implementation>
     </Method>
     <Method Name="run_logger" Id="{6edc0e38-a1c9-4a4f-a9cc-0eadd0ceaa52}">
@@ -312,10 +323,13 @@ ev := create_event_message(
         cleared:=cleared);
 
 IF NOT cleared THEN
-  F_FIFO_WRITE(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));
+  put_new_data_at_start(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));
 END_IF
 
-submit_event_message_to_logger(ev);]]></ST>
+IF NOT detection.event_was_called_in_last_invocation(ev) THEN
+  submit_event_message_to_logger(ev);
+END_IF
+detection.add_event(ev);]]></ST>
       </Implementation>
     </Method>
     <Method Name="submit_event_message_to_logger" Id="{39af9b80-587a-45d1-be6f-b8a8ddcf9a59}">

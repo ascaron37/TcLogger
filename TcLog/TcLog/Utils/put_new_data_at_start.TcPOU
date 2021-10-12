@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
-  <POU Name="F_FIFO_WRITE" Id="{c078c526-32d9-45ed-91b9-28727d579935}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION F_FIFO_WRITE: BOOL
+  <POU Name="put_new_data_at_start" Id="{c078c526-32d9-45ed-91b9-28727d579935}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION put_new_data_at_start: BOOL
 VAR_INPUT
   size_new_data: UDINT;
   adr_new_data: POINTER TO BYTE;

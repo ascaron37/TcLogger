@@ -17,7 +17,8 @@ submit_alarm();
 change_default_level_to_warning_and_submit_info();
 change_default_level_to_warning_and_submit_error();
 create_event_with_a_parameter();
-create_runner_message_with_a_parameter();]]></ST>
+create_runner_message_with_a_parameter();
+do_not_output_the_same_message_multiple_cycles_after_each_other();]]></ST>
     </Implementation>
     <Method Name="change_default_level_to_warning_and_submit_error" Id="{fde893c3-5a5b-4fdb-ab58-28f4712e9db3}">
       <Declaration><![CDATA[METHOD change_default_level_to_warning_and_submit_error
@@ -113,6 +114,63 @@ cut_output := RIGHT(sut.logger.formatted_output, 21);
 AssertEquals_STRING(' | Warning: Test 3.14', cut_output, '');
 
 TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="do_not_output_the_same_message_multiple_cycles_after_each_other" Id="{f2897511-5537-4810-89ea-d4903da56e20}">
+      <Declaration><![CDATA[METHOD do_not_output_the_same_message_multiple_cycles_after_each_other
+VAR_INPUT
+END_VAR
+VAR_INST
+  sut: ADSLoggerTestsystem;
+  state_counter: INT;
+END_VAR
+VAR
+  cut_output: STRING;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Do not output the same message multiple cycles after each other');
+
+sut.runner.add_logger(sut.logger);
+sut.runner.run();
+
+CASE state_counter OF
+0:
+  sut.runner.error(message:='Alarm');
+  sut.runner.error(message:='Error');
+  
+  cut_output := RIGHT(sut.logger.formatted_output, 15);
+  
+  AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
+  AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
+  AssertEquals_STRING(' | Error: Error', cut_output, '');
+  
+  state_counter := state_counter + 10;
+10:
+  // do not output this message
+  sut.runner.error(message:='Alarm');
+  
+  cut_output := RIGHT(sut.logger.formatted_output, 15);
+  
+  AssertEquals_STRING(' | Error: Error', cut_output, '');
+  state_counter := state_counter + 10;
+20:
+  // do not output this message
+  sut.runner.error(message:='Alarm');
+  
+  cut_output := RIGHT(sut.logger.formatted_output, 15);
+  
+  AssertEquals_STRING(' | Error: Error', cut_output, '');
+  state_counter := state_counter + 10;
+30:
+  // do not output this message
+  sut.runner.error(message:='Alarm');
+  
+  cut_output := RIGHT(sut.logger.formatted_output, 15);
+  
+  AssertEquals_STRING(' | Error: Error', cut_output, '');
+  
+  TEST_FINISHED();
+END_CASE]]></ST>
       </Implementation>
     </Method>
     <Method Name="submit_alarm" Id="{7203e8ee-f5fe-4e56-af12-ce30cf3bab16}">
