@@ -4,6 +4,7 @@
     <Declaration><![CDATA[TYPE EventMessage :
 STRUCT
   id: INT;
+  path: STRING(255);
   message: STRING(255);
   level: EventLevel;
   cleared: BOOL;

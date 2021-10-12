@@ -1,12 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="EventRunner" Id="{0d525c38-ad3f-47ea-a798-0db63d693ea9}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK EventRunner
+    <Declaration><![CDATA[{attribute 'reflection'}
+FUNCTION_BLOCK EventRunner
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
 END_VAR
 VAR
+  {attribute 'instance-path'}
+  {attribute 'noinit'}
+  path: STRING(255);
   event_id_counter: INT;
   localtime: FB_LocalSystemTime := (bEnable:=TRUE);
   actSystemTime: TIMESTRUCT;
@@ -93,6 +97,7 @@ END_IF]]></ST>
       <Declaration><![CDATA[METHOD PRIVATE create_event_message : EventMessage
 VAR_INPUT
   id: INT;
+  path: STRING(255);
   message: STRING(255);
   level: EventLevel;
   cleared: BOOL;
@@ -103,6 +108,7 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[ev.id := id;
+ev.path := path;
 ev.message := message;
 ev.level := level;
 ev.cleared := cleared;
@@ -125,6 +131,7 @@ END_VAR
       <Implementation>
         <ST><![CDATA[submit_event_message(
   id:=0,
+  path:=path,
   message:=message,
   level:=EventLevel.ERROR,
   cleared:=TRUE);]]></ST>
@@ -185,6 +192,7 @@ END_VAR
       <Implementation>
         <ST><![CDATA[submit_event_message(
   id:=0,
+  path:=path,
   message:=message,
   level:=EventLevel.INFO,
   cleared:=TRUE);]]></ST>
@@ -231,6 +239,7 @@ END_VAR
       <Declaration><![CDATA[METHOD INTERNAL raise_alarm
 VAR_INPUT
   id: INT;
+  path: STRING(255);
   message: STRING(255);
   level: EventLevel;
 END_VAR
@@ -241,6 +250,7 @@ END_VAR]]></Declaration>
         <ST><![CDATA[IF NOT alarm_raised(id:=id) THEN
   submit_event_message(
     id:=id,
+    path:=path,
     message:=message,
     level:=level,
     cleared:=FALSE);
@@ -279,6 +289,7 @@ END_FOR]]></ST>
       <Declaration><![CDATA[METHOD PRIVATE submit_event_message
 VAR_INPUT
   id: INT;
+  path: STRING(255);
   message: STRING(255);
   level: EventLevel;
   cleared: BOOL;
@@ -293,7 +304,12 @@ END_VAR
   sFormat:=message,
   arg1:=parameter,
   sOut=>message_formatted);
-ev := create_event_message(id, message_formatted, level, cleared);
+ev := create_event_message(
+        id:=id,
+        path:=path,
+        message:=message_formatted,
+        level:=level, 
+        cleared:=cleared);
 
 IF NOT cleared THEN
   F_FIFO_WRITE(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));
@@ -322,6 +338,7 @@ END_FOR]]></ST>
       <Declaration><![CDATA[METHOD INTERNAL submit_message
 VAR_INPUT
   id: INT;
+  path: STRING(255);
   message: STRING(255);
   level: EventLevel;
 END_VAR
@@ -329,6 +346,7 @@ END_VAR
       <Implementation>
         <ST><![CDATA[submit_event_message(
   id:=id,
+  path:=path,
   message:=message,
   level:=level,
   cleared:=TRUE);]]></ST>
@@ -369,6 +387,7 @@ END_VAR
       <Implementation>
         <ST><![CDATA[submit_event_message(
   id:=0,
+  path:=path,
   message:=message,
   level:=EventLevel.WARNING,
   cleared:=TRUE);]]></ST>

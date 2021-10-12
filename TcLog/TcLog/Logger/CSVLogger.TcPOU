@@ -40,11 +40,12 @@ clearedstr := TO_STRING(ev.cleared);
 levelstr := TO_STRING(ev.level);
 
 format_string(
-  sFormat:='%s,%s,%s,%s$R',
+  sFormat:='%s,%s,%s,%s,%s$R',
   arg1:=F_STRING(dtstr),
   arg2:=F_STRING(clearedstr),
   arg3:=F_STRING(levelstr),
-  arg4:=F_STRING(ev.message),
+  arg4:=F_STRING(ev.path),
+  arg5:=F_STRING(ev.message),
   sOut=>create_row
 );]]></ST>
       </Implementation>

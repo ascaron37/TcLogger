@@ -134,7 +134,11 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[runner.raise_alarm(id:=id, message:=message, level:=level);]]></ST>
+        <ST><![CDATA[runner.raise_alarm(
+  id:=id,
+  path:=path,
+  message:=message,
+  level:=level);]]></ST>
       </Implementation>
     </Method>
     <Property Name="runner" Id="{b5010af2-3f3c-42a7-be82-db2573006c88}">
@@ -176,7 +180,8 @@ END_VAR
       <Implementation>
         <ST><![CDATA[runner.parameter := parameter;
 runner.submit_message(
-  id:=id, 
+  id:=id,
+  path:=path,
   message:=message,
   level:=level);]]></ST>
       </Implementation>
