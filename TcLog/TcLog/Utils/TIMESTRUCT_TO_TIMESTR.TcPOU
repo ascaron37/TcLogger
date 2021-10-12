@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="TIMESTRUCT_TO_TIMESTR" Id="{91d88cd6-88a5-4a4c-881f-fe19db607d16}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION TIMESTRUCT_TO_TIMESTR : STRING(255)
+VAR_INPUT
+  ts: TIMESTRUCT;
+END_VAR
+VAR
+  format_string: FB_FormatString;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[format_string(
+  sFormat:='%2dh %2dm %2ds %3dms',
+  arg1:=F_WORD(ts.wHour),
+  arg2:=F_WORD(ts.wMinute),
+  arg3:=F_WORD(ts.wSecond),
+  arg4:=F_WORD(ts.wMilliseconds),
+  sOut=>TIMESTRUCT_TO_TIMESTR);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -89,7 +89,7 @@
     <Compile Include="Logger\EventLogger.TcIO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Logger\FileLogger.TcPOU">
+    <Compile Include="Logger\CSVLogger.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Logger\MemoryLogger.TcPOU">
@@ -113,19 +113,34 @@
     <Compile Include="Tests\Logger\ADSLoggerTestsystem.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\Logger\CSVLoggerTestsystem.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\Logger\TestADSLogger.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\Logger\TestFileLogger.TcPOU">
+    <Compile Include="Tests\Logger\TestCSVLogger.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\TEST_MAIN.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\FB_FrameFifo.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utils\F_FIFO_WRITE.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utils\remove_field_from_array.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\TIMESTRUCT_TO_DATESTR.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\TIMESTRUCT_TO_DATETIMESTR.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\TIMESTRUCT_TO_TIMESTR.TcPOU">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

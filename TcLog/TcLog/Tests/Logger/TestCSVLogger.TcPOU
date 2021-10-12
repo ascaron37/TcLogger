@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="TestCSVLogger" Id="{6eb9b79c-7996-4180-884f-6c85712e4467}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK TestCSVLogger EXTENDS TcUnit.FB_TestSuite
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[submit_alarm();]]></ST>
+    </Implementation>
+    <Method Name="submit_alarm" Id="{d77c3969-9108-4692-b556-3c4076a29c72}">
+      <Declaration><![CDATA[METHOD submit_alarm
+VAR_INPUT
+END_VAR
+VAR_INST
+  sut: CSVLoggerTestsystem;
+  state_number: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Submit alarm');
+
+sut.runner.run();
+
+CASE state_number OF
+0:
+  IF sut.runner.time_valid THEN
+    state_number := state_number + 10;
+	END_IF
+10:
+  sut.logger.path := 'C:\';
+  sut.runner.add_logger(sut.logger);
+  sut.event.message := 'Alarm';
+  sut.event.alarm();
+  state_number := state_number + 10;
+20:
+  IF sut.logger.state_number = 0 THEN
+    TEST_FINISHED();
+	END_IF
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

@@ -6,7 +6,7 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[GVL.runner.run(disable_ads_output:=TRUE);]]></ST>
+      <ST><![CDATA[GVL.runner.run();]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

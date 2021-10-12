@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="TIMESTRUCT_TO_DATETIMESTR" Id="{7f775718-2299-4495-976b-1fb53de1f9a4}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION TIMESTRUCT_TO_DATETIMESTR : STRING(255)
+VAR_INPUT
+  ts: TIMESTRUCT;
+END_VAR
+VAR
+  format_string: FB_FormatString;
+  datestr: STRING(255);
+  timestr: STRING(255);
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[datestr := TIMESTRUCT_TO_DATESTR(ts);
+timestr := TIMESTRUCT_TO_TIMESTR(ts);
+format_string(
+  sFormat:='%s %s',
+  arg1:=F_STRING(datestr),
+  arg2:=F_STRING(timestr),
+  sOut=>TIMESTRUCT_TO_DATETIMESTR);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -5,7 +5,7 @@
 VAR
   test_event: TestEvent;
   test_ads_logger: TestADSLogger;
-  //test_file_logger: TestFileLogger;
+  test_csv_logger: TestCSVLogger;
 END_VAR
 ]]></Declaration>
     <Implementation>

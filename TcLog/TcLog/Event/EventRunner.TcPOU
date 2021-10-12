@@ -319,8 +319,7 @@ END_VAR
     <Property Name="time_valid" Id="{97759346-09f2-489b-abe8-e35197fe4275}">
       <Declaration><![CDATA[PROPERTY PUBLIC time_valid : BOOL]]></Declaration>
       <Get Name="Get" Id="{0bd76518-28fe-433e-82d9-2b30ff8be461}">
-        <Declaration><![CDATA[PRIVATE
-VAR
+        <Declaration><![CDATA[VAR
 END_VAR
 ]]></Declaration>
         <Implementation>

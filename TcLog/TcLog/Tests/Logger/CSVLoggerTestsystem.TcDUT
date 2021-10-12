@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <DUT Name="CSVLoggerTestsystem" Id="{00ec79c1-c583-42f9-b87c-987d619bdde2}">
+    <Declaration><![CDATA[TYPE CSVLoggerTestsystem :
+STRUCT
+  runner: EventRunner;
+  event: Event := (runner:=runner);
+  logger: CSVLogger;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
