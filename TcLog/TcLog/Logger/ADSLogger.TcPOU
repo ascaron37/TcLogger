@@ -12,6 +12,7 @@ VAR
   _mask: DWORD;
   _prefix: STRING(15);
   _formatted_output: STRING(255);
+  _path: STRING(255);
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -26,8 +27,9 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[mask := create_mask(ev.level);
 prefix := create_prefix(ev.level);
+path := create_path(ev.path);
 
-formatted_output := CONCAT(prefix, ev.message);
+formatted_output := CONCAT(CONCAT(path, prefix), ev.message);
 
 IF NOT disable_ads_output THEN
   ADSLOGSTR(mask, formatted_output, '');
@@ -51,6 +53,16 @@ EventLevel.ERROR:
 ELSE
   create_mask := ADSLOG_MSGTYPE_HINT;
 END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="create_path" Id="{59a6e2af-a873-437a-9a9c-126ed2450a1d}">
+      <Declaration><![CDATA[METHOD PRIVATE create_path : STRING(255)
+VAR_INPUT
+  path: STRING(255);
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[create_path := CONCAT(' | ', path);]]></ST>
       </Implementation>
     </Method>
     <Method Name="create_prefix" Id="{e6393b63-a206-438e-accf-a721f61f3d0a}">
@@ -146,6 +158,25 @@ VAR
 END_VAR]]></Declaration>
         <Implementation>
           <ST><![CDATA[_mask := mask;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="path" Id="{e511861c-a424-44ef-bdc8-4e6c6c88ae46}">
+      <Declaration><![CDATA[PROPERTY INTERNAL path : STRING(255)]]></Declaration>
+      <Get Name="Get" Id="{fb30732d-8f5b-409b-8f6d-1e023e38aa7e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[path := _path;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{1e7e7871-083a-4cbe-9941-33a9f5e0966c}">
+        <Declaration><![CDATA[PRIVATE
+VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_path := path;]]></ST>
         </Implementation>
       </Set>
     </Property>

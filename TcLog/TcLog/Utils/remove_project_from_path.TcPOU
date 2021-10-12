@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="remove_project_from_path" Id="{edc9cf40-9dd4-4a6b-91fb-91c8b6378125}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION remove_project_from_path : STRING(255)
+VAR_INPUT
+  path: STRING(255);
+END_VAR
+VAR
+  position: INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[position := FIND(path, '.');
+remove_project_from_path := DELETE(path, position, 1);
+position := FIND(remove_project_from_path, '.');
+remove_project_from_path := DELETE(remove_project_from_path, position, 1);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

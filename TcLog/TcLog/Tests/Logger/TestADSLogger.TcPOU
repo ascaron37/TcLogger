@@ -25,6 +25,9 @@ VAR_INPUT
 END_VAR
 VAR_INST
   sut: ADSLoggerTestsystem;
+END_VAR
+VAR
+  cut_output: STRING;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Change default level to warning and submit error');
@@ -33,10 +36,11 @@ sut.runner.add_logger(sut.logger);
 sut.logger.level := EventLevel.WARNING;
 sut.event.message := 'Default level warning';
 sut.event.error();
+cut_output := RIGHT(sut.logger.formatted_output, 31);
 
 AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
 AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
-AssertEquals_STRING(' | Error: Default level warning', sut.logger.formatted_output, '');
+AssertEquals_STRING(' | Error: Default level warning', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -58,7 +62,6 @@ sut.event.info();
 
 AssertEquals_DWORD(0, sut.logger.mask, '');
 AssertEquals_STRING('', sut.logger.prefix, '');
-AssertEquals_STRING('', sut.logger.formatted_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -70,6 +73,7 @@ VAR_INST
 END_VAR
 VAR
   parameter: INT;
+  cut_output: STRING;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Create event with a parameter');
@@ -79,10 +83,11 @@ sut.event.message := 'Test %d';
 parameter := 123;
 sut.event.parameter := F_INT(parameter);
 sut.event.error();
+cut_output := RIGHT(sut.logger.formatted_output, 18);
 
 AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
 AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
-AssertEquals_STRING(' | Error: Test 123', sut.logger.formatted_output, '');
+AssertEquals_STRING(' | Error: Test 123', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -94,6 +99,7 @@ VAR_INST
 END_VAR
 VAR
   parameter: REAL;
+  cut_output: STRING;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Create runner message with a parameter');
@@ -102,8 +108,9 @@ sut.runner.add_logger(sut.logger);
 parameter := 3.14;
 sut.runner.parameter := F_REAL(parameter);
 sut.runner.warning(message:='Test %1.2f');
+cut_output := RIGHT(sut.logger.formatted_output, 21);
 
-AssertEquals_STRING(' | Warning: Test 3.14', sut.logger.formatted_output, '');
+AssertEquals_STRING(' | Warning: Test 3.14', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -114,6 +121,9 @@ VAR_INPUT
 END_VAR
 VAR_INST
   sut: ADSLoggerTestsystem;
+END_VAR
+VAR
+  cut_output: STRING;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Submit alarm');
@@ -121,10 +131,11 @@ END_VAR]]></Declaration>
 sut.runner.add_logger(sut.logger);
 sut.event.message := 'Alarm';
 sut.event.alarm();
+cut_output := RIGHT(sut.logger.formatted_output, 15);
 
 AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
 AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
-AssertEquals_STRING(' | Error: Alarm', sut.logger.formatted_output, '');
+AssertEquals_STRING(' | Error: Alarm', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -135,6 +146,9 @@ VAR_INPUT
 END_VAR
 VAR_INST
   sut: ADSLoggerTestsystem;
+END_VAR
+VAR
+  cut_output: STRING;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Submit error');
@@ -142,10 +156,11 @@ END_VAR]]></Declaration>
 sut.runner.add_logger(sut.logger);
 sut.event.message := 'Error';
 sut.event.error();
+cut_output := RIGHT(sut.logger.formatted_output, 15);
 
 AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
 AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
-AssertEquals_STRING(' | Error: Error', sut.logger.formatted_output, '');
+AssertEquals_STRING(' | Error: Error', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -156,6 +171,9 @@ VAR_INPUT
 END_VAR
 VAR_INST
   sut: ADSLoggerTestsystem;
+END_VAR
+VAR
+  cut_output: STRING;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Submit info');
@@ -163,10 +181,11 @@ END_VAR]]></Declaration>
 sut.runner.add_logger(sut.logger);
 sut.event.message := 'Info';
 sut.event.info();
+cut_output := RIGHT(sut.logger.formatted_output, 13);
 
 AssertEquals_DWORD(ADSLOG_MSGTYPE_HINT, sut.logger.mask, '');
 AssertEquals_STRING(' | Info: ', sut.logger.prefix, '');
-AssertEquals_STRING(' | Info: Info', sut.logger.formatted_output, '');
+AssertEquals_STRING(' | Info: Info', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -177,6 +196,9 @@ VAR_INPUT
 END_VAR
 VAR_INST
   sut: ADSLoggerTestsystem;
+END_VAR
+VAR
+  cut_output: STRING;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Submit warning');
@@ -184,10 +206,11 @@ END_VAR]]></Declaration>
 sut.runner.add_logger(sut.logger);
 sut.event.message := 'Warning';
 sut.event.warning();
+cut_output := RIGHT(sut.logger.formatted_output, 19);
 
 AssertEquals_DWORD(ADSLOG_MSGTYPE_WARN, sut.logger.mask, '');
 AssertEquals_STRING(' | Warning: ', sut.logger.prefix, '');
-AssertEquals_STRING(' | Warning: Warning', sut.logger.formatted_output, '');
+AssertEquals_STRING(' | Warning: Warning', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>

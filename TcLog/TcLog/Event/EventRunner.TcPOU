@@ -108,7 +108,7 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[ev.id := id;
-ev.path := path;
+ev.path := remove_project_from_path(path);
 ev.message := message;
 ev.level := level;
 ev.cleared := cleared;

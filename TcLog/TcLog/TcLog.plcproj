@@ -59,6 +59,7 @@
     <Folder Include="GVL" />
     <Folder Include="Event" />
     <Folder Include="Tests\Event" />
+    <Folder Include="Tests\Utils" />
     <Folder Include="Utils" />
     <Folder Include="Tests" />
     <Folder Include="Tests\Logger" />
@@ -125,10 +126,16 @@
     <Compile Include="Tests\TEST_MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\Utils\TestUtils.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Utils\FB_FrameFifo.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utils\F_FIFO_WRITE.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\remove_project_from_path.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utils\remove_field_from_array.TcPOU">

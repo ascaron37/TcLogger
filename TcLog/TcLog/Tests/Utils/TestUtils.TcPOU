@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="TestUtils" Id="{3fa20875-225a-4206-a46a-7351023bbda0}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK TestUtils EXTENDS TcUnit.FB_TestSuite
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[test_remove_project_from_path();]]></ST>
+    </Implementation>
+    <Method Name="test_remove_project_from_path" Id="{e8007b6e-7292-4cc4-be66-05706e700c47}">
+      <Declaration><![CDATA[METHOD test_remove_project_from_path
+VAR
+  path: STRING(255);
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Test remove project from path');
+
+path := 'project.project.MAIN.test';
+
+AssertEquals_STRING('MAIN.test', remove_project_from_path(path), '');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>
