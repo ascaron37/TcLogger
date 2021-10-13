@@ -33,8 +33,7 @@ END_VAR
       <Declaration><![CDATA[METHOD alarm_if_true
 VAR_INPUT
     value: BOOL;
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF value THEN
   alarm();
@@ -77,9 +76,12 @@ END_VAR
 VAR_INPUT
     value: BOOL;
 END_VAR
-]]></Declaration>
+VAR_INST
+  r_value: R_TRIG;
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF value THEN
+        <ST><![CDATA[r_value(CLK:=value);
+IF r_value.Q THEN
   error();
 END_IF]]></ST>
       </Implementation>
@@ -109,9 +111,12 @@ END_VAR
 VAR_INPUT
     value: BOOL;
 END_VAR
-]]></Declaration>
+VAR_INST
+  r_value: R_TRIG;
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF value THEN
+        <ST><![CDATA[r_value(CLK:=value);
+IF r_value.Q THEN
   info();
 END_IF]]></ST>
       </Implementation>
@@ -238,9 +243,12 @@ END_VAR
 VAR_INPUT
     value: BOOL;
 END_VAR
-]]></Declaration>
+VAR_INST
+  r_value: R_TRIG;
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF value THEN
+        <ST><![CDATA[r_value(CLK:=value);
+IF r_value.Q THEN
   warning();
 END_IF]]></ST>
       </Implementation>
