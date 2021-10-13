@@ -29,6 +29,20 @@ END_VAR
         <ST><![CDATA[raise_alarm(level:=EventLevel.ERROR);]]></ST>
       </Implementation>
     </Method>
+    <Method Name="alarm_if_true" Id="{ed06e891-83e8-4023-b03a-28331a2191c2}">
+      <Declaration><![CDATA[METHOD alarm_if_true
+VAR_INPUT
+    value: BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF value THEN
+  alarm();
+ELSE
+  clear_alarm();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Property Name="alarm_raised" Id="{771897ac-6516-468d-85ab-585a8329696b}">
       <Declaration><![CDATA[PROPERTY PUBLIC alarm_raised : BOOL]]></Declaration>
       <Get Name="Get" Id="{7e95134c-fdc7-4d48-b502-33e3499fcd90}">
@@ -58,6 +72,18 @@ END_VAR
         <ST><![CDATA[submit_message(level:=EventLevel.ERROR);]]></ST>
       </Implementation>
     </Method>
+    <Method Name="error_if_true" Id="{8af93ac7-1b7e-401f-9f1c-d6f493bbe4f5}">
+      <Declaration><![CDATA[METHOD error_if_true
+VAR_INPUT
+    value: BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF value THEN
+  error();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="FB_init" Id="{7731af07-9e97-4141-9829-41a64228a976}">
       <Declaration><![CDATA[METHOD FB_init : BOOL
 VAR_INPUT
@@ -76,6 +102,18 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[submit_message(level:=EventLevel.INFO);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="info_if_true" Id="{83861da7-e1af-4da2-959b-ff5ff145a653}">
+      <Declaration><![CDATA[METHOD info_if_true
+VAR_INPUT
+    value: BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF value THEN
+  info();
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Property Name="instance_path" Id="{8a5a1c1c-ff06-4418-9b66-52ecf8d7f269}">
@@ -193,6 +231,18 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[submit_message(level:=EventLevel.WARNING);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="warning_if_true" Id="{38297555-beb6-4c95-91f2-b4b5ac0ba3a8}">
+      <Declaration><![CDATA[METHOD warning_if_true
+VAR_INPUT
+    value: BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF value THEN
+  warning();
+END_IF]]></ST>
       </Implementation>
     </Method>
   </POU>

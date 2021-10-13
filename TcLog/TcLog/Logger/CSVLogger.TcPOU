@@ -164,7 +164,7 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF ev.level >= level THEN
-  message_queue.bLog := TRUE;
+  message_queue.bLog := FALSE;
   message_queue.sPrefix := 'CSVLogger::';
   message_queue.sPut := create_row(ev);
   message_queue.AddTail();

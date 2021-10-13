@@ -84,7 +84,7 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[FOR i:=1 TO event_counter DO
-  IF events[i].ev.message = ev.message THEN
+  IF events[i].ev.id = ev.id AND_THEN events[i].ev.message = ev.message THEN
     get_event_index := i;
     EXIT;
 	END_IF
