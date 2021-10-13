@@ -138,6 +138,19 @@ END_VAR
   cleared:=TRUE);]]></ST>
       </Implementation>
     </Method>
+    <Method Name="error_if_true" Id="{86903ce8-3919-4813-8c8e-481afd1ebc77}">
+      <Declaration><![CDATA[METHOD PUBLIC error_if_true
+VAR_INPUT
+  value: BOOL;
+  message: STRING(255);
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF value THEN
+  warning(message);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="generate_event_id" Id="{45e6113d-bd59-45d0-baac-1654e214698c}">
       <Declaration><![CDATA[METHOD INTERNAL generate_event_id : INT
 VAR_INPUT
@@ -197,6 +210,19 @@ END_VAR
   message:=message,
   level:=EventLevel.INFO,
   cleared:=TRUE);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="info_if_true" Id="{55973e9d-0603-429c-a9dd-012bc4a8dffa}">
+      <Declaration><![CDATA[METHOD PUBLIC info_if_true
+VAR_INPUT
+  value: BOOL;
+  message: STRING(255);
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF value THEN
+  info(message);
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="logger_exist" Id="{7768adfe-3fdd-4fd2-85a2-e1dbf045e2e5}">
@@ -405,6 +431,19 @@ END_VAR
   message:=message,
   level:=EventLevel.WARNING,
   cleared:=TRUE);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="warning_if_true" Id="{46dbe002-a229-41de-a424-818f2c2a47d0}">
+      <Declaration><![CDATA[METHOD PUBLIC warning_if_true
+VAR_INPUT
+  value: BOOL;
+  message: STRING(255);
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF value THEN
+  error(message);
+END_IF]]></ST>
       </Implementation>
     </Method>
   </POU>

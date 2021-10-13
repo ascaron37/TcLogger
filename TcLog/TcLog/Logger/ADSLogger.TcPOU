@@ -29,7 +29,7 @@ END_VAR]]></Declaration>
 prefix := create_prefix(ev.level);
 path := create_path(ev.path);
 
-formatted_output := CONCAT(CONCAT(path, prefix), ev.message);
+formatted_output := CONCAT(CONCAT(ev.path, prefix), ev.message);
 
 IF NOT disable_ads_output THEN
   ADSLOGSTR(mask, formatted_output, '');

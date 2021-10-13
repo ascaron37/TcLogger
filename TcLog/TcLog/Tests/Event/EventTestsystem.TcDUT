@@ -3,8 +3,8 @@
   <DUT Name="EventTestsystem" Id="{1d1d3ef4-d20e-433d-90eb-bc663d6abd18}">
     <Declaration><![CDATA[TYPE EventTestsystem :
 STRUCT
-  runner: EventRunner;
-  event: Event := (runner:=runner);
+  logging: EventRunner;
+  event: Event := (logging:=logging);
 END_STRUCT
 END_TYPE
 ]]></Declaration>

@@ -3,8 +3,8 @@
   <DUT Name="CSVLoggerTestsystem" Id="{00ec79c1-c583-42f9-b87c-987d619bdde2}">
     <Declaration><![CDATA[TYPE CSVLoggerTestsystem :
 STRUCT
-  runner: EventRunner;
-  event: Event := (runner:=runner);
+  logging: EventRunner;
+  event: Event := (logging:=logging);
   logger: CSVLogger;
 END_STRUCT
 END_TYPE

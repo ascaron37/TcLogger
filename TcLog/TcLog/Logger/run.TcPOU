@@ -6,7 +6,7 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[GVL.runner.run();]]></ST>
+      <ST><![CDATA[GVL.logging.run();]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

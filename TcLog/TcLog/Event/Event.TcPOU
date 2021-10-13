@@ -8,7 +8,7 @@ END_VAR
 VAR_OUTPUT
 END_VAR
 VAR
-  _runner: REFERENCE TO EventRunner;
+  _logging: REFERENCE TO EventRunner;
   {attribute 'instance-path'}
   {attribute 'noinit'}
   path: STRING(255);
@@ -36,7 +36,7 @@ END_VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[alarm_raised := runner.alarm_raised(id);]]></ST>
+          <ST><![CDATA[alarm_raised := logging.alarm_raised(id);]]></ST>
         </Implementation>
       </Get>
     </Property>
@@ -46,7 +46,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[runner.clear_alarm(id:=id);]]></ST>
+        <ST><![CDATA[logging.clear_alarm(id:=id);]]></ST>
       </Implementation>
     </Method>
     <Method Name="error" Id="{ca38d702-e59f-46d2-9511-1415bc78b78f}">
@@ -66,7 +66,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[THIS^.runner REF= GVL.runner;]]></ST>
+        <ST><![CDATA[THIS^.logging REF= GVL.logging;]]></ST>
       </Implementation>
     </Method>
     <Method Name="info" Id="{c0f9f1db-48a1-4979-bf36-bb8af0c33ed2}">
@@ -88,6 +88,26 @@ END_VAR
           <ST><![CDATA[instance_path := path;]]></ST>
         </Implementation>
       </Get>
+    </Property>
+    <Property Name="logging" Id="{b5010af2-3f3c-42a7-be82-db2573006c88}">
+      <Declaration><![CDATA[PROPERTY PUBLIC logging : REFERENCE TO EventRunner]]></Declaration>
+      <Get Name="Get" Id="{fbbf2d23-a4fb-474b-8700-f53e4fcd43ae}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[logging REF= _logging;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{c6c5bffc-0b16-4216-8776-007889c8b72b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_logging REF= logging;
+set_id(logging.generate_event_id());]]></ST>
+        </Implementation>
+      </Set>
     </Property>
     <Property Name="message" Id="{95b2f84d-eb7a-4759-a78c-209d6dcdc019}">
       <Declaration><![CDATA[PROPERTY PUBLIC message : STRING(255)]]></Declaration>
@@ -134,33 +154,13 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[runner.raise_alarm(
+        <ST><![CDATA[logging.raise_alarm(
   id:=id,
   path:=path,
   message:=message,
   level:=level);]]></ST>
       </Implementation>
     </Method>
-    <Property Name="runner" Id="{b5010af2-3f3c-42a7-be82-db2573006c88}">
-      <Declaration><![CDATA[PROPERTY PUBLIC runner : REFERENCE TO EventRunner]]></Declaration>
-      <Get Name="Get" Id="{fbbf2d23-a4fb-474b-8700-f53e4fcd43ae}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[runner REF= _runner;]]></ST>
-        </Implementation>
-      </Get>
-      <Set Name="Set" Id="{c6c5bffc-0b16-4216-8776-007889c8b72b}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[_runner REF= runner;
-set_id(runner.generate_event_id());]]></ST>
-        </Implementation>
-      </Set>
-    </Property>
     <Method Name="set_id" Id="{ca8e16af-abb6-4e45-b03a-925bd73ad678}">
       <Declaration><![CDATA[METHOD PRIVATE set_id
 VAR_INPUT
@@ -178,8 +178,8 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[runner.parameter := parameter;
-runner.submit_message(
+        <ST><![CDATA[logging.parameter := parameter;
+logging.submit_message(
   id:=id,
   path:=path,
   message:=message,

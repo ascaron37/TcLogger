@@ -7,8 +7,7 @@ VAR
   test_ads_logger: TestADSLogger;
   test_csv_logger: TestCSVLogger;
   test_utils: TestUtils;
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[TcUnit.RUN();]]></ST>
     </Implementation>

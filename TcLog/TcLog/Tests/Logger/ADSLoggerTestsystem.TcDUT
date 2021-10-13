@@ -3,8 +3,8 @@
   <DUT Name="ADSLoggerTestsystem" Id="{b1b05fc6-025d-4721-919d-ee911000e64d}">
     <Declaration><![CDATA[TYPE ADSLoggerTestsystem :
 STRUCT
-  runner: EventRunner;
-  event: Event := (runner:=runner);
+  logging: EventRunner;
+  event: Event := (logging:=logging);
   logger: ADSLogger := (disable_ads_output := TRUE);
 END_STRUCT
 END_TYPE

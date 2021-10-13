@@ -23,16 +23,16 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Submit alarm');
 
-sut.runner.run();
+sut.logging.run();
 
 CASE state_number OF
 0:
-  IF sut.runner.time_valid THEN
+  IF sut.logging.time_valid THEN
     state_number := state_number + 10;
 	END_IF
 10:
   sut.logger.path := 'C:\';
-  sut.runner.add_logger(sut.logger);
+  sut.logging.add_logger(sut.logger);
   sut.event.message := 'Alarm';
   sut.event.alarm();
   state_number := state_number + 10;

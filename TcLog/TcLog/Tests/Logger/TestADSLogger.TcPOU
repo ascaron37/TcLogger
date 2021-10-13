@@ -33,7 +33,7 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Change default level to warning and submit error');
 
-sut.runner.add_logger(sut.logger);
+sut.logging.add_logger(sut.logger);
 sut.logger.level := EventLevel.WARNING;
 sut.event.message := 'Default level warning';
 sut.event.error();
@@ -56,7 +56,7 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Change default level to warning and submit info');
 
-sut.runner.add_logger(sut.logger);
+sut.logging.add_logger(sut.logger);
 sut.logger.level := EventLevel.WARNING;
 sut.event.message := 'Default level warning';
 sut.event.info();
@@ -79,7 +79,7 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Create event with a parameter');
 
-sut.runner.add_logger(sut.logger);
+sut.logging.add_logger(sut.logger);
 sut.event.message := 'Test %d';
 parameter := 123;
 sut.event.parameter := F_INT(parameter);
@@ -105,10 +105,10 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Create runner message with a parameter');
 
-sut.runner.add_logger(sut.logger);
+sut.logging.add_logger(sut.logger);
 parameter := 3.14;
-sut.runner.parameter := F_REAL(parameter);
-sut.runner.warning(message:='Test %1.2f');
+sut.logging.parameter := F_REAL(parameter);
+sut.logging.warning(message:='Test %1.2f');
 cut_output := RIGHT(sut.logger.formatted_output, 21);
 
 AssertEquals_STRING(' | Warning: Test 3.14', cut_output, '');
@@ -130,13 +130,13 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Do not output the same message multiple cycles after each other');
 
-sut.runner.add_logger(sut.logger);
-sut.runner.run();
+sut.logging.add_logger(sut.logger);
+sut.logging.run();
 
 CASE state_counter OF
 0:
-  sut.runner.error(message:='Alarm');
-  sut.runner.error(message:='Error');
+  sut.logging.error(message:='Alarm');
+  sut.logging.error(message:='Error');
   
   cut_output := RIGHT(sut.logger.formatted_output, 15);
   
@@ -147,7 +147,7 @@ CASE state_counter OF
   state_counter := state_counter + 10;
 10:
   // do not output this message
-  sut.runner.error(message:='Alarm');
+  sut.logging.error(message:='Alarm');
   
   cut_output := RIGHT(sut.logger.formatted_output, 15);
   
@@ -155,7 +155,7 @@ CASE state_counter OF
   state_counter := state_counter + 10;
 20:
   // do not output this message
-  sut.runner.error(message:='Alarm');
+  sut.logging.error(message:='Alarm');
   
   cut_output := RIGHT(sut.logger.formatted_output, 15);
   
@@ -163,7 +163,7 @@ CASE state_counter OF
   state_counter := state_counter + 10;
 30:
   // do not output this message
-  sut.runner.error(message:='Alarm');
+  sut.logging.error(message:='Alarm');
   
   cut_output := RIGHT(sut.logger.formatted_output, 15);
   
@@ -186,7 +186,7 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Submit alarm');
 
-sut.runner.add_logger(sut.logger);
+sut.logging.add_logger(sut.logger);
 sut.event.message := 'Alarm';
 sut.event.alarm();
 cut_output := RIGHT(sut.logger.formatted_output, 15);
@@ -211,7 +211,7 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Submit error');
 
-sut.runner.add_logger(sut.logger);
+sut.logging.add_logger(sut.logger);
 sut.event.message := 'Error';
 sut.event.error();
 cut_output := RIGHT(sut.logger.formatted_output, 15);
@@ -236,7 +236,7 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Submit info');
 
-sut.runner.add_logger(sut.logger);
+sut.logging.add_logger(sut.logger);
 sut.event.message := 'Info';
 sut.event.info();
 cut_output := RIGHT(sut.logger.formatted_output, 13);
@@ -261,7 +261,7 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Submit warning');
 
-sut.runner.add_logger(sut.logger);
+sut.logging.add_logger(sut.logger);
 sut.event.message := 'Warning';
 sut.event.warning();
 cut_output := RIGHT(sut.logger.formatted_output, 19);
