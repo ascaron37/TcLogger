@@ -21,7 +21,7 @@ END_VAR
     </Method>
     <Method Name="submit_event_message" Id="{f84ec892-41c2-4113-b29d-b2de8225110c}">
       <Declaration><![CDATA[METHOD PUBLIC submit_event_message
-VAR_INPUT
+VAR_IN_OUT
   ev: EventMessage;
 END_VAR]]></Declaration>
     </Method>

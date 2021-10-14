@@ -109,10 +109,12 @@ END_IF]]></ST>
       <Declaration><![CDATA[METHOD PRIVATE create_event_message : EventMessage
 VAR_INPUT
   id: INT;
-  path: STRING(255);
-  message: STRING(255);
   level: EventLevel;
   cleared: BOOL;
+END_VAR
+VAR_IN_OUT
+  path: STRING(255);
+  message: STRING(255);
 END_VAR
 VAR
   undefined_time: TIMESTRUCT;
@@ -277,9 +279,11 @@ END_VAR
       <Declaration><![CDATA[METHOD INTERNAL raise_alarm
 VAR_INPUT
   id: INT;
+  level: EventLevel;
+END_VAR
+VAR_IN_OUT
   path: STRING(255);
   message: STRING(255);
-  level: EventLevel;
 END_VAR
 VAR
   undefined_time: TIMESTRUCT;
@@ -293,15 +297,6 @@ END_VAR]]></Declaration>
     level:=level,
     cleared:=FALSE);
 END_IF]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="reset_cyclic_detection" Id="{e07e56d0-a669-426d-9d48-6a24f56fa41a}">
-      <Declaration><![CDATA[METHOD PRIVATE reset_cyclic_detection
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[]]></ST>
       </Implementation>
     </Method>
     <Method Name="run" Id="{8739a071-bf84-4818-9cb8-125145dee33b}">
@@ -345,8 +340,7 @@ VAR_IN_OUT
   path: STRING(255);
   message: STRING(255);
 END_VAR
-VAR
-  message_formatted: STRING(255);
+VAR_INST
   ev: EventMessage;
   event_index: INT;
 END_VAR
@@ -356,9 +350,7 @@ END_VAR
   format_str(
     sFormat:=message,
     arg1:=parameter,
-    sOut=>message_formatted);
-ELSE
-  message_formatted := message;
+    sOut=>message);
 END_IF
 
 submit_event_message_counter := submit_event_message_counter + 1;
@@ -366,7 +358,7 @@ submit_event_message_counter := submit_event_message_counter + 1;
 ev := create_event_message(
         id:=id,
         path:=path,
-        message:=message_formatted,
+        message:=message,
         level:=level,
         cleared:=cleared);
 
@@ -387,7 +379,7 @@ END_IF]]></ST>
     </Method>
     <Method Name="submit_event_message_to_logger" Id="{39af9b80-587a-45d1-be6f-b8a8ddcf9a59}">
       <Declaration><![CDATA[METHOD PRIVATE submit_event_message_to_logger
-VAR_INPUT
+VAR_IN_OUT
   ev: EventMessage;
 END_VAR
 VAR

@@ -158,7 +158,7 @@ END_CASE]]></ST>
     </Method>
     <Method Name="submit_event_message" Id="{4532367b-994f-48dd-829f-58c767e7db29}">
       <Declaration><![CDATA[METHOD submit_event_message
-VAR_INPUT
+VAR_IN_OUT
 	ev: EventMessage;
 END_VAR
 ]]></Declaration>

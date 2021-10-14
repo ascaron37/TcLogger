@@ -26,7 +26,7 @@ END_VAR
     </Method>
     <Method Name="add_event" Id="{dbe32403-a802-4456-9932-b36bf1dfcc8a}">
       <Declaration><![CDATA[METHOD PUBLIC add_event
-VAR_INPUT
+VAR_IN_OUT
   ev: EventMessage;
 END_VAR
 VAR
@@ -71,7 +71,7 @@ END_VAR
     </Method>
     <Method Name="event_was_called_in_last_invocation" Id="{792ac793-573f-480e-9aac-6f74d8eb6b0f}">
       <Declaration><![CDATA[METHOD PUBLIC event_was_called_in_last_invocation : BOOL
-VAR_INPUT
+VAR_IN_OUT
   ev: EventMessage;
 END_VAR
 VAR
@@ -83,7 +83,7 @@ END_VAR]]></Declaration>
     </Method>
     <Method Name="get_event_index" Id="{a046a0fe-7a93-44d8-a74c-feebbbc6fcc6}">
       <Declaration><![CDATA[METHOD get_event_index : INT
-VAR_INPUT
+VAR_IN_OUT
   ev: EventMessage;
 END_VAR
 VAR

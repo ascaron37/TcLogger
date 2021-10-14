@@ -201,7 +201,7 @@ END_VAR
         <ST><![CDATA[logging.raise_alarm(
   id:=id,
   path:=path,
-  message:=message,
+  message:=_message,
   level:=level);]]></ST>
       </Implementation>
     </Method>

@@ -215,7 +215,7 @@ calls could lead to a loss of messages.
     </Method>
     <Method Name="submit_event_message" Id="{72fa51cd-5f83-427b-a2c1-e007bce7d269}">
       <Declaration><![CDATA[METHOD PUBLIC submit_event_message
-VAR_INPUT
+VAR_IN_OUT
 	ev: EventMessage;
 END_VAR
 ]]></Declaration>
