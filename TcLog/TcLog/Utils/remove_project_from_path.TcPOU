@@ -1,19 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="remove_project_from_path" Id="{edc9cf40-9dd4-4a6b-91fb-91c8b6378125}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION remove_project_from_path : STRING(255)
+    <Declaration><![CDATA[FUNCTION remove_project_from_path : STRING(120)
 VAR_INPUT
-  path: STRING(255);
+  path: STRING(120);
 END_VAR
 VAR
   position: INT;
+  length: INT;
+  i: INT;
+  num_dots: INT;
+  offset: INT;
+END_VAR
+VAR CONSTANT
+  ASCII_DOT: INT := 46;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[position := FIND(path, '.');
-remove_project_from_path := DELETE(path, position, 1);
-position := FIND(remove_project_from_path, '.');
-remove_project_from_path := DELETE(remove_project_from_path, position, 1);]]></ST>
+      <ST><![CDATA[WHILE path[i] <> 0 DO
+  IF num_dots < 2 THEN
+    IF path[i] = ASCII_DOT THEN
+      num_dots := num_dots + 1;
+    END_IF
+  ELSE
+    remove_project_from_path[offset] := path[i];
+    offset := offset + 1;
+	END_IF
+  i := i + 1;
+END_WHILE
+remove_project_from_path[offset] := 0;]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

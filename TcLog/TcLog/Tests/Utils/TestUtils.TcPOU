@@ -16,13 +16,17 @@ END_VAR
       <Declaration><![CDATA[METHOD test_remove_project_from_path
 VAR
   path: STRING(255);
+END_VAR
+VAR_INST
+  actual: STRING(255);
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Test remove project from path');
 
 path := 'project.project.MAIN.test';
+actual := remove_project_from_path(path);
 
-AssertEquals_STRING('MAIN.test', remove_project_from_path(path), '');
+AssertEquals_STRING('MAIN.test', actual, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>

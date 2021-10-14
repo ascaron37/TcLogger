@@ -3,6 +3,9 @@
   <GVL Name="GVL" Id="{e8cbc2c7-be2b-47ec-9cc7-f499f2cc99d1}">
     <Declaration><![CDATA[VAR_GLOBAL
   logging: EventRunner;
+END_VAR
+VAR_GLOBAL CONSTANT
+  EXCLUDE_ID: INT := 0;
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>
