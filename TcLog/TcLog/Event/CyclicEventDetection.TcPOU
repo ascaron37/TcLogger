@@ -33,10 +33,7 @@ VAR
   event_index: INT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[event_index := get_event_index(ev);
-IF event_index > 0 THEN
-  activate_event(event_index);
-ELSIF NOT max_number_events_reached() THEN
+        <ST><![CDATA[IF NOT max_number_events_reached() THEN
   inc_event_counter();
   events[event_counter].ev := ev;
   activate_event(event_counter);
@@ -62,6 +59,16 @@ END_VAR
         <ST><![CDATA[event_counter := LIMIT(0, event_counter - 1, Properties.NUM_CYCLIC_DETECTION_MESSAGES);]]></ST>
       </Implementation>
     </Method>
+    <Method Name="event_index_valid" Id="{c41f610a-d0c9-4f62-9bf3-87bbda6a200b}">
+      <Declaration><![CDATA[METHOD PRIVATE event_index_valid : BOOL
+VAR_INPUT
+  index: INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[event_index_valid := (1 <= index) AND (index <= Properties.NUM_CYCLIC_DETECTION_MESSAGES);]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="event_was_called_in_last_invocation" Id="{792ac793-573f-480e-9aac-6f74d8eb6b0f}">
       <Declaration><![CDATA[METHOD PUBLIC event_was_called_in_last_invocation : BOOL
 VAR_INPUT
@@ -75,7 +82,7 @@ END_VAR]]></Declaration>
       </Implementation>
     </Method>
     <Method Name="get_event_index" Id="{a046a0fe-7a93-44d8-a74c-feebbbc6fcc6}">
-      <Declaration><![CDATA[METHOD PRIVATE get_event_index : INT
+      <Declaration><![CDATA[METHOD get_event_index : INT
 VAR_INPUT
   ev: EventMessage;
 END_VAR
@@ -108,6 +115,18 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[max_number_events_reached := event_counter >= Properties.NUM_CYCLIC_DETECTION_MESSAGES;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="reactivate_event" Id="{d16e9fda-f182-4b12-830f-8fd08512ff2c}">
+      <Declaration><![CDATA[METHOD PUBLIC reactivate_event
+VAR_INPUT
+  index: INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF event_index_valid(index) THEN
+  activate_event(index);
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="remove_deactivated_events" Id="{800606f0-f6b4-4f9b-989f-2c47c5a54588}">

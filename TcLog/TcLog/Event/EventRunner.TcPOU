@@ -57,6 +57,15 @@ END_VAR
 END_IF]]></ST>
       </Implementation>
     </Method>
+    <Method Name="add_parameter_to_message" Id="{5d12b4f0-2daa-4a8f-9bce-5e367da3a2aa}">
+      <Declaration><![CDATA[METHOD PRIVATE add_parameter_to_message
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="alarm_raised" Id="{0ecb95b1-2cc0-4d11-97b5-c5cef817c911}">
       <Declaration><![CDATA[METHOD INTERNAL alarm_raised : BOOL
 VAR_INPUT
@@ -113,7 +122,7 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[create_event_message.id := id;
-create_event_message.path := remove_project_from_path(path);
+create_event_message.path := path;
 create_event_message.message := message;
 create_event_message.level := level;
 create_event_message.cleared := cleared;
@@ -337,31 +346,36 @@ END_VAR
 VAR
   message_formatted: STRING(255);
   ev: EventMessage;
+  event_index: INT;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[format_str(
-  sFormat:=message,
-  arg1:=parameter,
-  sOut=>message_formatted);
+        <ST><![CDATA[IF NOT F_ARGISZERO(parameter) THEN
+  format_str(
+    sFormat:=message,
+    arg1:=parameter,
+    sOut=>message_formatted);
+ELSE
+  message_formatted := message;
+END_IF
 
 submit_event_message_counter := submit_event_message_counter + 1;
 
-ev.id := id;
-ev.message := message_formatted;
-ev.cleared := cleared;
-
-IF NOT detection.event_was_called_in_last_invocation(ev) THEN
-  ev := create_event_message(
+ev := create_event_message(
         id:=id,
         path:=path,
         message:=message_formatted,
-        level:=level, 
+        level:=level,
         cleared:=cleared);
-        
+
+event_index := detection.get_event_index(ev);
+IF event_index = 0 THEN
+  ev.path := remove_project_from_path(ev.path);
   submit_event_message_to_logger(ev);
+  detection.add_event(ev);
+ELSE
+  detection.reactivate_event(event_index);
 END_IF
-detection.add_event(ev);
 
 IF NOT cleared THEN
   put_new_data_at_start(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));

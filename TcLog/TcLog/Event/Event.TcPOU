@@ -15,6 +15,7 @@ VAR
   id: INT;
   _message: STRING(255);
   _parameter: T_Arg;
+  ev: EventMessage;
 END_VAR
 ]]></Declaration>
     <Implementation>
