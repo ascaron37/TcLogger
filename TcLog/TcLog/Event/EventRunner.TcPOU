@@ -106,13 +106,14 @@ END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="create_event_message" Id="{e5a00f40-724a-4169-849a-17f7fb262ee6}">
-      <Declaration><![CDATA[METHOD PRIVATE create_event_message : EventMessage
+      <Declaration><![CDATA[METHOD PRIVATE create_event_message
 VAR_INPUT
   id: INT;
   level: EventLevel;
   cleared: BOOL;
 END_VAR
 VAR_IN_OUT
+  ev: EventMessage;
   path: STRING(255);
   message: STRING(255);
 END_VAR
@@ -123,16 +124,16 @@ VAR
   offset: INT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[create_event_message.id := id;
-create_event_message.path := path;
-create_event_message.message := message;
-create_event_message.level := level;
-create_event_message.cleared := cleared;
-create_event_message.timestamp_raised := act_time;
+        <ST><![CDATA[ev.id := id;
+ev.path := path;
+ev.message := message;
+ev.level := level;
+ev.cleared := cleared;
+ev.timestamp_raised := act_time;
 IF cleared THEN
-  create_event_message.timestamp_cleared := act_time;
+  ev.timestamp_cleared := act_time;
 ELSE
-  create_event_message.timestamp_cleared := undefined_time;
+  ev.timestamp_cleared := undefined_time;
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -355,15 +356,16 @@ END_IF
 
 submit_event_message_counter := submit_event_message_counter + 1;
 
-ev := create_event_message(
+create_event_message(
+        ev:=ev,
         id:=id,
         path:=path,
         message:=message,
         level:=level,
         cleared:=cleared);
 
-
 event_index := detection.get_event_index(ev);
+
 IF event_index = 0 THEN
   remove_project_from_path(ev.path);
   submit_event_message_to_logger(ev);
