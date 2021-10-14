@@ -226,7 +226,7 @@ END_VAR
 logging.submit_message(
   id:=id,
   path:=path,
-  message:=message,
+  message:=_message,
   level:=level);]]></ST>
       </Implementation>
     </Method>

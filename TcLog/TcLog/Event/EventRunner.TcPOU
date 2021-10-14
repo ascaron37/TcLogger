@@ -338,10 +338,12 @@ END_FOR]]></ST>
       <Declaration><![CDATA[METHOD PRIVATE submit_event_message
 VAR_INPUT
   id: INT;
-  path: STRING(255);
-  message: STRING(255);
   level: EventLevel;
   cleared: BOOL;
+END_VAR
+VAR_IN_OUT
+  path: STRING(255);
+  message: STRING(255);
 END_VAR
 VAR
   message_formatted: STRING(255);
@@ -368,9 +370,10 @@ ev := create_event_message(
         level:=level,
         cleared:=cleared);
 
+
 event_index := detection.get_event_index(ev);
 IF event_index = 0 THEN
-  ev.path := remove_project_from_path(ev.path);
+  remove_project_from_path(ev.path);
   submit_event_message_to_logger(ev);
   detection.add_event(ev);
 ELSE
@@ -402,9 +405,11 @@ END_FOR]]></ST>
       <Declaration><![CDATA[METHOD INTERNAL submit_message
 VAR_INPUT
   id: INT;
+  level: EventLevel;
+END_VAR
+VAR_IN_OUT
   path: STRING(255);
   message: STRING(255);
-  level: EventLevel;
 END_VAR
 ]]></Declaration>
       <Implementation>
