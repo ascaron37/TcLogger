@@ -68,7 +68,7 @@
     <Compile Include="Event\CyclicEventDetection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Event\ST_CyclicEventDetection.TcDUT">
+    <Compile Include="Event\ST_CyclicMessageDetection.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Event\Event.TcPOU">
@@ -81,6 +81,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Event\EventRunner.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Event\ST_CyclicEventDetection.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GVL\GVL.TcGVL">

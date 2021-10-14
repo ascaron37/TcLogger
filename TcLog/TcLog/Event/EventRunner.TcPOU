@@ -22,6 +22,7 @@ VAR
   _parameter: T_Arg;
   
   submit_event_message_counter: INT;
+  max_submit_event_message_counter: INT;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -344,38 +345,68 @@ END_VAR
 VAR_INST
   ev: EventMessage;
   event_index: INT;
+  message_index: INT;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF NOT F_ARGISZERO(parameter) THEN
-  format_str(
-    sFormat:=message,
-    arg1:=parameter,
-    sOut=>message);
-END_IF
-
-submit_event_message_counter := submit_event_message_counter + 1;
-
-create_event_message(
+        <ST><![CDATA[IF id = GVL.EXCLUDE_ID THEN
+  IF NOT F_ARGISZERO(parameter) THEN
+    format_str(
+      sFormat:=message,
+      arg1:=parameter,
+      sOut=>message);
+  END_IF
+  create_event_message(
+      ev:=ev,
+      id:=id,
+      path:=path,
+      message:=message,
+      level:=level,
+      cleared:=cleared);
+  message_index := detection.get_message_index(ev);
+  IF message_index = 0 THEN
+    remove_project_from_path(ev.path);
+    detection.add_message(ev);
+    
+    submit_event_message_to_logger(ev);
+    
+    IF NOT cleared THEN
+      put_new_data_at_start(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));
+    END_IF
+  ELSE
+    detection.reactivate_message(message_index);
+	END_IF
+ELSE
+  event_index := detection.get_event_index(id);
+  IF event_index = 0 THEN
+    detection.add_event(id);
+    IF NOT F_ARGISZERO(parameter) THEN
+      format_str(
+        sFormat:=message,
+        arg1:=parameter,
+        sOut=>message);
+    END_IF
+    create_event_message(
         ev:=ev,
         id:=id,
         path:=path,
         message:=message,
         level:=level,
         cleared:=cleared);
-
-event_index := detection.get_event_index(ev);
-
-IF event_index = 0 THEN
-  remove_project_from_path(ev.path);
-  submit_event_message_to_logger(ev);
-  detection.add_event(ev);
-ELSE
-  detection.reactivate_event(event_index);
+    remove_project_from_path(ev.path);
+    submit_event_message_to_logger(ev);
+    
+    IF NOT cleared THEN
+      put_new_data_at_start(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));
+    END_IF
+  ELSE
+    detection.reactivate_event(event_index);
+	END_IF
 END_IF
 
-IF NOT cleared THEN
-  put_new_data_at_start(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));
+submit_event_message_counter := submit_event_message_counter + 1;
+IF submit_event_message_counter > max_submit_event_message_counter THEN
+  max_submit_event_message_counter := submit_event_message_counter;
 END_IF]]></ST>
       </Implementation>
     </Method>
