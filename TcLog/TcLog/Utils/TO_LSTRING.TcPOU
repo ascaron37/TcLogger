@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="TO_LSTRING" Id="{f368814f-f5b3-4c61-998a-cd6abeb4f954}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION TO_LSTRING : LSTRING
+VAR_INPUT
+  str: STRING(255);
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[TO_LSTRING.str := str;]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

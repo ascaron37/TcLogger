@@ -8,6 +8,7 @@ VAR_OUTPUT
 END_VAR
 VAR
   _path: STRING(255);
+  filename: STRING(255);
   file: TcExt.FileMemory := (mode_write := Tc2_System.FOPEN_MODEAPPEND OR Tc2_System.FOPEN_MODETEXT);
   _done: BOOL;
   _level: EventLevel;
@@ -15,27 +16,41 @@ VAR
   format_string: FB_FormatSTring;
   message_queue: FB_FrameFifo;
   state_number: INT;
+  row: STRING(255);
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
     <Method Name="create_row" Id="{62ac12fa-3bef-45d6-b92a-39ca0590c04e}">
-      <Declaration><![CDATA[METHOD INTERNAL create_row : STRING(255)
-VAR_INPUT
+      <Declaration><![CDATA[METHOD INTERNAL create_row
+VAR_IN_OUT
   ev: EventMessage;
 END_VAR
 VAR
+  timestr: STRING(255);
+  datestr: STRING(255);
   dtstr: STRING(255);
   clearedstr: STRING(255);
   levelstr: STRING(255);
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF ev.cleared THEN
-  dtstr := TIMESTRUCT_TO_DATETIMESTR(ev.timestamp_cleared);
+  TIMESTRUCT_TO_DATESTR(
+    ts:=ev.timestamp_cleared,
+    outputstr:=datestr);
+  TIMESTRUCT_TO_TIMESTR(
+    ts:=ev.timestamp_cleared,
+    outputstr:=timestr);
 ELSE
-  dtstr := TIMESTRUCT_TO_DATETIMESTR(ev.timestamp_raised);
+  TIMESTRUCT_TO_DATESTR(
+    ts:=ev.timestamp_raised,
+    outputstr:=datestr);
+  TIMESTRUCT_TO_TIMESTR(
+    ts:=ev.timestamp_raised,
+    outputstr:=timestr);
 END_IF
+dtstr := CONCAT(datestr, CONCAT(' ', timestr));
 clearedstr := TO_STRING(ev.cleared);
 levelstr := TO_STRING(ev.level);
 
@@ -46,22 +61,24 @@ format_string(
   arg3:=F_STRING(levelstr),
   arg4:=F_STRING(ev.path),
   arg5:=F_STRING(ev.message),
-  sOut=>create_row
+  sOut=>row
 );]]></ST>
       </Implementation>
     </Method>
     <Method Name="get_timestamped_filename" Id="{fd365ee7-137c-43d5-b097-a6c91d56c64b}">
-      <Declaration><![CDATA[METHOD PRIVATE get_timestamped_filename : STRING(255)
-VAR
-  datestr: STRING(255);
+      <Declaration><![CDATA[METHOD PRIVATE get_timestamped_filename
+VAR_IN_OUT
+  filename: STRING(255);
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[datestr := TIMESTRUCT_TO_DATESTR(act_time);
+        <ST><![CDATA[TIMESTRUCT_TO_DATESTR(
+  ts:=act_time,
+  outputstr:=filename);
 format_string(
   sFormat:='log_%s.csv',
-  arg1:=F_STRING(datestr),
-  sOut=>get_timestamped_filename);]]></ST>
+  arg1:=F_STRING(filename),
+  sOut=>filename);]]></ST>
       </Implementation>
     </Method>
     <Property Name="level" Id="{ab6b9969-76e1-4879-b617-99481726f092}">
@@ -118,13 +135,15 @@ save();]]></ST>
 VAR
   done: BOOL;
   error_id: DWORD;
+  
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE state_number OF
 0:
   message_queue.RemoveHead();
   IF message_queue.bOk THEN
-    file.path := CONCAT(path, get_timestamped_filename());
+    get_timestamped_filename(filename);
+    file.path := CONCAT(path, filename);
     file.write(
       start:=FALSE,
       data_ptr:=ADR(message_queue.sGet),
@@ -166,7 +185,8 @@ END_VAR
         <ST><![CDATA[IF ev.level >= level THEN
   message_queue.bLog := FALSE;
   message_queue.sPrefix := 'CSVLogger::';
-  message_queue.sPut := create_row(ev);
+  create_row(ev);
+  message_queue.sPut := row;
   message_queue.AddTail();
 END_IF]]></ST>
       </Implementation>

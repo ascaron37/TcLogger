@@ -18,7 +18,7 @@
     <Company>TcLog</Company>
     <Title>TcLog</Title>
     <ProjectVersion>0.3.0</ProjectVersion>
-    <CompilerVersion>3.1.4022.22</CompilerVersion>
+    <CompilerVersion>3.1.4024.0</CompilerVersion>
   </PropertyGroup>
   <ItemGroup>
     <PlaceholderReference Include="Tc2_Standard">
@@ -132,10 +132,16 @@
     <Compile Include="Tests\TEST_MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\TEST_STRING_CYCLE_TIME.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\Utils\TestUtils.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utils\FB_FrameFifo.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\LString.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utils\put_new_data_at_start.TcPOU">
@@ -150,10 +156,10 @@
     <Compile Include="Utils\TIMESTRUCT_TO_DATESTR.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utils\TIMESTRUCT_TO_DATETIMESTR.TcPOU">
+    <Compile Include="Utils\TIMESTRUCT_TO_TIMESTR.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utils\TIMESTRUCT_TO_TIMESTR.TcPOU">
+    <Compile Include="Utils\TO_LSTRING.TcPOU">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -165,13 +171,19 @@
   <ProjectExtensions>
     <PlcProjectOptions>
       <XmlArchive>
-        <Data>
-          <o xml:space="preserve" t="OptionKey">
+  <Data>
+    <o xml:space="preserve" t="OptionKey">
       <v n="Name">"&lt;ProjectRoot&gt;"</v>
       <d n="SubKeys" t="Hashtable" ckt="String" cvt="OptionKey">
         <v>{192FAD59-8248-4824-A8DE-9177C94C195A}</v>
         <o>
           <v n="Name">"{192FAD59-8248-4824-A8DE-9177C94C195A}"</v>
+          <d n="SubKeys" t="Hashtable" />
+          <d n="Values" t="Hashtable" />
+        </o>
+        <v>{8F99A816-E488-41E4-9FA3-846536012284}</v>
+        <o>
+          <v n="Name">"{8F99A816-E488-41E4-9FA3-846536012284}"</v>
           <d n="SubKeys" t="Hashtable" />
           <d n="Values" t="Hashtable" />
         </o>
@@ -204,7 +216,7 @@
           <d n="Values" t="Hashtable" ckt="String" cvt="ExactVersionConstraintToSave">
             <v>VersionConstraint</v>
             <o>
-              <v n="TheVersion">"3.1.4022.22"</v>
+              <v n="TheVersion">"3.1.4024.0"</v>
             </o>
           </d>
         </o>
@@ -226,14 +238,14 @@
       </d>
       <d n="Values" t="Hashtable" />
     </o>
-        </Data>
-        <TypeList>
-          <Type n="ExactVersionConstraintToSave">{f9079115-a4ba-4f30-bf7c-9e76613146fc}</Type>
-          <Type n="Hashtable">System.Collections.Hashtable</Type>
-          <Type n="OptionKey">{54dd0eac-a6d8-46f2-8c27-2f43c7e49861}</Type>
-          <Type n="String">System.String</Type>
-        </TypeList>
-      </XmlArchive>
+  </Data>
+  <TypeList>
+    <Type n="ExactVersionConstraintToSave">{f9079115-a4ba-4f30-bf7c-9e76613146fc}</Type>
+    <Type n="Hashtable">System.Collections.Hashtable</Type>
+    <Type n="OptionKey">{54dd0eac-a6d8-46f2-8c27-2f43c7e49861}</Type>
+    <Type n="String">System.String</Type>
+  </TypeList>
+</XmlArchive>
     </PlcProjectOptions>
   </ProjectExtensions>
 </Project>

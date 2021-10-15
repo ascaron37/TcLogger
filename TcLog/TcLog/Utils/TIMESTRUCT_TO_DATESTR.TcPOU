@@ -1,9 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="TIMESTRUCT_TO_DATESTR" Id="{2069b1bd-90ea-4e27-886f-f4662f18b458}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION TIMESTRUCT_TO_DATESTR : STRING(255)
+    <Declaration><![CDATA[FUNCTION TIMESTRUCT_TO_DATESTR
 VAR_INPUT
   ts: TIMESTRUCT;
+END_VAR
+VAR_IN_OUT
+  outputstr: STRING(255);
 END_VAR
 VAR
   format_string: FB_FormatString;
@@ -14,7 +17,7 @@ END_VAR]]></Declaration>
   arg1:=F_WORD(ts.wYear),
   arg2:=F_WORD(ts.wMonth),
   arg3:=F_WORD(ts.wDay),
-  sOut=>TIMESTRUCT_TO_DATESTR);]]></ST>
+  sOut=>outputstr);]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

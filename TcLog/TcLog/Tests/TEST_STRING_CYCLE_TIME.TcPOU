@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="TEST_STRING_CYCLE_TIME" Id="{a686bc58-6e45-40de-ac8c-614b5493e540}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM TEST_STRING_CYCLE_TIME
+VAR
+  format_string: FB_FormatString;
+  i: INT;
+  j: INT;
+  teststr: ARRAY[1..8] OF STRING(255);
+  testlstr: ARRAY[1..8] OF LString;
+  testtime: TIMESTRUCT;
+  
+  tst: INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[testlstr[1].str := 'aaabbsbsbskjldajkgdklafk1';
+testlstr[2].str := 'aaabbsbsbskjldajkgdklafk1';
+testlstr[3].str := 'aaabbsbsbskjldajkgdklafk1';
+testlstr[4].str := 'aaabbsbsbskjldajkgdklafk1';
+testlstr[5].str := 'aaabbsbsbskjldajkgdklafk1';
+teststr[1] := 'aaabbsbsbskjldajkgdklafk1';
+teststr[2] := 'aaabbsbsbskjldajkgdklafk1';
+teststr[3] := 'aaabbsbsbskjldajkgdklafk1';
+teststr[4] := 'aaabbsbsbskjldajkgdklafk1';
+teststr[5] := 'aaabbsbsbskjldajkgdklafk1';
+FOR i:=1 TO 1000 DO
+  (*TIMESTRUCT_TO_DATESTR(
+    ts:=testtime,
+    outputstr:=teststr[6]);
+  TIMESTRUCT_TO_TIMESTR(
+    ts:=testtime,
+    outputstr:=teststr[7]);*)
+  testlstr[6].str := '';
+  testlstr[6].append_str(str:=TO_STRING(testtime.wYear));
+  testlstr[6].append_str(str:='-');
+  testlstr[6].append_str(str:=TO_STRING(testtime.wMonth));
+  testlstr[6].append_str(str:='-');
+  testlstr[6].append_str(str:=TO_STRING(testtime.wDay));
+  (*format_string(
+    sFormat:='%s,%s,%s,%s,%s$R',
+    arg1:=F_STRING(teststr[1]),
+    arg2:=F_STRING(teststr[2]),
+    arg3:=F_STRING(teststr[3]),
+    arg4:=F_STRING(teststr[4]),
+    arg5:=F_STRING(teststr[5]),
+    sOut=>teststr[6]
+  );*)
+END_FOR]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

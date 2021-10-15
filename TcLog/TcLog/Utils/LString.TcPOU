@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="LString" Id="{33f4feb9-6553-4430-ac72-271fe5fcf8e4}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK LString
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+  _str: STRING(255);
+  _length: INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="append" Id="{eee8c8db-46af-4231-bc5d-9c51482a2cbf}">
+      <Declaration><![CDATA[METHOD PUBLIC append
+VAR_IN_OUT
+  lstr: LString; 
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[MEMMOVE(
+  destAddr:=ADR(_str)+TO_DWORD(length),
+  srcAddr:=ADR(lstr._str),
+  n:=TO_UDINT(lstr.length+1));
+length := length + lstr.length;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="append_str" Id="{4e1327c3-c229-44c0-af49-8b9a41f66505}">
+      <Declaration><![CDATA[METHOD PUBLIC append_str
+VAR_INPUT
+  str: STRING(255);
+END_VAR
+VAR
+  length: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[length := LEN(str);
+MEMMOVE(
+  destAddr:=ADR(_str)+TO_DWORD(THIS^.length),
+  srcAddr:=ADR(str),
+  n:=TO_UDINT(length+1));
+THIS^.length := THIS^.length + length;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="length" Id="{59958980-3dda-4623-84b3-a87c55c1c2a2}">
+      <Declaration><![CDATA[PROPERTY PUBLIC length : INT]]></Declaration>
+      <Get Name="Get" Id="{8e8132ec-7a67-4a76-8600-1e35cc405b75}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[length := _length;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{7399b23d-69cf-4ad9-b49c-51afbe8a7fb8}">
+        <Declaration><![CDATA[PRIVATE
+VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_length := length;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="str" Id="{cb130ec0-9141-44e1-b370-410dc6ceaaf1}">
+      <Declaration><![CDATA[PROPERTY PUBLIC str : STRING(255)]]></Declaration>
+      <Get Name="Get" Id="{bf8ac549-5821-480a-966e-cb0bab4c54f7}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[str := _str;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{77e65917-d278-4fd9-a51a-7a8dfab88016}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_str := str;
+length := LEN(str);]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+  </POU>
+</TcPlcObject>
