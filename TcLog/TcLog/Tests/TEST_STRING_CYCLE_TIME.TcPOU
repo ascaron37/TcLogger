@@ -24,6 +24,9 @@ teststr[2] := 'aaabbsbsbskjldajkgdklafk1';
 teststr[3] := 'aaabbsbsbskjldajkgdklafk1';
 teststr[4] := 'aaabbsbsbskjldajkgdklafk1';
 teststr[5] := 'aaabbsbsbskjldajkgdklafk1';
+testlstr[6].str := TO_STRING(testtime.wYear);
+testlstr[6].str := TO_STRING(testtime.wMonth);
+testlstr[6].str := TO_STRING(testtime.wDay);
 FOR i:=1 TO 1000 DO
   (*TIMESTRUCT_TO_DATESTR(
     ts:=testtime,
@@ -31,12 +34,13 @@ FOR i:=1 TO 1000 DO
   TIMESTRUCT_TO_TIMESTR(
     ts:=testtime,
     outputstr:=teststr[7]);*)
+  
   testlstr[6].str := '';
-  testlstr[6].append_str(str:=TO_STRING(testtime.wYear));
-  testlstr[6].append_str(str:='-');
-  testlstr[6].append_str(str:=TO_STRING(testtime.wMonth));
-  testlstr[6].append_str(str:='-');
-  testlstr[6].append_str(str:=TO_STRING(testtime.wDay));
+  testlstr[6].append(lstr:=testlstr[1]);
+  testlstr[6].append(lstr:=testlstr[2]);
+  testlstr[6].append(lstr:=testlstr[3]);
+  testlstr[6].append(lstr:=testlstr[4]);
+  testlstr[6].append(lstr:=testlstr[5]);
   (*format_string(
     sFormat:='%s,%s,%s,%s,%s$R',
     arg1:=F_STRING(teststr[1]),

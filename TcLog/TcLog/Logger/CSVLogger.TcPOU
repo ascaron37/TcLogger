@@ -13,6 +13,8 @@ VAR
   _done: BOOL;
   _level: EventLevel;
   act_time: TIMESTRUCT;
+  act_time_str: STRING(255);
+  _datetime_format: STRING(255) := '%d-%2d-%2d %2dh %2dm %2ds %3dms';
   format_string: FB_FormatSTring;
   message_queue: FB_FrameFifo;
   state_number: INT;
@@ -28,35 +30,16 @@ VAR_IN_OUT
   ev: EventMessage;
 END_VAR
 VAR
-  timestr: STRING(255);
-  datestr: STRING(255);
-  dtstr: STRING(255);
   clearedstr: STRING(255);
   levelstr: STRING(255);
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF ev.cleared THEN
-  TIMESTRUCT_TO_DATESTR(
-    ts:=ev.timestamp_cleared,
-    outputstr:=datestr);
-  TIMESTRUCT_TO_TIMESTR(
-    ts:=ev.timestamp_cleared,
-    outputstr:=timestr);
-ELSE
-  TIMESTRUCT_TO_DATESTR(
-    ts:=ev.timestamp_raised,
-    outputstr:=datestr);
-  TIMESTRUCT_TO_TIMESTR(
-    ts:=ev.timestamp_raised,
-    outputstr:=timestr);
-END_IF
-dtstr := CONCAT(datestr, CONCAT(' ', timestr));
-clearedstr := TO_STRING(ev.cleared);
+        <ST><![CDATA[clearedstr := TO_STRING(ev.cleared);
 levelstr := TO_STRING(ev.level);
 
 format_string(
   sFormat:='%s,%s,%s,%s,%s$R',
-  arg1:=F_STRING(dtstr),
+  arg1:=F_STRING(act_time_str),
   arg2:=F_STRING(clearedstr),
   arg3:=F_STRING(levelstr),
   arg4:=F_STRING(ev.path),
@@ -65,6 +48,25 @@ format_string(
 );]]></ST>
       </Implementation>
     </Method>
+    <Property Name="datetime_format" Id="{ff9319a0-0f4d-457b-a5d8-b6c207973103}">
+      <Declaration><![CDATA[PROPERTY PUBLIC datetime_format : STRING(255)]]></Declaration>
+      <Get Name="Get" Id="{e12a71f6-714c-460f-9188-755709c1b532}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[datetime_format := _datetime_format;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{61169555-fcd6-4574-a27f-06ef2a91ade5}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_datetime_format := datetime_format;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Method Name="get_timestamped_filename" Id="{fd365ee7-137c-43d5-b097-a6c91d56c64b}">
       <Declaration><![CDATA[METHOD PRIVATE get_timestamped_filename
 VAR_IN_OUT
@@ -126,6 +128,16 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[THIS^.act_time := act_time;
+format_string(
+  sFormat:=datetime_format,
+  arg1:=F_WORD(act_time.wYear),
+  arg2:=F_WORD(act_time.wMonth),
+  arg3:=F_WORD(act_time.wDay),
+  arg4:=F_WORD(act_time.wHour),
+  arg5:=F_WORD(act_time.wMinute),
+  arg6:=F_WORD(act_time.wSecond),
+  arg7:=F_WORD(act_time.wMilliseconds),
+  sOut=>act_time_str);
 
 save();]]></ST>
       </Implementation>

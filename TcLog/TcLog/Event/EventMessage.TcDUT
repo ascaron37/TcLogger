@@ -8,8 +8,6 @@ STRUCT
   message: STRING(255);
   level: EventLevel;
   cleared: BOOL;
-  timestamp_raised: TIMESTRUCT;
-  timestamp_cleared: TIMESTRUCT;
 END_STRUCT
 END_TYPE
 ]]></Declaration>

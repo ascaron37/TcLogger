@@ -92,7 +92,6 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF alarm_raised(id:=id) THEN
   index := get_alarm_index(id:=id);
-  active_alarms[index].timestamp_cleared := act_time;
   active_alarms[index].cleared := TRUE;
   
   submit_event_message_to_logger(active_alarms[index]);
@@ -129,13 +128,7 @@ END_VAR]]></Declaration>
 ev.path := path;
 ev.message := message;
 ev.level := level;
-ev.cleared := cleared;
-ev.timestamp_raised := act_time;
-IF cleared THEN
-  ev.timestamp_cleared := act_time;
-ELSE
-  ev.timestamp_cleared := undefined_time;
-END_IF]]></ST>
+ev.cleared := cleared;]]></ST>
       </Implementation>
     </Method>
     <Method Name="error" Id="{4dd89880-1abb-4d7e-a276-4d71779474aa}">
