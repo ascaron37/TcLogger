@@ -192,8 +192,8 @@ sut.event.alarm();
 cut_output := RIGHT(sut.logger.formatted_output, 15);
 
 AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
-AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
-AssertEquals_STRING(' | Error: Alarm', cut_output, '');
+AssertEquals_STRING(' | Alarm: ', sut.logger.prefix, '');
+AssertEquals_STRING(' | Alarm: Alarm', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>

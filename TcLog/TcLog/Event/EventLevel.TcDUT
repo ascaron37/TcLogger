@@ -8,7 +8,8 @@ TYPE EventLevel :
 (
 	INFO := 10,
   WARNING :=20,
-  ERROR := 30
+  ERROR := 30,
+  ALARM := 40
 ) BYTE := INFO;
 END_TYPE]]></Declaration>
   </DUT>

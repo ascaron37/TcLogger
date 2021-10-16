@@ -138,12 +138,9 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[submit_event_message(
-  id:=GVL.EXCLUDE_ID,
-  path:=path,
+        <ST><![CDATA[submit_message(
   message:=message,
-  level:=EventLevel.ERROR,
-  cleared:=TRUE);]]></ST>
+  level:=EventLevel.ERROR);]]></ST>
       </Implementation>
     </Method>
     <Method Name="error_if_true" Id="{86903ce8-3919-4813-8c8e-481afd1ebc77}">
@@ -212,12 +209,9 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[submit_event_message(
-  id:=GVL.EXCLUDE_ID,
-  path:=path,
+        <ST><![CDATA[submit_message(
   message:=message,
-  level:=EventLevel.INFO,
-  cleared:=TRUE);]]></ST>
+  level:=EventLevel.INFO);]]></ST>
       </Implementation>
     </Method>
     <Method Name="info_if_true" Id="{55973e9d-0603-429c-a9dd-012bc4a8dffa}">
@@ -270,30 +264,6 @@ END_VAR
         </Implementation>
       </Set>
     </Property>
-    <Method Name="raise_alarm" Id="{b9a7897e-9e09-4385-9cb5-c61ebd939157}">
-      <Declaration><![CDATA[METHOD INTERNAL raise_alarm
-VAR_INPUT
-  id: INT;
-  level: EventLevel;
-END_VAR
-VAR_IN_OUT
-  path: STRING(255);
-  message: STRING(255);
-END_VAR
-VAR
-  undefined_time: TIMESTRUCT;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[IF NOT alarm_raised(id:=id) THEN
-  submit_event_message(
-    id:=id,
-    path:=path,
-    message:=message,
-    level:=level,
-    cleared:=FALSE);
-END_IF]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="run" Id="{8739a071-bf84-4818-9cb8-125145dee33b}">
       <Declaration><![CDATA[METHOD PUBLIC run
 VAR_INPUT
@@ -324,8 +294,8 @@ END_VAR]]></Declaration>
 END_FOR]]></ST>
       </Implementation>
     </Method>
-    <Method Name="submit_event_message" Id="{ce173cb8-ea36-4b51-8b06-142152b19f09}">
-      <Declaration><![CDATA[METHOD PRIVATE submit_event_message
+    <Method Name="submit_event" Id="{5048bc84-d342-49bd-b01f-a2a3feadcb99}">
+      <Declaration><![CDATA[METHOD PUBLIC submit_event
 VAR_INPUT
   id: INT;
   level: EventLevel;
@@ -342,64 +312,32 @@ VAR_INST
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF id = GVL.EXCLUDE_ID THEN
+        <ST><![CDATA[IF alarm_raised(id:=id) THEN
+  RETURN;
+END_IF
+
+event_index := detection.get_event_index(id);
+IF event_index = 0 THEN
+  detection.add_event(id);
   IF NOT F_ARGISZERO(parameter) THEN
     format_str(
       sFormat:=message,
       arg1:=parameter,
       sOut=>message);
   END_IF
-  create_event_message(
-      ev:=ev,
-      id:=id,
-      path:=path,
-      message:=message,
-      level:=level,
-      cleared:=cleared);
-  message_index := detection.get_message_index(ev);
-  IF message_index = 0 THEN
-    remove_project_from_path(ev.path);
-    detection.add_message(ev);
-    
-    submit_event_message_to_logger(ev);
-    
-    IF NOT cleared THEN
-      put_new_data_at_start(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));
-    END_IF
-  ELSE
-    detection.reactivate_message(message_index);
-	END_IF
+  ev.id := id;
+  ev.path := path;
+  ev.message := message;
+  ev.level := level;
+  ev.cleared := cleared;
+  remove_project_from_path(ev.path);
+  submit_event_message_to_logger(ev);
+  
+  IF NOT cleared THEN
+    put_new_data_at_start(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));
+  END_IF
 ELSE
-  event_index := detection.get_event_index(id);
-  IF event_index = 0 THEN
-    detection.add_event(id);
-    IF NOT F_ARGISZERO(parameter) THEN
-      format_str(
-        sFormat:=message,
-        arg1:=parameter,
-        sOut=>message);
-    END_IF
-    create_event_message(
-        ev:=ev,
-        id:=id,
-        path:=path,
-        message:=message,
-        level:=level,
-        cleared:=cleared);
-    remove_project_from_path(ev.path);
-    submit_event_message_to_logger(ev);
-    
-    IF NOT cleared THEN
-      put_new_data_at_start(SIZEOF(ev), ADR(ev), SIZEOF(active_alarms), ADR(active_alarms));
-    END_IF
-  ELSE
-    detection.reactivate_event(event_index);
-	END_IF
-END_IF
-
-submit_event_message_counter := submit_event_message_counter + 1;
-IF submit_event_message_counter > max_submit_event_message_counter THEN
-  max_submit_event_message_counter := submit_event_message_counter;
+  detection.reactivate_event(event_index);
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -419,24 +357,43 @@ END_VAR]]></Declaration>
 END_FOR]]></ST>
       </Implementation>
     </Method>
-    <Method Name="submit_message" Id="{f126ae69-dbb0-4036-b829-819771f00c85}">
-      <Declaration><![CDATA[METHOD INTERNAL submit_message
+    <Method Name="submit_message" Id="{ce173cb8-ea36-4b51-8b06-142152b19f09}">
+      <Declaration><![CDATA[METHOD PRIVATE submit_message
 VAR_INPUT
-  id: INT;
   level: EventLevel;
 END_VAR
 VAR_IN_OUT
-  path: STRING(255);
   message: STRING(255);
+END_VAR
+VAR_INST
+  ev: EventMessage;
+  event_index: INT;
+  message_index: INT;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[submit_event_message(
-  id:=id,
-  path:=path,
-  message:=message,
-  level:=level,
-  cleared:=TRUE);]]></ST>
+        <ST><![CDATA[IF NOT F_ARGISZERO(parameter) THEN
+  format_str(
+    sFormat:=message,
+    arg1:=parameter,
+    sOut=>message);
+END_IF
+create_event_message(
+    ev:=ev,
+    id:=GVL.EXCLUDE_ID,
+    path:=path,
+    message:=message,
+    level:=level,
+    cleared:=TRUE);
+message_index := detection.get_message_index(ev);
+IF message_index = 0 THEN
+  remove_project_from_path(ev.path);
+  detection.add_message(ev);
+  
+  submit_event_message_to_logger(ev);
+ELSE
+  detection.reactivate_message(message_index);
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Property Name="time_valid" Id="{97759346-09f2-489b-abe8-e35197fe4275}">
@@ -472,12 +429,9 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[submit_event_message(
-  id:=GVL.EXCLUDE_ID,
-  path:=path,
+        <ST><![CDATA[submit_message(
   message:=message,
-  level:=EventLevel.WARNING,
-  cleared:=TRUE);]]></ST>
+  level:=EventLevel.WARNING);]]></ST>
       </Implementation>
     </Method>
     <Method Name="warning_if_true" Id="{46dbe002-a229-41de-a424-818f2c2a47d0}">

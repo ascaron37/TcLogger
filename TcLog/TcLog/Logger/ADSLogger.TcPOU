@@ -48,7 +48,7 @@ EventLevel.INFO:
   create_mask := ADSLOG_MSGTYPE_HINT;
 EventLevel.WARNING:
   create_mask := ADSLOG_MSGTYPE_WARN;
-EventLevel.ERROR:
+EventLevel.ERROR, EventLevel.ALARM:
   create_mask := ADSLOG_MSGTYPE_ERROR;
 ELSE
   create_mask := ADSLOG_MSGTYPE_HINT;
@@ -79,6 +79,8 @@ EventLevel.WARNING:
   create_prefix := ' | Warning: ';
 EventLevel.ERROR:
   create_prefix := ' | Error: ';
+EventLevel.Alarm:
+  create_prefix := ' | Alarm: ';
 ELSE
   create_prefix := ' | Undefined: ';
 END_CASE]]></ST>
