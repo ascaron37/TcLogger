@@ -58,15 +58,6 @@ END_VAR
 END_IF]]></ST>
       </Implementation>
     </Method>
-    <Method Name="add_parameter_to_message" Id="{5d12b4f0-2daa-4a8f-9bce-5e367da3a2aa}">
-      <Declaration><![CDATA[METHOD PRIVATE add_parameter_to_message
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="alarm_raised" Id="{0ecb95b1-2cc0-4d11-97b5-c5cef817c911}">
       <Declaration><![CDATA[METHOD INTERNAL alarm_raised : BOOL
 VAR_INPUT
