@@ -14,16 +14,16 @@ END_VAR
     </Implementation>
     <Method Name="test_remove_project_from_path" Id="{e8007b6e-7292-4cc4-be66-05706e700c47}">
       <Declaration><![CDATA[METHOD test_remove_project_from_path
-VAR
-  path: STRING(255);
+VAR_INST
+  path: LString;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('Test remove project from path');
 
-path := 'project.project.MAIN.test';
-remove_project_from_path(path);
+path.str := 'project.project.MAIN.test';
+path.remove_left_including_char('.', 2);
 
-AssertEquals_STRING('MAIN.test', path, '');
+AssertEquals_STRING('MAIN.test', path.str, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>

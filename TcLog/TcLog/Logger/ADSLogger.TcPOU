@@ -10,8 +10,8 @@ VAR
   _level: EventLevel;
   _disable_ads_output: BOOL;
   _mask: DWORD;
-  _prefix: STRING(15);
-  _formatted_output: STRING(255);
+  _ref_formatted_output: REFERENCE TO LString;
+  _formatted_output: LString;
   _path: STRING(255);
 END_VAR]]></Declaration>
     <Implementation>
@@ -26,13 +26,15 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[mask := create_mask(ev.level);
-prefix := create_prefix(ev.level);
-path := create_path(ev.path);
 
-formatted_output := CONCAT(CONCAT(ev.path, prefix), ev.message);
+formatted_output := ev.path;
+formatted_output.append_str(' | ');
+formatted_output.append_str(TO_STRING(ev.level));
+formatted_output.append_str(': ');
+formatted_output.append(ev.message);
 
 IF NOT disable_ads_output THEN
-  ADSLOGSTR(mask, formatted_output, '');
+  ADSLOGSTR(mask, formatted_output.str, '');
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -55,37 +57,6 @@ ELSE
 END_CASE]]></ST>
       </Implementation>
     </Method>
-    <Method Name="create_path" Id="{59a6e2af-a873-437a-9a9c-126ed2450a1d}">
-      <Declaration><![CDATA[METHOD PRIVATE create_path : STRING(255)
-VAR_IN_OUT
-  path: STRING(255);
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[create_path := CONCAT(' | ', path);]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="create_prefix" Id="{e6393b63-a206-438e-accf-a721f61f3d0a}">
-      <Declaration><![CDATA[METHOD PRIVATE create_prefix : STRING(15)
-VAR_INPUT
-  level: EventLevel;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[CASE level OF
-EventLevel.INFO:
-  create_prefix := ' | Info: ';
-EventLevel.WARNING:
-  create_prefix := ' | Warning: ';
-EventLevel.ERROR:
-  create_prefix := ' | Error: ';
-EventLevel.Alarm:
-  create_prefix := ' | Alarm: ';
-ELSE
-  create_prefix := ' | Undefined: ';
-END_CASE]]></ST>
-      </Implementation>
-    </Method>
     <Property Name="disable_ads_output" Id="{7e9c1897-64d5-455a-b20b-e82b4706fc80}">
       <Declaration><![CDATA[PROPERTY INTERNAL disable_ads_output : BOOL]]></Declaration>
       <Get Name="Get" Id="{249061bd-6c70-46d6-a135-7e502181640a}">
@@ -105,14 +76,25 @@ END_VAR
         </Implementation>
       </Set>
     </Property>
+    <Method Name="FB_init" Id="{0636f24e-062c-48cf-b4ac-ddf7de715b3a}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[formatted_output REF= _formatted_output;]]></ST>
+      </Implementation>
+    </Method>
     <Property Name="formatted_output" Id="{c00d9c99-7aed-49b0-83c9-9c5fba96f988}">
-      <Declaration><![CDATA[PROPERTY INTERNAL formatted_output : STRING(255)]]></Declaration>
+      <Declaration><![CDATA[PROPERTY INTERNAL formatted_output : REFERENCE TO LString]]></Declaration>
       <Get Name="Get" Id="{cb587932-271f-416f-b6a0-4af026f4953f}">
         <Declaration><![CDATA[VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[formatted_output := _formatted_output;]]></ST>
+          <ST><![CDATA[formatted_output REF= _ref_formatted_output;]]></ST>
         </Implementation>
       </Get>
       <Set Name="Set" Id="{8bc1fa17-0d69-4124-b2c4-148f2b65324b}">
@@ -121,7 +103,7 @@ VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[_formatted_output := formatted_output;]]></ST>
+          <ST><![CDATA[_ref_formatted_output REF= formatted_output;]]></ST>
         </Implementation>
       </Set>
     </Property>
@@ -179,25 +161,6 @@ VAR
 END_VAR]]></Declaration>
         <Implementation>
           <ST><![CDATA[_path := path;]]></ST>
-        </Implementation>
-      </Set>
-    </Property>
-    <Property Name="prefix" Id="{323f41d0-a33a-4170-aaca-6778f0d96f7d}">
-      <Declaration><![CDATA[PROPERTY INTERNAL prefix : STRING(15)]]></Declaration>
-      <Get Name="Get" Id="{8ee79c6b-0c1f-4ac5-bc2d-f4f7faabd841}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[prefix := _prefix;]]></ST>
-        </Implementation>
-      </Get>
-      <Set Name="Set" Id="{d2420567-3b92-48d5-8816-decae5ecdad9}">
-        <Declaration><![CDATA[PRIVATE
-VAR
-END_VAR]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[_prefix := prefix;]]></ST>
         </Implementation>
       </Set>
     </Property>

@@ -11,9 +11,10 @@ VAR
   _logging: REFERENCE TO EventRunner;
   {attribute 'instance-path'}
   {attribute 'noinit'}
-  path: STRING(255);
+  path_str: STRING(255);
+  path: LString;
   id: INT;
-  _message: STRING(255);
+  _message: LString;
   _parameter: T_Arg;
   ev: EventMessage;
 END_VAR
@@ -95,7 +96,8 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[THIS^.logging REF= GVL.logging;]]></ST>
+        <ST><![CDATA[THIS^.logging REF= GVL.logging;
+path.str := path_str;]]></ST>
       </Implementation>
     </Method>
     <Method Name="info" Id="{c0f9f1db-48a1-4979-bf36-bb8af0c33ed2}">
@@ -122,17 +124,6 @@ IF r_value.Q THEN
 END_IF]]></ST>
       </Implementation>
     </Method>
-    <Property Name="instance_path" Id="{8a5a1c1c-ff06-4418-9b66-52ecf8d7f269}">
-      <Declaration><![CDATA[PROPERTY PUBLIC instance_path : STRING(255)]]></Declaration>
-      <Get Name="Get" Id="{502f1fc3-998f-4e3e-ac0b-443913534009}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[instance_path := path;]]></ST>
-        </Implementation>
-      </Get>
-    </Property>
     <Property Name="logging" Id="{b5010af2-3f3c-42a7-be82-db2573006c88}">
       <Declaration><![CDATA[PROPERTY PUBLIC logging : REFERENCE TO EventRunner]]></Declaration>
       <Get Name="Get" Id="{fbbf2d23-a4fb-474b-8700-f53e4fcd43ae}">
@@ -160,7 +151,7 @@ set_id(logging.generate_event_id());]]></ST>
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[message := _message;]]></ST>
+          <ST><![CDATA[message := _message.str;]]></ST>
         </Implementation>
       </Get>
       <Set Name="Set" Id="{c521e5f0-7926-4ff9-9eb2-135493eb5d8f}">
@@ -168,7 +159,7 @@ END_VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[_message := message;]]></ST>
+          <ST><![CDATA[_message.str := message;]]></ST>
         </Implementation>
       </Set>
     </Property>

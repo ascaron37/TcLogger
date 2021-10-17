@@ -18,7 +18,7 @@ VAR
   format_string: FB_FormatSTring;
   message_queue: FB_FrameFifo;
   state_number: INT;
-  row: STRING(255);
+  formatted_output: LString;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -30,22 +30,18 @@ VAR_IN_OUT
   ev: EventMessage;
 END_VAR
 VAR
-  clearedstr: STRING(255);
-  levelstr: STRING(255);
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[clearedstr := TO_STRING(ev.cleared);
-levelstr := TO_STRING(ev.level);
-
-format_string(
-  sFormat:='%s,%s,%s,%s,%s$R',
-  arg1:=F_STRING(act_time_str),
-  arg2:=F_STRING(clearedstr),
-  arg3:=F_STRING(levelstr),
-  arg4:=F_STRING(ev.path),
-  arg5:=F_STRING(ev.message),
-  sOut=>row
-);]]></ST>
+        <ST><![CDATA[formatted_output := TO_LSTRING(act_time_str);
+formatted_output.append_str(',');
+formatted_output.append_str(TO_STRING(ev.cleared));
+formatted_output.append_str(',');
+formatted_output.append_str(TO_STRING(ev.level));
+formatted_output.append_str(',');
+formatted_output.append(ev.path);
+formatted_output.append_str(',');
+formatted_output.append(ev.message);
+]]></ST>
       </Implementation>
     </Method>
     <Property Name="datetime_format" Id="{ff9319a0-0f4d-457b-a5d8-b6c207973103}">
@@ -198,7 +194,7 @@ END_VAR
   message_queue.bLog := FALSE;
   message_queue.sPrefix := 'CSVLogger::';
   create_row(ev);
-  message_queue.sPut := row;
+  message_queue.sPut := formatted_output.str;
   message_queue.AddTail();
 END_IF]]></ST>
       </Implementation>

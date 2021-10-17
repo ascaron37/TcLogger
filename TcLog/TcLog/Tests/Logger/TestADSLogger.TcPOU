@@ -37,11 +37,10 @@ sut.logging.add_logger(sut.logger);
 sut.logger.level := EventLevel.WARNING;
 sut.event.message := 'Default level warning';
 sut.event.error();
-cut_output := RIGHT(sut.logger.formatted_output, 31);
+cut_output := RIGHT(sut.logger.formatted_output.str, 31);
 
 AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
-AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
-AssertEquals_STRING(' | Error: Default level warning', cut_output, '');
+AssertEquals_STRING(' | ERROR: Default level warning', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -62,7 +61,6 @@ sut.event.message := 'Default level warning';
 sut.event.info();
 
 AssertEquals_DWORD(0, sut.logger.mask, '');
-AssertEquals_STRING('', sut.logger.prefix, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -84,11 +82,10 @@ sut.event.message := 'Test %d';
 parameter := 123;
 sut.event.parameter := F_INT(parameter);
 sut.event.error();
-cut_output := RIGHT(sut.logger.formatted_output, 18);
+cut_output := RIGHT(sut.logger.formatted_output.str, 18);
 
 AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
-AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
-AssertEquals_STRING(' | Error: Test 123', cut_output, '');
+AssertEquals_STRING(' | ERROR: Test 123', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -109,9 +106,9 @@ sut.logging.add_logger(sut.logger);
 parameter := 3.14;
 sut.logging.parameter := F_REAL(parameter);
 sut.logging.warning(message:='Test %1.2f');
-cut_output := RIGHT(sut.logger.formatted_output, 21);
+cut_output := RIGHT(sut.logger.formatted_output.str, 21);
 
-AssertEquals_STRING(' | Warning: Test 3.14', cut_output, '');
+AssertEquals_STRING(' | WARNING: Test 3.14', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -138,36 +135,35 @@ CASE state_counter OF
   sut.logging.error(message:='Alarm');
   sut.logging.error(message:='Error');
   
-  cut_output := RIGHT(sut.logger.formatted_output, 15);
+  cut_output := RIGHT(sut.logger.formatted_output.str, 15);
   
   AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
-  AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
-  AssertEquals_STRING(' | Error: Error', cut_output, '');
+  AssertEquals_STRING(' | ERROR: Error', cut_output, '');
   
   state_counter := state_counter + 10;
 10:
   // do not output this message
   sut.logging.error(message:='Alarm');
   
-  cut_output := RIGHT(sut.logger.formatted_output, 15);
+  cut_output := RIGHT(sut.logger.formatted_output.str, 15);
   
-  AssertEquals_STRING(' | Error: Error', cut_output, '');
+  AssertEquals_STRING(' | ERROR: Error', cut_output, '');
   state_counter := state_counter + 10;
 20:
   // do not output this message
   sut.logging.error(message:='Alarm');
   
-  cut_output := RIGHT(sut.logger.formatted_output, 15);
+  cut_output := RIGHT(sut.logger.formatted_output.str, 15);
   
-  AssertEquals_STRING(' | Error: Error', cut_output, '');
+  AssertEquals_STRING(' | ERROR: Error', cut_output, '');
   state_counter := state_counter + 10;
 30:
   // do not output this message
   sut.logging.error(message:='Alarm');
   
-  cut_output := RIGHT(sut.logger.formatted_output, 15);
+  cut_output := RIGHT(sut.logger.formatted_output.str, 15);
   
-  AssertEquals_STRING(' | Error: Error', cut_output, '');
+  AssertEquals_STRING(' | ERROR: Error', cut_output, '');
   
   TEST_FINISHED();
 END_CASE]]></ST>
@@ -189,11 +185,10 @@ END_VAR]]></Declaration>
 sut.logging.add_logger(sut.logger);
 sut.event.message := 'Alarm';
 sut.event.alarm();
-cut_output := RIGHT(sut.logger.formatted_output, 15);
+cut_output := RIGHT(sut.logger.formatted_output.str, 15);
 
 AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
-AssertEquals_STRING(' | Alarm: ', sut.logger.prefix, '');
-AssertEquals_STRING(' | Alarm: Alarm', cut_output, '');
+AssertEquals_STRING(' | ALARM: Alarm', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -214,11 +209,10 @@ END_VAR]]></Declaration>
 sut.logging.add_logger(sut.logger);
 sut.event.message := 'Error';
 sut.event.error();
-cut_output := RIGHT(sut.logger.formatted_output, 15);
+cut_output := RIGHT(sut.logger.formatted_output.str, 15);
 
 AssertEquals_DWORD(ADSLOG_MSGTYPE_ERROR, sut.logger.mask, '');
-AssertEquals_STRING(' | Error: ', sut.logger.prefix, '');
-AssertEquals_STRING(' | Error: Error', cut_output, '');
+AssertEquals_STRING(' | ERROR: Error', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -239,11 +233,10 @@ END_VAR]]></Declaration>
 sut.logging.add_logger(sut.logger);
 sut.event.message := 'Info';
 sut.event.info();
-cut_output := RIGHT(sut.logger.formatted_output, 13);
+cut_output := RIGHT(sut.logger.formatted_output.str, 13);
 
 AssertEquals_DWORD(ADSLOG_MSGTYPE_HINT, sut.logger.mask, '');
-AssertEquals_STRING(' | Info: ', sut.logger.prefix, '');
-AssertEquals_STRING(' | Info: Info', cut_output, '');
+AssertEquals_STRING(' | INFO: Info', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -264,11 +257,10 @@ END_VAR]]></Declaration>
 sut.logging.add_logger(sut.logger);
 sut.event.message := 'Warning';
 sut.event.warning();
-cut_output := RIGHT(sut.logger.formatted_output, 19);
+cut_output := RIGHT(sut.logger.formatted_output.str, 19);
 
 AssertEquals_DWORD(ADSLOG_MSGTYPE_WARN, sut.logger.mask, '');
-AssertEquals_STRING(' | Warning: ', sut.logger.prefix, '');
-AssertEquals_STRING(' | Warning: Warning', cut_output, '');
+AssertEquals_STRING(' | WARNING: Warning', cut_output, '');
 
 TEST_FINISHED();]]></ST>
       </Implementation>

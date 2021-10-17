@@ -150,7 +150,7 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[FOR i:=1 TO message_counter DO
-  IF messages[i].ev.message = ev.message THEN
+  IF messages[i].ev.message.str = ev.message.str THEN
     get_message_index := i;
     EXIT;
   END_IF

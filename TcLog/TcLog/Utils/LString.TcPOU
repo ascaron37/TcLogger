@@ -64,6 +64,36 @@ END_VAR]]></Declaration>
         </Implementation>
       </Set>
     </Property>
+    <Method Name="remove_left_including_char" Id="{968542c2-bcb2-4f71-974c-51d0564fbae4}">
+      <Declaration><![CDATA[METHOD PUBLIC remove_left_including_char
+VAR_INPUT
+  char: STRING(1);
+  number: INT;
+END_VAR
+VAR
+  act_number: INT;
+  offset: INT;
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[WHILE _str[i] <> 0 DO
+  IF act_number < number THEN
+    IF _str[i] = char[0] THEN
+      act_number := act_number + 1;
+    END_IF
+  ELSE
+    EXIT;
+	END_IF
+  i := i + 1;
+END_WHILE
+MEMMOVE(
+  destAddr:=ADR(_str),
+  srcAddr:=ADR(_str)+TO_DWORD(i),
+  n:=TO_UDINT(length-i));
+length := length - i;
+_str[length] := 0;]]></ST>
+      </Implementation>
+    </Method>
     <Property Name="str" Id="{cb130ec0-9141-44e1-b370-410dc6ceaaf1}">
       <Declaration><![CDATA[PROPERTY PUBLIC str : STRING(255)]]></Declaration>
       <Get Name="Get" Id="{bf8ac549-5821-480a-966e-cb0bab4c54f7}">
