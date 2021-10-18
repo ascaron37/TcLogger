@@ -19,6 +19,7 @@
     <Title>TcLog</Title>
     <ProjectVersion>0.4.0</ProjectVersion>
     <CompilerVersion>3.1.4024.0</CompilerVersion>
+    <CompilerDefines />
   </PropertyGroup>
   <ItemGroup>
     <PlaceholderReference Include="Tc2_Standard">
@@ -44,6 +45,9 @@
     <PlaceholderReference Include="TcUnit">
       <DefaultResolution>TcUnit, * (www.tcunit.org)</DefaultResolution>
       <Namespace>TcUnit</Namespace>
+      <Optional>true</Optional>
+      <HideWhenReferencedAsDependency>true</HideWhenReferencedAsDependency>
+      <Condition>TEST</Condition>
     </PlaceholderReference>
   </ItemGroup>
   <ItemGroup>
@@ -61,7 +65,9 @@
     <Folder Include="Tests\Event" />
     <Folder Include="Tests\Utils" />
     <Folder Include="Utils" />
-    <Folder Include="Tests" />
+    <Folder Include="Tests">
+      <ExcludeFromBuild>true</ExcludeFromBuild>
+    </Folder>
     <Folder Include="Tests\Logger" />
   </ItemGroup>
   <ItemGroup>
@@ -105,9 +111,6 @@
     <Compile Include="Logger\MemoryLogger.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PlcTask.TcTTO">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Tests\Event\EventTestsystem.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -127,6 +130,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\Logger\TestCSVLogger.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\TEST_MAIN.TcPOU">

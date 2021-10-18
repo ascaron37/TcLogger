@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="TEST_STRING_CYCLE_TIME" Id="{a686bc58-6e45-40de-ac8c-614b5493e540}" SpecialFunc="None">
-    <Declaration><![CDATA[PROGRAM TEST_STRING_CYCLE_TIME
+    <Declaration><![CDATA[{attribute 'hide'} 
+PROGRAM TEST_STRING_CYCLE_TIME
 VAR
   format_string: FB_FormatString;
   i: INT;
