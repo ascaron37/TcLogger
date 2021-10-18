@@ -17,7 +17,7 @@
     <Released>false</Released>
     <Company>TcLog</Company>
     <Title>TcLog</Title>
-    <ProjectVersion>0.3.0</ProjectVersion>
+    <ProjectVersion>0.4.0</ProjectVersion>
     <CompilerVersion>3.1.4024.0</CompilerVersion>
   </PropertyGroup>
   <ItemGroup>

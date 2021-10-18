@@ -41,7 +41,7 @@ formatted_output.append_str(',');
 formatted_output.append(ev.path);
 formatted_output.append_str(',');
 formatted_output.append(ev.message);
-]]></ST>
+formatted_output.append_str('$R');]]></ST>
       </Implementation>
     </Method>
     <Property Name="datetime_format" Id="{ff9319a0-0f4d-457b-a5d8-b6c207973103}">
