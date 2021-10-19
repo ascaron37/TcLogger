@@ -322,6 +322,7 @@ VAR_INST
   ev: EventMessage;
   event_index: INT;
   message_index: INT;
+  formatted_message: LString;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -337,11 +338,13 @@ IF event_index = 0 THEN
       sFormat:=message.str,
       arg1:=parameter,
       sOut=>temp_message);
-      message.str := temp_message;
+    formatted_message.str := temp_message;
+  ELSE
+    formatted_message := message;
   END_IF
   ev.id := id;
   ev.path := path;
-  ev.message := message;
+  ev.message := formatted_message;
   ev.level := level;
   ev.cleared := cleared;
   ev.path.remove_left_including_char('.', 2);
@@ -386,21 +389,24 @@ VAR_INST
   ev: EventMessage;
   event_index: INT;
   message_index: INT;
+  formatted_message: LString;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF NOT F_ARGISZERO(parameter) THEN
+        <ST><![CDATA[IF _parameter.cbLen > 0 THEN
   format_str(
     sFormat:=message.str,
     arg1:=parameter,
     sOut=>temp_message);
-    message.str := temp_message;
+  formatted_message.str := temp_message;
+ELSE
+  formatted_message := message;
 END_IF
 create_event_message(
     ev:=ev,
     id:=GVL.EXCLUDE_ID,
     path:=path,
-    message:=message,
+    message:=formatted_message,
     level:=level,
     cleared:=TRUE);
 message_index := detection.get_message_index(ev);
