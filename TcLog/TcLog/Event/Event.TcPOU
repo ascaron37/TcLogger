@@ -64,6 +64,30 @@ END_VAR
         <ST><![CDATA[logging.clear_alarm(id:=id);]]></ST>
       </Implementation>
     </Method>
+    <Method Name="debug" Id="{c7dace64-1eff-4374-a921-927cd96ca8db}">
+      <Declaration><![CDATA[METHOD PUBLIC debug
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[submit(level:=EventLevel.DEBUG);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="debug_if_true" Id="{a06d8b31-3af7-4fa1-8e8f-897a10e82fe5}">
+      <Declaration><![CDATA[METHOD debug_if_true
+VAR_INPUT
+    value: BOOL;
+END_VAR
+VAR_INST
+  r_value: R_TRIG;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[r_value(CLK:=value);
+IF r_value.Q THEN
+  debug();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="error" Id="{ca38d702-e59f-46d2-9511-1415bc78b78f}">
       <Declaration><![CDATA[METHOD PUBLIC error
 VAR_INPUT

@@ -6,10 +6,11 @@
 {attribute 'to_string'}
 TYPE EventLevel :
 (
-	INFO := 10,
-  WARNING :=20,
-  ERROR := 30,
-  ALARM := 40
+  DEBUG := 10,
+	INFO := 20,
+  WARNING := 30,
+  ERROR := 40,
+  ALARM := 50
 ) BYTE := INFO;
 END_TYPE]]></Declaration>
   </DUT>
