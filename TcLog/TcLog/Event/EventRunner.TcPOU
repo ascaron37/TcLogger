@@ -332,7 +332,7 @@ END_IF
 event_index := detection.get_event_index(id);
 IF event_index = 0 THEN
   detection.add_event(id);
-  IF NOT F_ARGISZERO(parameter) THEN
+  IF _parameter.cbLen > 0 THEN
     format_str(
       sFormat:=message.str,
       arg1:=parameter,
