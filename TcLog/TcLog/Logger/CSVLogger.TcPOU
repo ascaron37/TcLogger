@@ -14,7 +14,7 @@ VAR
   _level: EventLevel;
   act_time: TIMESTRUCT;
   act_time_str: STRING(255);
-  _datetime_format: STRING(255) := '%d-%2d-%2d %2dh %2dm %2ds %3dms';
+  _datetime_format: STRING(255) := '%4.0f-%02.0f-%02.0f %02.0f:%02.0f:%02.0f.%03.0f';
   format_string: FB_FormatSTring;
   message_queue: FB_FrameFifo;
   state_number: INT;
@@ -121,18 +121,36 @@ END_VAR
       <Declaration><![CDATA[METHOD run
 VAR_INPUT
   act_time: TIMESTRUCT;
+END_VAR
+VAR_INST
+  year: REAL;
+  month: REAL;
+  day: REAL;
+  hour: REAL;
+  minute: REAL;
+  second: REAL;
+  millisecond: REAL;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[THIS^.act_time := act_time;
+// ugly hack. have to convert numbers to real because the format specification
+// only allows leading zeros on types f, e and s
+year := TO_REAL(act_time.wYear);
+month := TO_REAL(act_time.wMonth);
+day := TO_REAL(act_time.wDay);
+hour := TO_REAL(act_time.wHour);
+minute := TO_REAL(act_time.wMinute);
+second := TO_REAL(act_time.wSecond);
+millisecond := TO_REAL(act_time.wMilliseconds);
 format_string(
   sFormat:=datetime_format,
-  arg1:=F_WORD(act_time.wYear),
-  arg2:=F_WORD(act_time.wMonth),
-  arg3:=F_WORD(act_time.wDay),
-  arg4:=F_WORD(act_time.wHour),
-  arg5:=F_WORD(act_time.wMinute),
-  arg6:=F_WORD(act_time.wSecond),
-  arg7:=F_WORD(act_time.wMilliseconds),
+  arg1:=F_REAL(year),
+  arg2:=F_REAL(month),
+  arg3:=F_REAL(day),
+  arg4:=F_REAL(hour),
+  arg5:=F_REAL(minute),
+  arg6:=F_REAL(second),
+  arg7:=F_REAL(millisecond),
   sOut=>act_time_str);
 
 save();]]></ST>
