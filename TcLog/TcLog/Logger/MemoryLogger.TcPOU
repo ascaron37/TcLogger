@@ -7,20 +7,149 @@ END_VAR
 VAR_OUTPUT
 END_VAR
 VAR
-  event_history: ARRAY[1..Properties.NUM_EVENT_HISTORY] OF EventMessage;
+  event_history: ARRAY[1..Properties.MEMORY_LOGGER_NUM_EVENTS_HISTORY] OF EventMessageHMI;
+  hmi_events: ARRAY[1..Properties.MEMORY_LOGGER_NUM_EVENTS_HMI] OF EventMessageHMI;
+  _level: EventLevel;
+  _hmi_level: EventLevel;
+  act_time: TIMESTRUCT;
+  act_time_str: STRING(255);
+  format_string: FB_FormatString;
+  _datetime_format: STRING(255) := '%4.0f-%02.0f-%02.0f %02.0f:%02.0f:%02.0f.%03.0f';
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Method Name="submit_event_message" Id="{e515f482-fb51-429d-880d-23c8a80c9002}">
-      <Declaration><![CDATA[METHOD submit_event_message
-VAR_INPUT
-	ev: EventMessage;
+    <Property Name="datetime_format" Id="{901880cf-3e03-479e-afc7-bf9c33946e90}">
+      <Declaration><![CDATA[PROPERTY PUBLIC datetime_format : STRING(255)]]></Declaration>
+      <Get Name="Get" Id="{1050bc2c-793a-430c-9957-1b0f82e901f9}">
+        <Declaration><![CDATA[VAR
 END_VAR
 ]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[datetime_format := _datetime_format;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{b24051a1-68e2-4acd-b491-98dc35e4821d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_datetime_format := datetime_format;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="hmi_level" Id="{b044f083-34c4-49f1-ade7-53f28b24829c}">
+      <Declaration><![CDATA[PROPERTY hmi_level : EventLevel]]></Declaration>
+      <Get Name="Get" Id="{7dc7ece3-d7e7-4153-91ba-2f6a63d9c190}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[hmi_level := _hmi_level;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{61402b8b-9347-402f-8a63-4a264099fd21}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_hmi_level := hmi_level;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="level" Id="{400577ac-50c3-4aed-b9e3-93cf3a28e12f}">
+      <Declaration><![CDATA[PROPERTY PUBLIC level : EventLevel]]></Declaration>
+      <Get Name="Get" Id="{4ae6e810-5e37-4128-ae3c-ed61b1588896}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[level := _level;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{36a90529-6ab0-4286-9e54-70b066f06512}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_level := level;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="run" Id="{00274fe4-0245-46f6-918b-f6d272503dd0}">
+      <Declaration><![CDATA[METHOD run
+VAR_INPUT
+	act_time	: Tc2_Utilities.TIMESTRUCT;
+END_VAR
+VAR_INST
+  year: REAL;
+  month: REAL;
+  day: REAL;
+  hour: REAL;
+  minute: REAL;
+  second: REAL;
+  millisecond: REAL;
+END_VAR
+VAR
+  i: INT;
+  j: INT;
+  empty_message: EventMessageHMI;
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[put_new_data_at_start(SIZEOF(ev), ADR(ev), SIZEOF(event_history), ADR(event_history));]]></ST>
+        <ST><![CDATA[THIS^.act_time := act_time;
+// ugly hack. have to convert numbers to real because the format specification
+// only allows leading zeros on types f, e and s
+year := TO_REAL(act_time.wYear);
+month := TO_REAL(act_time.wMonth);
+day := TO_REAL(act_time.wDay);
+hour := TO_REAL(act_time.wHour);
+minute := TO_REAL(act_time.wMinute);
+second := TO_REAL(act_time.wSecond);
+millisecond := TO_REAL(act_time.wMilliseconds);
+format_string(
+  sFormat:=datetime_format,
+  arg1:=F_REAL(year),
+  arg2:=F_REAL(month),
+  arg3:=F_REAL(day),
+  arg4:=F_REAL(hour),
+  arg5:=F_REAL(minute),
+  arg6:=F_REAL(second),
+  arg7:=F_REAL(millisecond),
+  sOut=>act_time_str);
+
+j := 1;
+FOR i:=1 TO Properties.MEMORY_LOGGER_NUM_EVENTS_HISTORY DO
+  IF event_history[i].level >= hmi_level THEN
+    hmi_events[j] := event_history[i];
+    j := j + 1;
+	END_IF
+  IF j > Properties.MEMORY_LOGGER_NUM_EVENTS_HMI THEN
+    EXIT;
+	END_IF
+END_FOR
+WHILE j <= Properties.MEMORY_LOGGER_NUM_EVENTS_HMI DO
+  hmi_events[j] := empty_message;
+  j := j + 1;
+END_WHILE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="submit_event_message" Id="{e515f482-fb51-429d-880d-23c8a80c9002}">
+      <Declaration><![CDATA[METHOD submit_event_message
+VAR_IN_OUT
+	ev: EventMessage;
+END_VAR
+VAR_INST
+  ev_hmi: EventMessageHMI;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF ev.level >= level THEN
+  ev_hmi.level := ev.level;
+  ev_hmi.message := ev.message;
+  ev_hmi.path := ev.path;
+  ev_hmi.timestamp := TO_LSTRING(act_time_str);
+  put_new_data_at_start(SIZEOF(ev_hmi), ADR(ev_hmi), SIZEOF(event_history), ADR(event_history));
+END_IF]]></ST>
       </Implementation>
     </Method>
   </POU>

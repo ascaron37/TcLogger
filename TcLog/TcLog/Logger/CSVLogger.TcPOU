@@ -15,7 +15,7 @@ VAR
   act_time: TIMESTRUCT;
   act_time_str: STRING(255);
   _datetime_format: STRING(255) := '%4.0f-%02.0f-%02.0f %02.0f:%02.0f:%02.0f.%03.0f';
-  format_string: FB_FormatSTring;
+  format_string: FB_FormatString;
   message_queue: FB_FrameFifo;
   state_number: INT;
   formatted_output: LString;

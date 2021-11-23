@@ -17,7 +17,7 @@
     <Released>false</Released>
     <Company>TcLog</Company>
     <Title>TcLog</Title>
-    <ProjectVersion>0.4.0</ProjectVersion>
+    <ProjectVersion>0.4.1</ProjectVersion>
     <CompilerVersion>3.1.4024.0</CompilerVersion>
     <CompilerDefines />
   </PropertyGroup>
@@ -72,6 +72,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Event\CyclicEventDetection.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Event\EventMessageHMI.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Event\ST_CyclicMessageDetection.TcDUT">
