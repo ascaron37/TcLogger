@@ -145,9 +145,9 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF ev.level >= level THEN
   ev_hmi.level := ev.level;
-  ev_hmi.message := ev.message;
-  ev_hmi.path := ev.path;
-  ev_hmi.timestamp := TO_LSTRING(act_time_str);
+  ev_hmi.message := ev.message.str;
+  ev_hmi.path := ev.path.str;
+  ev_hmi.timestamp := act_time_str;
   put_new_data_at_start(SIZEOF(ev_hmi), ADR(ev_hmi), SIZEOF(event_history), ADR(event_history));
 END_IF]]></ST>
       </Implementation>
