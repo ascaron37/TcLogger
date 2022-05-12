@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <GVL Name="Properties" Id="{f4d96ff7-2767-4dda-aedb-114ebae1033c}" ParameterList="True">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL CONSTANT
@@ -10,6 +10,7 @@ VAR_GLOBAL CONSTANT
   CSV_BUFFER_SIZE: UDINT := 2000;
   MEMORY_LOGGER_NUM_EVENTS_HISTORY: INT := 100;
   MEMORY_LOGGER_NUM_EVENTS_HMI: INT := 30;
+  ALARM_VIEW_NUM_EVENTS: INT := 20;
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>

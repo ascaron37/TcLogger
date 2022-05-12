@@ -129,6 +129,16 @@ submit_message(
   level:=EventLevel.WARNING);]]></ST>
       </Implementation>
     </Method>
+    <Method Name="reset_events_and_messages" Id="{24e8ac4e-2ee4-4499-9337-63fe89a998a3}">
+      <Declaration><![CDATA[METHOD PUBLIC reset_events_and_messages
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[detection.reset_events();
+detection.reset_messages();]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="add_logger" Id="{2651f9dc-bec6-4584-8fd4-83f95233f0d4}">
       <Declaration><![CDATA[METHOD PUBLIC add_logger
 VAR_INPUT
