@@ -14,8 +14,7 @@ VAR
   act_time_str: STRING(255);
   format_string: FB_FormatString;
   _datetime_format: STRING(255) := '%4.0f-%02.0f-%02.0f %02.0f:%02.0f:%02.0f.%03.0f';
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>

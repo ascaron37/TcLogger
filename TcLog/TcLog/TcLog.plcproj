@@ -18,11 +18,53 @@
     <Released>false</Released>
     <Company>TcLog</Company>
     <Title>TcLog</Title>
-    <ProjectVersion>0.4.1</ProjectVersion>
     <CompilerVersion>3.1.4022.22</CompilerVersion>
     <CompilerDefines />
+    <ProjectVersion>0.5.0</ProjectVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PlaceholderReference Include="System_VisuElemMeter">
+      <DefaultResolution>VisuElemMeter, 3.5.10.0 (System)</DefaultResolution>
+      <Namespace>VisuElemMeter</Namespace>
+      <SystemLibrary>true</SystemLibrary>
+      <ResolverGuid>2717eb6a-dd07-4c66-8d8d-cacebd7b18ae</ResolverGuid>
+    </PlaceholderReference>
+    <PlaceholderReference Include="System_VisuElems">
+      <DefaultResolution>VisuElems, 3.5.10.40 (System)</DefaultResolution>
+      <Namespace>VisuElems</Namespace>
+      <SystemLibrary>true</SystemLibrary>
+      <ResolverGuid>2717eb6a-dd07-4c66-8d8d-cacebd7b18ae</ResolverGuid>
+    </PlaceholderReference>
+    <PlaceholderReference Include="System_VisuElemsSpecialControls">
+      <DefaultResolution>VisuElemsSpecialControls, 3.5.10.0 (System)</DefaultResolution>
+      <Namespace>VisuElemsSpecialControls</Namespace>
+      <SystemLibrary>true</SystemLibrary>
+      <ResolverGuid>2717eb6a-dd07-4c66-8d8d-cacebd7b18ae</ResolverGuid>
+    </PlaceholderReference>
+    <PlaceholderReference Include="System_VisuElemsWinControls">
+      <DefaultResolution>VisuElemsWinControls, 3.5.10.40 (System)</DefaultResolution>
+      <Namespace>VisuElemsWinControls</Namespace>
+      <SystemLibrary>true</SystemLibrary>
+      <ResolverGuid>2717eb6a-dd07-4c66-8d8d-cacebd7b18ae</ResolverGuid>
+    </PlaceholderReference>
+    <PlaceholderReference Include="System_VisuElemTextEditor">
+      <DefaultResolution>VisuElemTextEditor, 3.5.10.10 (System)</DefaultResolution>
+      <Namespace>VisuElemTextEditor</Namespace>
+      <SystemLibrary>true</SystemLibrary>
+      <ResolverGuid>2717eb6a-dd07-4c66-8d8d-cacebd7b18ae</ResolverGuid>
+    </PlaceholderReference>
+    <PlaceholderReference Include="system_visuinputs">
+      <DefaultResolution>visuinputs, 3.5.10.0 (system)</DefaultResolution>
+      <Namespace>visuinputs</Namespace>
+      <SystemLibrary>true</SystemLibrary>
+      <ResolverGuid>2717eb6a-dd07-4c66-8d8d-cacebd7b18ae</ResolverGuid>
+    </PlaceholderReference>
+    <PlaceholderReference Include="System_VisuNativeControl">
+      <DefaultResolution>VisuNativeControl, 3.5.10.40 (System)</DefaultResolution>
+      <Namespace>VisuNativeControl</Namespace>
+      <SystemLibrary>true</SystemLibrary>
+      <ResolverGuid>2717eb6a-dd07-4c66-8d8d-cacebd7b18ae</ResolverGuid>
+    </PlaceholderReference>
     <PlaceholderReference Include="Tc2_Standard">
       <DefaultResolution>Tc2_Standard, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc2_Standard</Namespace>
@@ -63,10 +105,15 @@
     <Folder Include="Logger" />
     <Folder Include="GVL" />
     <Folder Include="Event" />
+    <Folder Include="Images" />
+    <Folder Include="Textlists" />
+    <Folder Include="Visu" />
     <Folder Include="Tests\Event" />
     <Folder Include="Tests\Utils" />
     <Folder Include="Utils" />
-    <Folder Include="Tests" />
+    <Folder Include="Tests">
+      <ExcludeFromBuild>true</ExcludeFromBuild>
+    </Folder>
     <Folder Include="Tests\Logger" />
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +141,9 @@
     <Compile Include="Event\ST_CyclicEventDetection.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GlobalTextList.TcGTLO">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="GVL\GVL.TcGVL">
       <SubType>Code</SubType>
     </Compile>
@@ -114,6 +164,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Logger\AlarmViewLogger.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SymbolsPool.TcIPO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\Event\EventTestsystem.TcDUT">
@@ -170,17 +223,42 @@
     <Compile Include="Utils\TO_LSTRING.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Visualization Manager.TcVMO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Visu\AlarmViewSingle.TcVIS">
+      <SubType>Code</SubType>
+      <DependentUpon>Visualization Manager.TcVMO</DependentUpon>
+    </Compile>
+    <Compile Include="Visu\AlarmViewSingleWithReset.TcVIS">
+      <SubType>Code</SubType>
+      <DependentUpon>Visualization Manager.TcVMO</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="TcLog.tmc">
       <SubType>Content</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\alert-circle.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\alert-octagon.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\alert-triangle.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\x-octagon.png">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
   <ProjectExtensions>
     <PlcProjectOptions>
       <XmlArchive>
-        <Data>
-          <o xml:space="preserve" t="OptionKey">
+  <Data>
+    <o xml:space="preserve" t="OptionKey">
       <v n="Name">"&lt;ProjectRoot&gt;"</v>
       <d n="SubKeys" t="Hashtable" ckt="String" cvt="OptionKey">
         <v>{192FAD59-8248-4824-A8DE-9177C94C195A}</v>
@@ -238,22 +316,25 @@
         <o>
           <v n="Name">"{246001F4-279D-43AC-B241-948EB31120E1}"</v>
           <d n="SubKeys" t="Hashtable" />
-          <d n="Values" t="Hashtable" ckt="String" cvt="String">
+          <d n="Values" t="Hashtable" ckt="String">
             <v>GlobalVisuImageFilePath</v>
-            <v>%APPLICATIONPATH%\</v>
+            <v>"%APPLICATIONPATH%\"</v>
+            <v>UnicodeStrings</v>
+            <v>false</v>
           </d>
         </o>
       </d>
       <d n="Values" t="Hashtable" />
     </o>
-        </Data>
-        <TypeList>
-          <Type n="ExactVersionConstraintToSave">{f9079115-a4ba-4f30-bf7c-9e76613146fc}</Type>
-          <Type n="Hashtable">System.Collections.Hashtable</Type>
-          <Type n="OptionKey">{54dd0eac-a6d8-46f2-8c27-2f43c7e49861}</Type>
-          <Type n="String">System.String</Type>
-        </TypeList>
-      </XmlArchive>
+  </Data>
+  <TypeList>
+    <Type n="Boolean">System.Boolean</Type>
+    <Type n="ExactVersionConstraintToSave">{f9079115-a4ba-4f30-bf7c-9e76613146fc}</Type>
+    <Type n="Hashtable">System.Collections.Hashtable</Type>
+    <Type n="OptionKey">{54dd0eac-a6d8-46f2-8c27-2f43c7e49861}</Type>
+    <Type n="String">System.String</Type>
+  </TypeList>
+</XmlArchive>
     </PlcProjectOptions>
   </ProjectExtensions>
 </Project>

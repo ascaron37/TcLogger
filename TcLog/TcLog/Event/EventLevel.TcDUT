@@ -1,17 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <DUT Name="EventLevel" Id="{5d6074ed-2b44-44a9-889f-6e1c42bed7e0}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 {attribute 'strict'}
 {attribute 'to_string'}
 TYPE EventLevel :
 (
-  DEBUG := 10,
-	INFO := 20,
-  WARNING := 30,
-  ERROR := 40,
-  ALARM := 50
-) BYTE := INFO;
+  NONE := 0,
+  DEBUG := 1,
+	INFO := 2,
+  WARNING := 3,
+  ERROR := 4,
+  ALARM := 5
+) BYTE := NONE;
 END_TYPE]]></Declaration>
   </DUT>
 </TcPlcObject>
