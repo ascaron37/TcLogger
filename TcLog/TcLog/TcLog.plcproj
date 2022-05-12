@@ -19,7 +19,7 @@
     <Company>TcLog</Company>
     <Title>TcLog</Title>
     <ProjectVersion>0.4.1</ProjectVersion>
-    <CompilerVersion>3.1.4024.0</CompilerVersion>
+    <CompilerVersion>3.1.4022.22</CompilerVersion>
     <CompilerDefines />
   </PropertyGroup>
   <ItemGroup>
@@ -66,9 +66,7 @@
     <Folder Include="Tests\Event" />
     <Folder Include="Tests\Utils" />
     <Folder Include="Utils" />
-    <Folder Include="Tests">
-      <ExcludeFromBuild>true</ExcludeFromBuild>
-    </Folder>
+    <Folder Include="Tests" />
     <Folder Include="Tests\Logger" />
   </ItemGroup>
   <ItemGroup>
@@ -223,7 +221,7 @@
           <d n="Values" t="Hashtable" ckt="String" cvt="ExactVersionConstraintToSave">
             <v>VersionConstraint</v>
             <o>
-              <v n="TheVersion">"3.1.4024.0"</v>
+              <v n="TheVersion">"3.1.4022.22"</v>
             </o>
           </d>
         </o>
