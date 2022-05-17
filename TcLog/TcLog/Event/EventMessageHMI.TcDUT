@@ -3,6 +3,7 @@
   <DUT Name="EventMessageHMI" Id="{c2876103-f28c-4070-9615-95f28d277a60}">
     <Declaration><![CDATA[TYPE EventMessageHMI :
 STRUCT
+  id: INT;
   timestamp: STRING;
   path: STRING;
   message: STRING;

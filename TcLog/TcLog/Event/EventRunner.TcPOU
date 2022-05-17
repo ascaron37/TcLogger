@@ -72,6 +72,22 @@ END_VAR
         <ST><![CDATA[alarm_raised := get_alarm_index(id:=id) > 0;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="clear" Id="{19996064-ae21-49f0-8fe4-0d8d3ff72c43}">
+      <Declaration><![CDATA[METHOD PUBLIC clear
+VAR_INPUT
+  id: INT;
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i:=1 TO Properties.NUM_LOGGER DO
+  IF event_logger[i] <> 0 THEN
+    event_logger[i].clear_event_message(id);
+	END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="clear_alarm" Id="{07a3255c-8c06-4ac3-9bc3-7cc05616380c}">
       <Declaration><![CDATA[METHOD INTERNAL clear_alarm
 VAR_INPUT
@@ -148,7 +164,7 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF value THEN
-  warning(message);
+  error(message);
 END_IF]]></ST>
       </Implementation>
     </Method>

@@ -18,6 +18,28 @@ END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
+    <Method Name="clear_event_message" Id="{aeb1148d-756f-4577-a075-dfc54b0c3260}">
+      <Declaration><![CDATA[METHOD clear_event_message
+VAR_INPUT
+	id: INT;
+END_VAR
+VAR
+  index: INT;
+  filldata: EventMessageHMI;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF event_in_table(id:=id) THEN
+  index := event_index(id:=id);
+  
+  remove_field_from_array(
+    index_to_remove:=index,
+    size_filldata:=SIZEOF(filldata),
+    adr_filldata:=ADR(filldata),
+    size_memory_buffer:=SIZEOF(events),
+    adr_memory_buffer:=ADR(events));
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Property Name="datetime_format" Id="{86e3183d-d03c-4a29-977d-60d740970beb}">
       <Declaration><![CDATA[PROPERTY PUBLIC datetime_format : STRING(255)]]></Declaration>
       <Get Name="Get" Id="{90f39645-2cc5-49a9-8665-cc0db8146f32}">
@@ -37,6 +59,39 @@ END_VAR
         </Implementation>
       </Set>
     </Property>
+    <Method Name="event_in_table" Id="{284b3227-559e-49bb-9754-2f0306e475b3}">
+      <Declaration><![CDATA[METHOD PRIVATE event_in_table : BOOL
+VAR_INPUT
+  id: INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[event_in_table := event_index(id) > 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="event_index" Id="{d4a08f6d-cd9c-47e6-9893-a9926832b62a}">
+      <Declaration><![CDATA[METHOD PRIVATE event_index : INT
+VAR_INPUT
+  id: INT;
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i:=1 TO Properties.ALARM_VIEW_NUM_EVENTS DO
+  // there are no gaps between events, so it is safe to assume
+  // that the first empty event is the end
+  IF events[i].id = 0 THEN
+    EXIT;
+	END_IF
+  
+  IF events[i].id := id THEN
+    event_index := i;
+    EXIT;
+	END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
     <Property Name="level" Id="{d383f47b-c7e8-4ec6-a222-5dd0cc857a16}">
       <Declaration><![CDATA[PROPERTY PUBLIC level : EventLevel]]></Declaration>
       <Get Name="Get" Id="{9cdae7c4-013f-4597-aa67-3b4fbf2062b3}">
@@ -127,6 +182,7 @@ VAR_INST
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF ev.level >= level THEN
+  ev_hmi.id := ev.id;
   ev_hmi.level := ev.level;
   ev_hmi.message := ev.message.str;
   ev_hmi.path := ev.path.str;

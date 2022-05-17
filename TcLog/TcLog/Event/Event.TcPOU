@@ -55,6 +55,15 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
+    <Method Name="clear" Id="{e2f724bf-4489-4be0-b97b-f8116a9de24e}">
+      <Declaration><![CDATA[METHOD PUBLIC clear
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[logging.clear(id:=id);]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="clear_alarm" Id="{7cc823d2-a8dd-44ff-903e-fdbcff90c798}">
       <Declaration><![CDATA[METHOD PUBLIC clear_alarm
 VAR_INPUT
@@ -76,7 +85,7 @@ END_VAR
     <Method Name="debug_if_true" Id="{a06d8b31-3af7-4fa1-8e8f-897a10e82fe5}">
       <Declaration><![CDATA[METHOD debug_if_true
 VAR_INPUT
-    value: BOOL;
+  value: BOOL;
 END_VAR
 VAR_INST
   r_value: R_TRIG;
@@ -85,6 +94,19 @@ END_VAR]]></Declaration>
         <ST><![CDATA[r_value(CLK:=value);
 IF r_value.Q THEN
   debug();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="debug_signal" Id="{06b5a6e3-4ad8-4493-90a5-2aabaf0c4246}">
+      <Declaration><![CDATA[METHOD debug_signal
+VAR_INPUT
+  signal: BOOL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF signal THEN
+  debug();
+ELSE
+  clear();
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -100,7 +122,7 @@ END_VAR
     <Method Name="error_if_true" Id="{8af93ac7-1b7e-401f-9f1c-d6f493bbe4f5}">
       <Declaration><![CDATA[METHOD error_if_true
 VAR_INPUT
-    value: BOOL;
+  value: BOOL;
 END_VAR
 VAR_INST
   r_value: R_TRIG;
@@ -109,6 +131,19 @@ END_VAR]]></Declaration>
         <ST><![CDATA[r_value(CLK:=value);
 IF r_value.Q THEN
   error();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="error_signal" Id="{e8eab678-8a12-4852-8403-2c0daff1c09b}">
+      <Declaration><![CDATA[METHOD error_signal
+VAR_INPUT
+  signal: BOOL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF signal THEN
+  error();
+ELSE
+  clear();
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -136,7 +171,7 @@ END_VAR
     <Method Name="info_if_true" Id="{83861da7-e1af-4da2-959b-ff5ff145a653}">
       <Declaration><![CDATA[METHOD info_if_true
 VAR_INPUT
-    value: BOOL;
+  value: BOOL;
 END_VAR
 VAR_INST
   r_value: R_TRIG;
@@ -244,7 +279,7 @@ END_VAR
     <Method Name="warning_if_true" Id="{38297555-beb6-4c95-91f2-b4b5ac0ba3a8}">
       <Declaration><![CDATA[METHOD warning_if_true
 VAR_INPUT
-    value: BOOL;
+  value: BOOL;
 END_VAR
 VAR_INST
   r_value: R_TRIG;
@@ -253,6 +288,19 @@ END_VAR]]></Declaration>
         <ST><![CDATA[r_value(CLK:=value);
 IF r_value.Q THEN
   warning();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="warning_signal" Id="{a7ab4b24-9202-4a97-91ba-cefb90fee56f}">
+      <Declaration><![CDATA[METHOD warning_signal
+VAR_INPUT
+  signal: BOOL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF signal THEN
+  warning();
+ELSE
+  clear();
 END_IF]]></ST>
       </Implementation>
     </Method>

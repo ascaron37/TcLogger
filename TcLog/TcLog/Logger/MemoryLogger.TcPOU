@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="MemoryLogger" Id="{96136309-a53e-49de-920d-d5f50ab34f7f}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK MemoryLogger IMPLEMENTS EventLogger
 VAR_INPUT
@@ -20,6 +20,15 @@ END_VAR
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
+    <Method Name="clear_event_message" Id="{272503e0-99a8-4b67-b3f6-61f4bb4fcb62}">
+      <Declaration><![CDATA[METHOD clear_event_message
+VAR_INPUT
+  id: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// nothing to do here]]></ST>
+      </Implementation>
+    </Method>
     <Property Name="datetime_format" Id="{901880cf-3e03-479e-afc7-bf9c33946e90}">
       <Declaration><![CDATA[PROPERTY PUBLIC datetime_format : STRING(255)]]></Declaration>
       <Get Name="Get" Id="{1050bc2c-793a-430c-9957-1b0f82e901f9}">
@@ -144,6 +153,7 @@ VAR_INST
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF ev.level >= level THEN
+  ev_hmi.id := ev.id;
   ev_hmi.level := ev.level;
   ev_hmi.message := ev.message.str;
   ev_hmi.path := ev.path.str;

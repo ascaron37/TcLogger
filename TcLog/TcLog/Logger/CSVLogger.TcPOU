@@ -24,6 +24,16 @@ END_VAR
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
+    <Method Name="clear_event_message" Id="{31bf3fbc-2391-4047-9f8c-a261ff0356f0}">
+      <Declaration><![CDATA[METHOD clear_event_message
+VAR_INPUT
+	id: INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// nothing to do here]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="create_row" Id="{62ac12fa-3bef-45d6-b92a-39ca0590c04e}">
       <Declaration><![CDATA[METHOD INTERNAL create_row
 VAR_IN_OUT

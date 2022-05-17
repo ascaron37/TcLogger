@@ -1,8 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <Itf Name="EventLogger" Id="{ed02ee8e-c48d-425b-b1ba-db2fe412fd83}">
     <Declaration><![CDATA[INTERFACE EventLogger
 ]]></Declaration>
+    <Method Name="clear_event_message" Id="{6e64d4cb-52bd-4cd7-a00f-6caf69dcdee3}">
+      <Declaration><![CDATA[METHOD clear_event_message
+VAR_INPUT
+  id: INT;
+END_VAR
+]]></Declaration>
+    </Method>
     <Property Name="level" Id="{730b9c5a-0551-4f93-88c2-7713947006a0}">
       <Declaration><![CDATA[PROPERTY PUBLIC level : EventLevel]]></Declaration>
       <Get Name="Get" Id="{841b1b39-fa57-4400-953f-380c944e25b0}">
