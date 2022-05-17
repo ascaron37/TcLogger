@@ -862,8 +862,6 @@
                 <v>7ca10180-9238-44e2-bfe6-5b3db64c6ac4</v>
                 <v>ContainsPoint</v>
                 <v>a1610777-6142-49e3-b580-0d5aa1dd467e</v>
-                <v>FB_Reinit</v>
-                <v>3cefa99a-4dec-4d44-9f7d-562152274909</v>
                 <v>HasInputAccess</v>
                 <v>672f6cf2-5346-43af-8b1a-8ad97d8cf2b1</v>
                 <v>HasInputAccessIntern</v>
@@ -902,6 +900,8 @@
                 <v>f1f0e9bf-a7f0-47b2-9e7d-0c62ea8079c0</v>
                 <v>Initialize</v>
                 <v>ef057632-4a30-4f48-9c7a-d3515a54f4e6</v>
+                <v>Destruct</v>
+                <v>ee0cbfc1-8861-4e96-b9b8-d88ee0e517bc</v>
                 <v>SetStaticState</v>
                 <v>bd01063d-22fc-4a13-968b-143d4ec722a6</v>
                 <v>GetSurroundingRect</v>
@@ -916,8 +916,8 @@
                 <v>3fc21209-ce86-40a5-8f07-3f72d9677132</v>
                 <v>SetDialogInterface</v>
                 <v>af52604f-749b-4783-b208-1012cf16d3e7</v>
-                <v>Destruct</v>
-                <v>ee0cbfc1-8861-4e96-b9b8-d88ee0e517bc</v>
+                <v>FB_Reinit</v>
+                <v>3cefa99a-4dec-4d44-9f7d-562152274909</v>
                 <v>FB_Exit</v>
                 <v>1457fb1b-a16c-4e46-b6a4-4b27142542be</v>
                 <v>GetInitializeVersion</v>
@@ -942,10 +942,10 @@
               <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
                 <v>FB_Init</v>
                 <v>a43efc37-e8ff-417a-9121-840f382e693e</v>
-                <v>FB_Reinit</v>
-                <v>498c1576-9363-4be3-b4e5-ff7cb0792183</v>
                 <v>FB_Exit</v>
                 <v>3f56dabc-999a-4502-924b-bd775c90c690</v>
+                <v>FB_Reinit</v>
+                <v>498c1576-9363-4be3-b4e5-ff7cb0792183</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{e3281ee2-812e-4c6b-8345-e15d5a62aeb6}</v>

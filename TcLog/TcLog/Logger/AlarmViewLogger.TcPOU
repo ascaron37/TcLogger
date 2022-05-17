@@ -18,34 +18,8 @@ END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Method Name="submit_event_message" Id="{7614287c-c461-4ecf-835d-82cb246574a4}">
-      <Declaration><![CDATA[METHOD submit_event_message
-VAR_IN_OUT
-	ev: EventMessage;
-END_VAR
-VAR_INST
-  ev_hmi: EventMessageHMI;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[IF ev.level >= level THEN
-  ev_hmi.level := ev.level;
-  ev_hmi.message := ev.message.str;
-  ev_hmi.path := ev.path.str;
-  ev_hmi.timestamp := act_time_str;
-  put_new_data_at_start(SIZEOF(ev_hmi), ADR(ev_hmi), SIZEOF(events), ADR(events));
-END_IF]]></ST>
-      </Implementation>
-    </Method>
     <Property Name="datetime_format" Id="{86e3183d-d03c-4a29-977d-60d740970beb}">
       <Declaration><![CDATA[PROPERTY PUBLIC datetime_format : STRING(255)]]></Declaration>
-      <Set Name="Set" Id="{157f0eef-4b71-4290-a80c-a58eddb99984}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[_datetime_format := datetime_format;]]></ST>
-        </Implementation>
-      </Set>
       <Get Name="Get" Id="{90f39645-2cc5-49a9-8665-cc0db8146f32}">
         <Declaration><![CDATA[VAR
 END_VAR
@@ -54,7 +28,56 @@ END_VAR
           <ST><![CDATA[datetime_format := _datetime_format;]]></ST>
         </Implementation>
       </Get>
+      <Set Name="Set" Id="{157f0eef-4b71-4290-a80c-a58eddb99984}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_datetime_format := datetime_format;]]></ST>
+        </Implementation>
+      </Set>
     </Property>
+    <Property Name="level" Id="{d383f47b-c7e8-4ec6-a222-5dd0cc857a16}">
+      <Declaration><![CDATA[PROPERTY PUBLIC level : EventLevel]]></Declaration>
+      <Get Name="Get" Id="{9cdae7c4-013f-4597-aa67-3b4fbf2062b3}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[level := _level;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{b5c89708-4977-48f9-81fe-b00e169d114a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_level := level;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="reset" Id="{b05a7595-f32b-4d18-b444-ab46d22f0168}">
+      <Declaration><![CDATA[METHOD PUBLIC reset
+VAR_INPUT
+  execute: BOOL;
+END_VAR
+VAR
+  i: INT;
+END_VAR
+VAR_INST
+  r_execute: R_TRIG;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[r_execute(CLK:=execute);
+IF r_execute.Q THEN
+  logging.reset_events_and_messages();
+  FOR i:=1 TO Properties.ALARM_VIEW_NUM_EVENTS DO
+    events[i] := empty_message;
+	END_FOR
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="run" Id="{94d44a78-563d-472f-bc28-9cbe9d075abe}">
       <Declaration><![CDATA[METHOD run
 VAR_INPUT
@@ -94,46 +117,23 @@ format_string(
   sOut=>act_time_str);]]></ST>
       </Implementation>
     </Method>
-    <Method Name="reset" Id="{b05a7595-f32b-4d18-b444-ab46d22f0168}">
-      <Declaration><![CDATA[METHOD PUBLIC reset
-VAR_INPUT
-  execute: BOOL;
-END_VAR
-VAR
-  i: INT;
+    <Method Name="submit_event_message" Id="{7614287c-c461-4ecf-835d-82cb246574a4}">
+      <Declaration><![CDATA[METHOD submit_event_message
+VAR_IN_OUT
+	ev: EventMessage;
 END_VAR
 VAR_INST
-  r_execute: R_TRIG;
-END_VAR
-]]></Declaration>
+  ev_hmi: EventMessageHMI;
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[r_execute(CLK:=execute);
-IF r_execute.Q THEN
-  logging.reset_events_and_messages();
-  FOR i:=1 TO Properties.ALARM_VIEW_NUM_EVENTS DO
-    events[i] := empty_message;
-	END_FOR
+        <ST><![CDATA[IF ev.level >= level THEN
+  ev_hmi.level := ev.level;
+  ev_hmi.message := ev.message.str;
+  ev_hmi.path := ev.path.str;
+  ev_hmi.timestamp := act_time_str;
+  put_new_data_at_start(SIZEOF(ev_hmi), ADR(ev_hmi), SIZEOF(events), ADR(events));
 END_IF]]></ST>
       </Implementation>
     </Method>
-    <Property Name="level" Id="{d383f47b-c7e8-4ec6-a222-5dd0cc857a16}">
-      <Declaration><![CDATA[PROPERTY PUBLIC level : EventLevel]]></Declaration>
-      <Get Name="Get" Id="{9cdae7c4-013f-4597-aa67-3b4fbf2062b3}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[level := _level;]]></ST>
-        </Implementation>
-      </Get>
-      <Set Name="Set" Id="{b5c89708-4977-48f9-81fe-b00e169d114a}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[_level := level;]]></ST>
-        </Implementation>
-      </Set>
-    </Property>
   </POU>
 </TcPlcObject>

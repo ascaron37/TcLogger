@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="CSVLogger" Id="{eddd5bf2-9f8b-4014-b1a1-2b9514f6af17}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK CSVLogger IMPLEMENTS EventLogger
 VAR_INPUT

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="ADSLogger" Id="{f353a23b-59c1-4eb7-b1b3-77f5986ff606}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK ADSLogger IMPLEMENTS EventLogger
 VAR_INPUT

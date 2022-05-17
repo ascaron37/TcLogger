@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="TIMESTRUCT_TO_TIMESTR" Id="{91d88cd6-88a5-4a4c-881f-fe19db607d16}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION TIMESTRUCT_TO_TIMESTR
 VAR_INPUT

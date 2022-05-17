@@ -33,25 +33,45 @@ der runner wird am ende des sps programms ausgefuehrt
 - im runner wird zudem das datum immer aktualisiert
 *)]]></ST>
     </Implementation>
-    <Property Name="parameter" Id="{06b7980e-d1cc-40e8-bdcf-02a1d31b5017}">
-      <Declaration><![CDATA[PROPERTY PUBLIC parameter : T_Arg]]></Declaration>
-      <Set Name="Set" Id="{780515c3-7c09-49e5-abe9-acf9d3402fa3}">
+    <Property Name="act_time" Id="{7e8ceabb-80c4-4035-9e65-42491c23b792}">
+      <Declaration><![CDATA[PROPERTY PRIVATE act_time : TIMESTRUCT]]></Declaration>
+      <Get Name="Get" Id="{380360c5-f864-458f-9b41-ca220d584c69}">
         <Declaration><![CDATA[VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[_parameter := parameter;]]></ST>
-        </Implementation>
-      </Set>
-      <Get Name="Get" Id="{f31b7eb9-151d-4b85-b437-02fbb47931d8}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[parameter := _parameter;]]></ST>
+          <ST><![CDATA[IF time_valid THEN
+  act_time := localtime.systemTime;
+END_IF]]></ST>
         </Implementation>
       </Get>
     </Property>
+    <Method Name="add_logger" Id="{2651f9dc-bec6-4584-8fd4-83f95233f0d4}">
+      <Declaration><![CDATA[METHOD PUBLIC add_logger
+VAR_INPUT
+  logger: EventLogger;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF logger_counter < Properties.NUM_LOGGER AND ADR(logger) <> 0 AND NOT logger_exist(logger) THEN
+  inc_logger_counter();
+  event_logger[logger_counter] := logger;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="alarm_raised" Id="{0ecb95b1-2cc0-4d11-97b5-c5cef817c911}">
+      <Declaration><![CDATA[METHOD INTERNAL alarm_raised : BOOL
+VAR_INPUT
+  id: INT;
+END_VAR
+VAR
+  i: INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[alarm_raised := get_alarm_index(id:=id) > 0;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="clear_alarm" Id="{07a3255c-8c06-4ac3-9bc3-7cc05616380c}">
       <Declaration><![CDATA[METHOD INTERNAL clear_alarm
 VAR_INPUT
@@ -77,118 +97,30 @@ END_VAR]]></Declaration>
 END_IF]]></ST>
       </Implementation>
     </Method>
-    <Method Name="info" Id="{0e6c198e-5eef-43dd-aa68-60c1a8cf47ab}">
-      <Declaration><![CDATA[METHOD PUBLIC info
-VAR_INPUT
-  message: STRING(255);
-END_VAR
-VAR_INST
-  message_lstr: LString;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[message_lstr := TO_LSTRING(message);
-submit_message(
-  message:=message_lstr,
-  level:=EventLevel.INFO);]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="alarm_raised" Id="{0ecb95b1-2cc0-4d11-97b5-c5cef817c911}">
-      <Declaration><![CDATA[METHOD INTERNAL alarm_raised : BOOL
+    <Method Name="create_event_message" Id="{e5a00f40-724a-4169-849a-17f7fb262ee6}">
+      <Declaration><![CDATA[METHOD PRIVATE create_event_message
 VAR_INPUT
   id: INT;
+  level: EventLevel;
+  cleared: BOOL;
 END_VAR
-VAR
-  i: INT;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[alarm_raised := get_alarm_index(id:=id) > 0;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="inc_event_id_counter" Id="{18d6b3f6-2969-4465-a6b9-303d2dae68f6}">
-      <Declaration><![CDATA[METHOD PRIVATE inc_event_id_counter
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[event_id_counter := LIMIT(1, event_id_counter + 1, Properties.NUM_EVENTS);]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="warning" Id="{24bf1d2a-2c3d-49f9-a931-65114b2195ac}">
-      <Declaration><![CDATA[METHOD PUBLIC warning
-VAR_INPUT
-  message: STRING(255);
-END_VAR
-VAR_INST
-  message_lstr: LString;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[message_lstr := TO_LSTRING(message);
-submit_message(
-  message:=message_lstr,
-  level:=EventLevel.WARNING);]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="reset_events_and_messages" Id="{24e8ac4e-2ee4-4499-9337-63fe89a998a3}">
-      <Declaration><![CDATA[METHOD PUBLIC reset_events_and_messages
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[detection.reset_events();
-detection.reset_messages();]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="add_logger" Id="{2651f9dc-bec6-4584-8fd4-83f95233f0d4}">
-      <Declaration><![CDATA[METHOD PUBLIC add_logger
-VAR_INPUT
-  logger: EventLogger;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[IF logger_counter < Properties.NUM_LOGGER AND ADR(logger) <> 0 AND NOT logger_exist(logger) THEN
-  inc_logger_counter();
-  event_logger[logger_counter] := logger;
-END_IF]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="submit_event_message_to_logger" Id="{39af9b80-587a-45d1-be6f-b8a8ddcf9a59}">
-      <Declaration><![CDATA[METHOD PRIVATE submit_event_message_to_logger
 VAR_IN_OUT
   ev: EventMessage;
+  path: LString;
+  message: LString;
 END_VAR
 VAR
+  undefined_time: TIMESTRUCT;
+  num_dots: INT;
   i: INT;
+  offset: INT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[FOR i:=1 TO Properties.NUM_LOGGER DO
-  IF event_logger[i] <> 0 THEN
-    event_logger[i].submit_event_message(ev);
-	END_IF
-END_FOR]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="generate_event_id" Id="{45e6113d-bd59-45d0-baac-1654e214698c}">
-      <Declaration><![CDATA[METHOD INTERNAL generate_event_id : INT
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[inc_event_id_counter();
-generate_event_id := event_id_counter;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="warning_if_true" Id="{46dbe002-a229-41de-a424-818f2c2a47d0}">
-      <Declaration><![CDATA[METHOD PUBLIC warning_if_true
-VAR_INPUT
-  value: BOOL;
-  message: STRING(255);
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[IF value THEN
-  warning(message);
-END_IF]]></ST>
+        <ST><![CDATA[ev.id := id;
+ev.path := path;
+ev.message := message;
+ev.level := level;
+ev.cleared := cleared;]]></ST>
       </Implementation>
     </Method>
     <Method Name="error" Id="{4dd89880-1abb-4d7e-a276-4d71779474aa}">
@@ -205,6 +137,181 @@ END_VAR
 submit_message(
   message:=message_lstr,
   level:=EventLevel.ERROR);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="error_if_true" Id="{86903ce8-3919-4813-8c8e-481afd1ebc77}">
+      <Declaration><![CDATA[METHOD PUBLIC error_if_true
+VAR_INPUT
+  value: BOOL;
+  message: STRING(255);
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF value THEN
+  warning(message);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FB_init" Id="{f667b0e6-17bf-4e87-a397-fbd06967cd33}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[path.str := path_str;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="generate_event_id" Id="{45e6113d-bd59-45d0-baac-1654e214698c}">
+      <Declaration><![CDATA[METHOD INTERNAL generate_event_id : INT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[inc_event_id_counter();
+generate_event_id := event_id_counter;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="get_alarm_index" Id="{9cd2a2f4-2a2d-4387-8ae7-23f7428700c9}">
+      <Declaration><![CDATA[METHOD PRIVATE get_alarm_index : INT
+VAR_INPUT
+  id: INT;
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[get_alarm_index := 0;
+FOR i:=1 TO Properties.NUM_CONCURRENT_ALARMS DO
+  IF active_alarms[i].id = id AND NOT active_alarms[i].cleared THEN
+    get_alarm_index := i;
+    EXIT;
+	END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="inc_event_id_counter" Id="{18d6b3f6-2969-4465-a6b9-303d2dae68f6}">
+      <Declaration><![CDATA[METHOD PRIVATE inc_event_id_counter
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[event_id_counter := LIMIT(1, event_id_counter + 1, Properties.NUM_EVENTS);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="inc_logger_counter" Id="{ac0be269-11ff-49ba-a6b4-7832eb336d0a}">
+      <Declaration><![CDATA[METHOD PRIVATE inc_logger_counter
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[logger_counter := LIMIT(1, logger_counter + 1, Properties.NUM_LOGGER);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="info" Id="{0e6c198e-5eef-43dd-aa68-60c1a8cf47ab}">
+      <Declaration><![CDATA[METHOD PUBLIC info
+VAR_INPUT
+  message: STRING(255);
+END_VAR
+VAR_INST
+  message_lstr: LString;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[message_lstr := TO_LSTRING(message);
+submit_message(
+  message:=message_lstr,
+  level:=EventLevel.INFO);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="info_if_true" Id="{55973e9d-0603-429c-a9dd-012bc4a8dffa}">
+      <Declaration><![CDATA[METHOD PUBLIC info_if_true
+VAR_INPUT
+  value: BOOL;
+  message: STRING(255);
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF value THEN
+  info(message);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="logger_exist" Id="{7768adfe-3fdd-4fd2-85a2-e1dbf045e2e5}">
+      <Declaration><![CDATA[METHOD PRIVATE logger_exist : BOOL
+VAR_INPUT
+  logger: EventLogger;
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[logger_exist := FALSE;
+FOR i:=1 TO Properties.NUM_LOGGER DO
+  IF event_logger[i] = logger THEN
+    logger_exist := TRUE;
+    EXIT;
+	END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="parameter" Id="{06b7980e-d1cc-40e8-bdcf-02a1d31b5017}">
+      <Declaration><![CDATA[PROPERTY PUBLIC parameter : T_Arg]]></Declaration>
+      <Get Name="Get" Id="{f31b7eb9-151d-4b85-b437-02fbb47931d8}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[parameter := _parameter;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{780515c3-7c09-49e5-abe9-acf9d3402fa3}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_parameter := parameter;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="reset_events_and_messages" Id="{24e8ac4e-2ee4-4499-9337-63fe89a998a3}">
+      <Declaration><![CDATA[METHOD PUBLIC reset_events_and_messages
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[detection.reset_events();
+detection.reset_messages();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="run" Id="{8739a071-bf84-4818-9cb8-125145dee33b}">
+      <Declaration><![CDATA[METHOD PUBLIC run
+VAR_INPUT
+END_VAR
+VAR
+  read_done: BOOL;
+  error_id: UDINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[localtime();
+run_logger();
+detection.cyclic_call();
+submit_event_message_counter := 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="run_logger" Id="{6edc0e38-a1c9-4a4f-a9cc-0eadd0ceaa52}">
+      <Declaration><![CDATA[METHOD PRIVATE run_logger
+VAR_INPUT
+END_VAR
+VAR
+  i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i:=1 TO Properties.NUM_LOGGER DO
+  IF event_logger[i] <> 0 THEN
+    event_logger[i].run(act_time:=act_time);
+	END_IF
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="submit_event" Id="{5048bc84-d342-49bd-b01f-a2a3feadcb99}">
@@ -261,22 +368,10 @@ ELSE
 END_IF]]></ST>
       </Implementation>
     </Method>
-    <Method Name="info_if_true" Id="{55973e9d-0603-429c-a9dd-012bc4a8dffa}">
-      <Declaration><![CDATA[METHOD PUBLIC info_if_true
-VAR_INPUT
-  value: BOOL;
-  message: STRING(255);
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[IF value THEN
-  info(message);
-END_IF]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="run_logger" Id="{6edc0e38-a1c9-4a4f-a9cc-0eadd0ceaa52}">
-      <Declaration><![CDATA[METHOD PRIVATE run_logger
-VAR_INPUT
+    <Method Name="submit_event_message_to_logger" Id="{39af9b80-587a-45d1-be6f-b8a8ddcf9a59}">
+      <Declaration><![CDATA[METHOD PRIVATE submit_event_message_to_logger
+VAR_IN_OUT
+  ev: EventMessage;
 END_VAR
 VAR
   i: INT;
@@ -284,106 +379,9 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[FOR i:=1 TO Properties.NUM_LOGGER DO
   IF event_logger[i] <> 0 THEN
-    event_logger[i].run(act_time:=act_time);
+    event_logger[i].submit_event_message(ev);
 	END_IF
 END_FOR]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="logger_exist" Id="{7768adfe-3fdd-4fd2-85a2-e1dbf045e2e5}">
-      <Declaration><![CDATA[METHOD PRIVATE logger_exist : BOOL
-VAR_INPUT
-  logger: EventLogger;
-END_VAR
-VAR
-  i: INT;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[logger_exist := FALSE;
-FOR i:=1 TO Properties.NUM_LOGGER DO
-  IF event_logger[i] = logger THEN
-    logger_exist := TRUE;
-    EXIT;
-	END_IF
-END_FOR]]></ST>
-      </Implementation>
-    </Method>
-    <Property Name="act_time" Id="{7e8ceabb-80c4-4035-9e65-42491c23b792}">
-      <Declaration><![CDATA[PROPERTY PRIVATE act_time : TIMESTRUCT]]></Declaration>
-      <Get Name="Get" Id="{380360c5-f864-458f-9b41-ca220d584c69}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[IF time_valid THEN
-  act_time := localtime.systemTime;
-END_IF]]></ST>
-        </Implementation>
-      </Get>
-    </Property>
-    <Method Name="error_if_true" Id="{86903ce8-3919-4813-8c8e-481afd1ebc77}">
-      <Declaration><![CDATA[METHOD PUBLIC error_if_true
-VAR_INPUT
-  value: BOOL;
-  message: STRING(255);
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[IF value THEN
-  warning(message);
-END_IF]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="run" Id="{8739a071-bf84-4818-9cb8-125145dee33b}">
-      <Declaration><![CDATA[METHOD PUBLIC run
-VAR_INPUT
-END_VAR
-VAR
-  read_done: BOOL;
-  error_id: UDINT;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[localtime();
-run_logger();
-detection.cyclic_call();
-submit_event_message_counter := 0;]]></ST>
-      </Implementation>
-    </Method>
-    <Property Name="time_valid" Id="{97759346-09f2-489b-abe8-e35197fe4275}">
-      <Declaration><![CDATA[PROPERTY PUBLIC time_valid : BOOL]]></Declaration>
-      <Get Name="Get" Id="{0bd76518-28fe-433e-82d9-2b30ff8be461}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[time_valid := localtime.bValid;]]></ST>
-        </Implementation>
-      </Get>
-    </Property>
-    <Method Name="get_alarm_index" Id="{9cd2a2f4-2a2d-4387-8ae7-23f7428700c9}">
-      <Declaration><![CDATA[METHOD PRIVATE get_alarm_index : INT
-VAR_INPUT
-  id: INT;
-END_VAR
-VAR
-  i: INT;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[get_alarm_index := 0;
-FOR i:=1 TO Properties.NUM_CONCURRENT_ALARMS DO
-  IF active_alarms[i].id = id AND NOT active_alarms[i].cleared THEN
-    get_alarm_index := i;
-    EXIT;
-	END_IF
-END_FOR]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="inc_logger_counter" Id="{ac0be269-11ff-49ba-a6b4-7832eb336d0a}">
-      <Declaration><![CDATA[METHOD PRIVATE inc_logger_counter
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[logger_counter := LIMIT(1, logger_counter + 1, Properties.NUM_LOGGER);]]></ST>
       </Implementation>
     </Method>
     <Method Name="submit_message" Id="{ce173cb8-ea36-4b51-8b06-142152b19f09}">
@@ -432,6 +430,17 @@ ELSE
 END_IF]]></ST>
       </Implementation>
     </Method>
+    <Property Name="time_valid" Id="{97759346-09f2-489b-abe8-e35197fe4275}">
+      <Declaration><![CDATA[PROPERTY PUBLIC time_valid : BOOL]]></Declaration>
+      <Get Name="Get" Id="{0bd76518-28fe-433e-82d9-2b30ff8be461}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[time_valid := localtime.bValid;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Method Name="timestruct_equal" Id="{d3110f90-c794-4c07-a338-1efa49783308}">
       <Declaration><![CDATA[METHOD PRIVATE timestruct_equal : BOOL
 VAR_INPUT
@@ -447,41 +456,32 @@ timestruct_equal := timestruct_equal AND timestruct_1.wMilliseconds = timestruct
 timestruct_equal := timestruct_equal AND timestruct_1.wMinute = timestruct_2.wMinute;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="create_event_message" Id="{e5a00f40-724a-4169-849a-17f7fb262ee6}">
-      <Declaration><![CDATA[METHOD PRIVATE create_event_message
+    <Method Name="warning" Id="{24bf1d2a-2c3d-49f9-a931-65114b2195ac}">
+      <Declaration><![CDATA[METHOD PUBLIC warning
 VAR_INPUT
-  id: INT;
-  level: EventLevel;
-  cleared: BOOL;
+  message: STRING(255);
 END_VAR
-VAR_IN_OUT
-  ev: EventMessage;
-  path: LString;
-  message: LString;
-END_VAR
-VAR
-  undefined_time: TIMESTRUCT;
-  num_dots: INT;
-  i: INT;
-  offset: INT;
+VAR_INST
+  message_lstr: LString;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[ev.id := id;
-ev.path := path;
-ev.message := message;
-ev.level := level;
-ev.cleared := cleared;]]></ST>
+        <ST><![CDATA[message_lstr := TO_LSTRING(message);
+submit_message(
+  message:=message_lstr,
+  level:=EventLevel.WARNING);]]></ST>
       </Implementation>
     </Method>
-    <Method Name="FB_init" Id="{f667b0e6-17bf-4e87-a397-fbd06967cd33}">
-      <Declaration><![CDATA[METHOD FB_init : BOOL
+    <Method Name="warning_if_true" Id="{46dbe002-a229-41de-a424-818f2c2a47d0}">
+      <Declaration><![CDATA[METHOD PUBLIC warning_if_true
 VAR_INPUT
-	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
-	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+  value: BOOL;
+  message: STRING(255);
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[path.str := path_str;]]></ST>
+        <ST><![CDATA[IF value THEN
+  warning(message);
+END_IF]]></ST>
       </Implementation>
     </Method>
   </POU>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="remove_field_from_array" Id="{1bd3c098-02fe-41dc-a7a9-aefaf2de3001}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION remove_field_from_array : BOOL
 VAR_INPUT
