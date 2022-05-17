@@ -85,7 +85,7 @@ END_VAR]]></Declaration>
     EXIT;
 	END_IF
   
-  IF events[i].id := id THEN
+  IF events[i].id = id THEN
     event_index := i;
     EXIT;
 	END_IF
@@ -181,7 +181,7 @@ VAR_INST
   ev_hmi: EventMessageHMI;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF ev.level >= level THEN
+        <ST><![CDATA[IF ev.level >= level AND NOT event_in_table(id:=ev.id) THEN
   ev_hmi.id := ev.id;
   ev_hmi.level := ev.level;
   ev_hmi.message := ev.message.str;
