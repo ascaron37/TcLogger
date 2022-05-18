@@ -297,7 +297,8 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[detection.reset_events();
-detection.reset_messages();]]></ST>
+detection.reset_messages();
+detection.cyclic_call();]]></ST>
       </Implementation>
     </Method>
     <Method Name="run" Id="{8739a071-bf84-4818-9cb8-125145dee33b}">
